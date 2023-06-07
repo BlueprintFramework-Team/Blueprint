@@ -1,0 +1,41 @@
+<xml>
+	<set name="PROJECT_DIR" value="${haxelib:blueprint}/" />
+
+	<files id='haxe'>
+		<compilerflag value="-I${PROJECT_DIR}vendor/include/glad" />
+		<compilerflag value="-I${PROJECT_DIR}vendor/include" />
+
+		<file name="${PROJECT_DIR}vendor/src/glad.c" />
+	</files>
+
+	<target id="haxe">
+		<flag value="-libpath:${PROJECT_DIR}vendor/lib" />
+		<lib name="glfw3.lib" />
+	</target>
+
+	<!-- Taken from raylib-hx -->
+	<!-- WINDOWS LINKER -->
+	<target id="haxe" tool="linker" toolid="exe" if="windows">
+		<!-- <lib name="Winmm.lib" /> -->
+		<lib name="Gdi32.lib" />
+		<lib name="Shell32.lib" />
+		<lib name="OpenGL32.lib" />
+		<lib name="msvcrt.lib" />
+	</target>
+
+	<!-- OSX LINKER -->
+	<target id="haxe" tool="linker" if="macos">
+		<flag value="-framework" />
+		<flag value="IOKit" />
+		<flag value="-framework" />
+		<flag value="Cocoa" />
+		<flag value="-framework" />
+		<flag value="OpenGL" />
+	</target>
+
+	<!-- LINUX LINKER -->
+	<target id="haxe" tool="linker" if="linux">
+		<lib name="libgl.so" />
+		<lib name="libc.so" />
+	</target>
+</xml>

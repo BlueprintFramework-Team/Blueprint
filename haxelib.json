@@ -1,0 +1,12 @@
+{
+    "name": "blueprint",
+    "url" : "",
+    "license": "MIT",
+    "tags": ["haxe", "framework"],
+    "description": "A work in progress framework made using Haxe and GLFW.",
+    "version": "0.1.0",
+    "classPath": "src/",
+    "releasenote": "",
+    "contributors": ["SrtHero278"],
+    "dependencies": {}
+  }
