@@ -3,6 +3,7 @@ package bindings;
 #if !macro
 import cpp.RawPointer;
 import cpp.ConstPointer;
+import cpp.Star;
 import cpp.Callable;
 import cpp.Pointer;
 import cpp.Struct;
@@ -978,10 +979,10 @@ extern class Glfw {
     public static function getJoystickAxes(joystickID:Int, count:Pointer<Int>):ConstPointer<Float>;
 
     @:native("glfwGetJoystickButtons")
-    public static function getJoystickButtons(joystickID:Int, count:Pointer<Int>):cpp.ConstStar<Int>;
+    public static function getJoystickButtons(joystickID:Int, count:Pointer<Int>):cpp.ConstPointer<Int>;
 
     @:native("glfwGetJoystickHats")
-    public static function getJoystickHats(joystickID:Int, count:Pointer<Int>):cpp.ConstStar<Int>;
+    public static function getJoystickHats(joystickID:Int, count:Pointer<Int>):cpp.ConstPointer<Int>;
 
     @:native("glfwGetJoystickName")
     public static function _getJoystickName(joystickID:Int):ConstCharStar;
