@@ -86,24 +86,30 @@ extern class Glad {
 		return untyped __cpp__("gladLoadGLLoader((GLADloadproc){0})", loadProc);
 	}
 
-	static inline function bufferArray(target:GlEnum, array:Array<cpp.Float32>, usage:GlEnum):Void {
+	/**
+	 * NOTE: INSERT A NON-VARIABLE INTERGER FOR `arrayLength`!
+	 */
+	static inline function bufferArray(target:GlEnum, array:Array<cpp.Float32>, usage:GlEnum, arrayLength:Int):Void {
 		return untyped __cpp__(
-			"float* cArray = new float[{0}->length];
+			"float _cArray[{3}];
 			for (int i = 0; i < {0}->length; i++) {
-				cArray[i] = {0}->__get(i);
+				_cArray[i] = {0}->__get(i);
 			}
-			glBufferData({1}, sizeof(cArray), cArray, {2})",
-		array, target, usage);
+			glBufferData({1}, sizeof(_cArray), _cArray, {2})",
+		array, target, usage, arrayLength);
 	}
 
-	static inline function bufferSubArray(target:GlEnum, offset:GlIntPointer, array:Array<cpp.Float32>):Void {
+	/**
+	 * NOTE: INSERT A NON-VARIABLE INTERGER FOR `arrayLength`!
+	 */
+	static inline function bufferSubArray(target:GlEnum, offset:GlIntPointer, array:Array<cpp.Float32>, arrayLength:Int):Void {
 		return untyped __cpp__(
-			"float* cArray = new float[{0}->length];
+			"float _cArray[{3}];
 			for (int i = 0; i < {0}->length; i++) {
-				cArray[i] = {0}->__get(i);
+				_cArray[i] = {0}->__get(i);
 			}
-			glBufferSubData({1}, {2}, sizeof(cArray), cArray)",
-		array, target, offset);
+			glBufferSubData({1}, {2}, sizeof(_cArray), _cArray)",
+		array, target, offset, arrayLength);
 	}
 
 	static inline function vertexFloatAttrib(varIndex:cpp.UInt32, size:Int, normalized:GlBool, stride:Int, pointer:cpp.Star<cpp.Void>):Void {
