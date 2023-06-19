@@ -8,10 +8,6 @@ extern class CppHelpers {
         return untyped __cpp__("sizeof({0})", value);
     }
 
-    inline static function tempPointer(value:Dynamic):Dynamic {
-        return untyped __cpp__("&{0}", value);
-    }
-
     inline static function traceChar(toTrace:cpp.Star<cpp.Char>):Void {
         return untyped __cpp__('printf({0}, "\\n")', toTrace);
     }

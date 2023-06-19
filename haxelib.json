@@ -1,6 +1,6 @@
 {
     "name": "blueprint",
-    "url" : "",
+    "url" : "https://github.com/SrtHero278/Blueprint",
     "license": "MIT",
     "tags": ["haxe", "framework"],
     "description": "A work in progress framework made using Haxe and GLFW.",

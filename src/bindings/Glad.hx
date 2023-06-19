@@ -63,7 +63,7 @@ typedef GlSync = cpp.RawPointer<GlSyncStruct>;
 // struct _cl_context;
 // struct _cl_event;
 
-typedef GlDebugProc = Callable<(source:GlEnum, type:GlEnum, severity:GlEnum, length:GlSizeI, message:ConstCharStar, userParam:Dynamic) -> Void>;
+typedef GlDebugProc = Callable<(source:GlEnum, type:GlEnum, severity:GlEnum, length:GlSizeI, message:ConstCharStar, userParam:ConstStar<cpp.Void>) -> Void>;
 // typedef void (APIENTRY *GLDEBUGPROCARB)(GLenum source,GLenum type,GLuint id,GLenum severity,GLsizei length,const GLchar *message,const void *userParam);
 // typedef void (APIENTRY *GLDEBUGPROCKHR)(GLenum source,GLenum type,GLuint id,GLenum severity,GLsizei length,const GLchar *message,const void *userParam);
 // typedef void (APIENTRY *GLDEBUGPROCAMD)(GLuint id,GLenum category,GLenum severity,GLsizei length,const GLchar *message,void *userParam);
@@ -73,13 +73,12 @@ typedef GladLoadProc = (name:ConstCharStar) -> Void;
 @:include("GLFW/glfw3.h")
 @:native("gladGLversionStruct")
 @:structAccess
-private class GladGLversionStruct {
+extern class GladGLversionStruct {
     var major:Int;
     var minor:Int;
 }
 typedef VersionStruct = cpp.Struct<GladGLversionStruct>;
 
-@:buildXml("<include name='${haxelib:blueprint}/src/Build.xml'/>")
 @:include("glad/glad.h")
 extern class Glad {
 	public static inline function loadHelper(loadProc:GladLoadProc):Int {
@@ -89,7 +88,7 @@ extern class Glad {
 	/**
 	 * NOTE: INSERT A NON-VARIABLE INTERGER FOR `arrayLength`!
 	 */
-	static inline function bufferArray(target:GlEnum, array:Array<cpp.Float32>, usage:GlEnum, arrayLength:Int):Void {
+	static inline function bufferFloatArray(target:GlEnum, array:Array<cpp.Float32>, usage:GlEnum, arrayLength:Int):Void {
 		return untyped __cpp__(
 			"float _cArray[{3}];
 			for (int i = 0; i < {0}->length; i++) {
@@ -102,7 +101,7 @@ extern class Glad {
 	/**
 	 * NOTE: INSERT A NON-VARIABLE INTERGER FOR `arrayLength`!
 	 */
-	static inline function bufferSubArray(target:GlEnum, offset:GlIntPointer, array:Array<cpp.Float32>, arrayLength:Int):Void {
+	static inline function bufferSubFloatArray(target:GlEnum, offset:GlIntPointer, array:Array<cpp.Float32>, arrayLength:Int):Void {
 		return untyped __cpp__(
 			"float _cArray[{3}];
 			for (int i = 0; i < {0}->length; i++) {
@@ -112,8 +111,34 @@ extern class Glad {
 		array, target, offset, arrayLength);
 	}
 
-	static inline function vertexFloatAttrib(varIndex:cpp.UInt32, size:Int, normalized:GlBool, stride:Int, pointer:cpp.Star<cpp.Void>):Void {
-		return untyped __cpp__("glVertexAttribPointer({0}, {1}, GL_FLOAT, {2}, {3} * sizeof(float), {4})", varIndex, size, normalized, stride, pointer);
+	/**
+	 * NOTE: INSERT A NON-VARIABLE INTERGER FOR `arrayLength`!
+	 */
+	 static inline function bufferIntArray(target:GlEnum, array:Array<cpp.UInt32>, usage:GlEnum, arrayLength:Int):Void {
+		return untyped __cpp__(
+			"unsigned int _cArray[{3}];
+			for (int i = 0; i < {0}->length; i++) {
+				_cArray[i] = {0}->__get(i);
+			}
+			glBufferData({1}, sizeof(_cArray), _cArray, {2})",
+		array, target, usage, arrayLength);
+	}
+
+	/**
+	 * NOTE: INSERT A NON-VARIABLE INTERGER FOR `arrayLength`!
+	 */
+	static inline function bufferSubIntArray(target:GlEnum, offset:GlIntPointer, array:Array<cpp.UInt32>, arrayLength:Int):Void {
+		return untyped __cpp__(
+			"unsigned int _cArray[{3}];
+			for (int i = 0; i < {0}->length; i++) {
+				_cArray[i] = {0}->__get(i);
+			}
+			glBufferSubData({1}, {2}, sizeof(_cArray), _cArray)",
+		array, target, offset, arrayLength);
+	}
+
+	static inline function vertexFloatAttrib(varIndex:cpp.UInt32, size:Int, normalized:GlBool, stride:Int, offset:Int):Void {
+		return untyped __cpp__("glVertexAttribPointer({0}, {1}, GL_FLOAT, {2}, {3} * sizeof(float), (void*)({4} * sizeof(float)))", varIndex, size, normalized, stride, offset);
 	}
 
     @:native("GLVersion")
@@ -3303,10 +3328,10 @@ extern class Glad {
 	public static function texParameteriv(target:GlEnum, pname:GlEnum, params:ConstStar<GlInt>):Void;
 
 	@:native("glTexImage1D")
-	public static function texImage1D(target:GlEnum, level:GlInt, internalformat:GlInt, width:GlSizeI, border:GlInt, format:GlEnum, type:GlEnum, pixels:Dynamic):Void;
+	public static function texImage1D(target:GlEnum, level:GlInt, internalformat:GlInt, width:GlSizeI, border:GlInt, format:GlEnum, type:GlEnum, pixels:ConstStar<cpp.Void>):Void;
 
 	@:native("glTexImage2D")
-	public static function texImage2D(target:GlEnum, level:GlInt, internalformat:GlInt, width:GlSizeI, height:GlSizeI, border:GlInt, format:GlEnum, type:GlEnum, pixels:Dynamic):Void;
+	public static function texImage2D(target:GlEnum, level:GlInt, internalformat:GlInt, width:GlSizeI, height:GlSizeI, border:GlInt, format:GlEnum, type:GlEnum, pixels:ConstStar<cpp.Void>):Void;
 
 	@:native("glDrawBuffer")
 	public static function drawBuffer(buf:GlEnum):Void;
@@ -3417,7 +3442,7 @@ extern class Glad {
 	public static function drawArrays(mode:GlEnum, first:GlInt, count:GlSizeI):Void;
 
 	@:native("glDrawElements")
-	public static function drawElements(mode:GlEnum, count:GlSizeI, type:GlEnum, indices:Dynamic):Void;
+	public static function drawElements(mode:GlEnum, count:GlSizeI, type:GlEnum, indices:ConstStar<cpp.Void>):Void;
 
 	@:native("glPolygonOffset")
 	public static function polygonOffset(factor:GlFloat, units:GlFloat):Void;
@@ -3435,10 +3460,10 @@ extern class Glad {
 	public static function copyTexSubImage2D(target:GlEnum, level:GlInt, xoffset:GlInt, yoffset:GlInt, x:GlInt, y:GlInt, width:GlSizeI, height:GlSizeI):Void;
 
 	@:native("glTexSubImage1D")
-	public static function texSubImage1D(target:GlEnum, level:GlInt, xoffset:GlInt, width:GlSizeI, format:GlEnum, type:GlEnum, pixels:Dynamic):Void;
+	public static function texSubImage1D(target:GlEnum, level:GlInt, xoffset:GlInt, width:GlSizeI, format:GlEnum, type:GlEnum, pixels:ConstStar<cpp.Void>):Void;
 
 	@:native("glTexSubImage2D")
-	public static function texSubImage2D(target:GlEnum, level:GlInt, xoffset:GlInt, yoffset:GlInt, width:GlSizeI, height:GlSizeI, format:GlEnum, type:GlEnum, pixels:Dynamic):Void;
+	public static function texSubImage2D(target:GlEnum, level:GlInt, xoffset:GlInt, yoffset:GlInt, width:GlSizeI, height:GlSizeI, format:GlEnum, type:GlEnum, pixels:ConstStar<cpp.Void>):Void;
 
 	@:native("glBindTexture")
 	public static function bindTexture(target:GlEnum, texture:GlUInt):Void;
@@ -3453,13 +3478,13 @@ extern class Glad {
 	public static function isTexture(texture:GlUInt):GlBool;
 
 	@:native("glDrawRangeElements")
-	public static function drawRangeElements(mode:GlEnum, start:GlUInt, end:GlUInt, count:GlSizeI, type:GlEnum, indices:Dynamic):Void;
+	public static function drawRangeElements(mode:GlEnum, start:GlUInt, end:GlUInt, count:GlSizeI, type:GlEnum, indices:ConstStar<cpp.Void>):Void;
 
 	@:native("glTexImage3D")
-	public static function texImage3D(target:GlEnum, level:GlInt, internalformat:GlInt, width:GlSizeI, height:GlSizeI, depth:GlSizeI, border:GlInt, format:GlEnum, type:GlEnum, pixels:Dynamic):Void;
+	public static function texImage3D(target:GlEnum, level:GlInt, internalformat:GlInt, width:GlSizeI, height:GlSizeI, depth:GlSizeI, border:GlInt, format:GlEnum, type:GlEnum, pixels:ConstStar<cpp.Void>):Void;
 
 	@:native("glTexSubImage3D")
-	public static function texSubImage3D(target:GlEnum, level:GlInt, xoffset:GlInt, yoffset:GlInt, zoffset:GlInt, width:GlSizeI, height:GlSizeI, depth:GlSizeI, format:GlEnum, type:GlEnum, pixels:Dynamic):Void;
+	public static function texSubImage3D(target:GlEnum, level:GlInt, xoffset:GlInt, yoffset:GlInt, zoffset:GlInt, width:GlSizeI, height:GlSizeI, depth:GlSizeI, format:GlEnum, type:GlEnum, pixels:ConstStar<cpp.Void>):Void;
 
 	@:native("glCopyTexSubImage3D")
 	public static function copyTexSubImage3D(target:GlEnum, level:GlInt, xoffset:GlInt, yoffset:GlInt, zoffset:GlInt, x:GlInt, y:GlInt, width:GlSizeI, height:GlSizeI):Void;
@@ -3471,22 +3496,22 @@ extern class Glad {
 	public static function sampleCoverage(value:GlFloat, invert:GlBool):Void;
 
 	@:native("glCompressedTexImage3D")
-	public static function compressedTexImage3D(target:GlEnum, level:GlInt, internalformat:GlEnum, width:GlSizeI, height:GlSizeI, depth:GlSizeI, border:GlInt, imageSize:GlSizeI, data:Dynamic):Void;
+	public static function compressedTexImage3D(target:GlEnum, level:GlInt, internalformat:GlEnum, width:GlSizeI, height:GlSizeI, depth:GlSizeI, border:GlInt, imageSize:GlSizeI, data:ConstStar<cpp.Void>):Void;
 
 	@:native("glCompressedTexImage2D")
-	public static function compressedTexImage2D(target:GlEnum, level:GlInt, internalformat:GlEnum, width:GlSizeI, height:GlSizeI, border:GlInt, imageSize:GlSizeI, data:Dynamic):Void;
+	public static function compressedTexImage2D(target:GlEnum, level:GlInt, internalformat:GlEnum, width:GlSizeI, height:GlSizeI, border:GlInt, imageSize:GlSizeI, data:ConstStar<cpp.Void>):Void;
 
 	@:native("glCompressedTexImage1D")
-	public static function compressedTexImage1D(target:GlEnum, level:GlInt, internalformat:GlEnum, width:GlSizeI, border:GlInt, imageSize:GlSizeI, data:Dynamic):Void;
+	public static function compressedTexImage1D(target:GlEnum, level:GlInt, internalformat:GlEnum, width:GlSizeI, border:GlInt, imageSize:GlSizeI, data:ConstStar<cpp.Void>):Void;
 
 	@:native("glCompressedTexSubImage3D")
-	public static function compressedTexSubImage3D(target:GlEnum, level:GlInt, xoffset:GlInt, yoffset:GlInt, zoffset:GlInt, width:GlSizeI, height:GlSizeI, depth:GlSizeI, format:GlEnum, imageSize:GlSizeI, data:Dynamic):Void;
+	public static function compressedTexSubImage3D(target:GlEnum, level:GlInt, xoffset:GlInt, yoffset:GlInt, zoffset:GlInt, width:GlSizeI, height:GlSizeI, depth:GlSizeI, format:GlEnum, imageSize:GlSizeI, data:ConstStar<cpp.Void>):Void;
 
 	@:native("glCompressedTexSubImage2D")
-	public static function compressedTexSubImage2D(target:GlEnum, level:GlInt, xoffset:GlInt, yoffset:GlInt, width:GlSizeI, height:GlSizeI, format:GlEnum, imageSize:GlSizeI, data:Dynamic):Void;
+	public static function compressedTexSubImage2D(target:GlEnum, level:GlInt, xoffset:GlInt, yoffset:GlInt, width:GlSizeI, height:GlSizeI, format:GlEnum, imageSize:GlSizeI, data:ConstStar<cpp.Void>):Void;
 
 	@:native("glCompressedTexSubImage1D")
-	public static function compressedTexSubImage1D(target:GlEnum, level:GlInt, xoffset:GlInt, width:GlSizeI, format:GlEnum, imageSize:GlSizeI, data:Dynamic):Void;
+	public static function compressedTexSubImage1D(target:GlEnum, level:GlInt, xoffset:GlInt, width:GlSizeI, format:GlEnum, imageSize:GlSizeI, data:ConstStar<cpp.Void>):Void;
 
 	@:native("glGetCompressedTexImage")
 	public static function getCompressedTexImage(target:GlEnum, level:GlInt, img:Pointer<cpp.Void>):Void;
@@ -3498,7 +3523,7 @@ extern class Glad {
 	public static function multiDrawArrays(mode:GlEnum, first:ConstStar<GlInt>, count:ConstStar<GlSizeI>, drawcount:GlSizeI):Void;
 
 	// @:native("glMultiDrawElements") TODO: kill whoever the fuck decided to make a "const void* const*" as a var type.
-	// public static function multiDrawElements(mode:GlEnum, count:ConstStar<GlSizeI>, type:GlEnum, const*indices:Dynamic, drawcount:GlSizeI):Void;
+	// public static function multiDrawElements(mode:GlEnum, count:ConstStar<GlSizeI>, type:GlEnum, const*indices:ConstStar<cpp.Void>, drawcount:GlSizeI):Void;
 
 	@:native("glPointParameterf")
 	public static function pointParameterf(pname:GlEnum, param:GlFloat):Void;
@@ -3555,10 +3580,10 @@ extern class Glad {
 	public static function isBuffer(buffer:GlUInt):GlBool;
 
 	@:native("glBufferData")
-	public static function bufferData(target:GlEnum, size:GlSizeIPointer, data:Dynamic, usage:GlEnum):Void;
+	public static function bufferData(target:GlEnum, size:GlSizeIPointer, data:ConstStar<cpp.Void>, usage:GlEnum):Void;
 
 	@:native("glBufferSubData")
-	public static function bufferSubData(target:GlEnum, offset:GlIntPointer, size:GlSizeIPointer, data:Dynamic):Void;
+	public static function bufferSubData(target:GlEnum, offset:GlIntPointer, size:GlSizeIPointer, data:ConstStar<cpp.Void>):Void;
 
 	@:native("glGetBufferSubData")
 	public static function getBufferSubData(target:GlEnum, offset:GlIntPointer, size:GlSizeIPointer, data:Pointer<cpp.Void>):Void;
@@ -3918,7 +3943,7 @@ extern class Glad {
 	public static function endConditionalRender():Void;
 
 	@:native("glVertexAttribIPointer")
-	public static function vertexAttribIPointer(index:GlUInt, size:GlInt, type:GlEnum, stride:GlSizeI, pointer:Dynamic):Void;
+	public static function vertexAttribIPointer(index:GlUInt, size:GlInt, type:GlEnum, stride:GlSizeI, pointer:ConstStar<cpp.Void>):Void;
 
 	@:native("glGetVertexAttribIiv")
 	public static function getVertexAttribIiv(index:GlUInt, pname:GlEnum, params:Pointer<GlInt>):Void;
@@ -4128,7 +4153,7 @@ extern class Glad {
 	public static function drawArraysInstanced(mode:GlEnum, first:GlInt, count:GlSizeI, instancecount:GlSizeI):Void;
 
 	@:native("glDrawElementsInstanced")
-	public static function drawElementsInstanced(mode:GlEnum, count:GlSizeI, type:GlEnum, indices:Dynamic, instancecount:GlSizeI):Void;
+	public static function drawElementsInstanced(mode:GlEnum, count:GlSizeI, type:GlEnum, indices:ConstStar<cpp.Void>, instancecount:GlSizeI):Void;
 
 	@:native("glTexBuffer")
 	public static function texBuffer(target:GlEnum, internalformat:GlEnum, buffer:GlUInt):Void;
@@ -4161,16 +4186,16 @@ extern class Glad {
 	public static function uniformBlockBinding(program:GlUInt, uniformBlockIndex:GlUInt, uniformBlockBinding:GlUInt):Void;
 
 	@:native("glDrawElementsBaseVertex")
-	public static function drawElementsBaseVertex(mode:GlEnum, count:GlSizeI, type:GlEnum, indices:Dynamic, basevertex:GlInt):Void;
+	public static function drawElementsBaseVertex(mode:GlEnum, count:GlSizeI, type:GlEnum, indices:ConstStar<cpp.Void>, basevertex:GlInt):Void;
 
 	@:native("glDrawRangeElementsBaseVertex")
-	public static function drawRangeElementsBaseVertex(mode:GlEnum, start:GlUInt, end:GlUInt, count:GlSizeI, type:GlEnum, indices:Dynamic, basevertex:GlInt):Void;
+	public static function drawRangeElementsBaseVertex(mode:GlEnum, start:GlUInt, end:GlUInt, count:GlSizeI, type:GlEnum, indices:ConstStar<cpp.Void>, basevertex:GlInt):Void;
 
 	@:native("glDrawElementsInstancedBaseVertex")
-	public static function drawElementsInstancedBaseVertex(mode:GlEnum, count:GlSizeI, type:GlEnum, indices:Dynamic, instancecount:GlSizeI, basevertex:GlInt):Void;
+	public static function drawElementsInstancedBaseVertex(mode:GlEnum, count:GlSizeI, type:GlEnum, indices:ConstStar<cpp.Void>, instancecount:GlSizeI, basevertex:GlInt):Void;
 
 	// @:native("glMultiDrawElementsBaseVertex") same reason as line 1855.
-	// public static function multiDrawElementsBaseVertex(mode:GlEnum, count:ConstStar<GlSizeI>, type:GlEnum, const*indices:Dynamic, drawcount:GlSizeI, basevertex:ConstStar<GlInt>):Void;
+	// public static function multiDrawElementsBaseVertex(mode:GlEnum, count:ConstStar<GlSizeI>, type:GlEnum, const*indices:ConstStar<cpp.Void>, drawcount:GlSizeI, basevertex:ConstStar<GlInt>):Void;
 
 	@:native("glProvokingVertex")
 	public static function provokingVertex(mode:GlEnum):Void;
@@ -4407,10 +4432,10 @@ extern class Glad {
 	public static function blendFuncSeparatei(buf:GlUInt, srcRGB:GlEnum, dstRGB:GlEnum, srcAlpha:GlEnum, dstAlpha:GlEnum):Void;
 
 	@:native("glDrawArraysIndirect")
-	public static function drawArraysIndirect(mode:GlEnum, indirect:Dynamic):Void;
+	public static function drawArraysIndirect(mode:GlEnum, indirect:ConstStar<cpp.Void>):Void;
 
 	@:native("glDrawElementsIndirect")
-	public static function drawElementsIndirect(mode:GlEnum, type:GlEnum, indirect:Dynamic):Void;
+	public static function drawElementsIndirect(mode:GlEnum, type:GlEnum, indirect:ConstStar<cpp.Void>):Void;
 
 	@:native("glUniform1d")
 	public static function uniform1d(location:GlInt, x:GlDouble):Void;
@@ -4533,7 +4558,7 @@ extern class Glad {
 	public static function releaseShaderCompiler():Void;
 
 	@:native("glShaderBinary")
-	public static function shaderBinary(count:GlSizeI, shaders:ConstStar<GlUInt>, binaryFormat:GlEnum, binary:Dynamic, length:GlSizeI):Void;
+	public static function shaderBinary(count:GlSizeI, shaders:ConstStar<GlUInt>, binaryFormat:GlEnum, binary:ConstStar<cpp.Void>, length:GlSizeI):Void;
 
 	@:native("glGetShaderPrecisionFormat")
 	public static function getShaderPrecisionFormat(shadertype:GlEnum, precisiontype:GlEnum, range:Pointer<GlInt>, precision:Pointer<GlInt>):Void;
@@ -4548,7 +4573,7 @@ extern class Glad {
 	public static function getProgramBinary(program:GlUInt, bufSize:GlSizeI, length:Pointer<GlSizeI>, binaryFormat:Pointer<GlEnum>, binary:Pointer<cpp.Void>):Void;
 
 	@:native("glProgramBinary")
-	public static function programBinary(program:GlUInt, binaryFormat:GlEnum, binary:Dynamic, length:GlSizeI):Void;
+	public static function programBinary(program:GlUInt, binaryFormat:GlEnum, binary:ConstStar<cpp.Void>, length:GlSizeI):Void;
 
 	@:native("glProgramParameteri")
 	public static function programParameteri(program:GlUInt, pname:GlEnum, value:GlInt):Void;
@@ -4758,7 +4783,7 @@ extern class Glad {
 	public static function vertexAttribL4dv(index:GlUInt, v:ConstStar<GlDouble>):Void;
 
 	@:native("glVertexAttribLPointer")
-	public static function vertexAttribLPointer(index:GlUInt, size:GlInt, type:GlEnum, stride:GlSizeI, pointer:Dynamic):Void;
+	public static function vertexAttribLPointer(index:GlUInt, size:GlInt, type:GlEnum, stride:GlSizeI, pointer:ConstStar<cpp.Void>):Void;
 
 	@:native("glGetVertexAttribLdv")
 	public static function getVertexAttribLdv(index:GlUInt, pname:GlEnum, params:Pointer<GlDouble>):Void;
@@ -4797,10 +4822,10 @@ extern class Glad {
 	public static function drawArraysInstancedBaseInstance(mode:GlEnum, first:GlInt, count:GlSizeI, instancecount:GlSizeI, baseinstance:GlUInt):Void;
 
 	@:native("glDrawElementsInstancedBaseInstance")
-	public static function drawElementsInstancedBaseInstance(mode:GlEnum, count:GlSizeI, type:GlEnum, indices:Dynamic, instancecount:GlSizeI, baseinstance:GlUInt):Void;
+	public static function drawElementsInstancedBaseInstance(mode:GlEnum, count:GlSizeI, type:GlEnum, indices:ConstStar<cpp.Void>, instancecount:GlSizeI, baseinstance:GlUInt):Void;
 
 	@:native("glDrawElementsInstancedBaseVertexBaseInstance")
-	public static function drawElementsInstancedBaseVertexBaseInstance(mode:GlEnum, count:GlSizeI, type:GlEnum, indices:Dynamic, instancecount:GlSizeI, basevertex:GlInt, baseinstance:GlUInt):Void;
+	public static function drawElementsInstancedBaseVertexBaseInstance(mode:GlEnum, count:GlSizeI, type:GlEnum, indices:ConstStar<cpp.Void>, instancecount:GlSizeI, basevertex:GlInt, baseinstance:GlUInt):Void;
 
 	@:native("glGetInternalformativ")
 	public static function getInternalformativ(target:GlEnum, internalformat:GlEnum, pname:GlEnum, count:GlSizeI, params:Pointer<GlInt>):Void;
@@ -4830,10 +4855,10 @@ extern class Glad {
 	public static function drawTransformFeedbackStreamInstanced(mode:GlEnum, id:GlUInt, stream:GlUInt, instancecount:GlSizeI):Void;
 
 	@:native("glClearBufferData")
-	public static function clearBufferData(target:GlEnum, internalformat:GlEnum, format:GlEnum, type:GlEnum, data:Dynamic):Void;
+	public static function clearBufferData(target:GlEnum, internalformat:GlEnum, format:GlEnum, type:GlEnum, data:ConstStar<cpp.Void>):Void;
 
 	@:native("glClearBufferSubData")
-	public static function clearBufferSubData(target:GlEnum, internalformat:GlEnum, offset:GlIntPointer, size:GlSizeIPointer, format:GlEnum, type:GlEnum, data:Dynamic):Void;
+	public static function clearBufferSubData(target:GlEnum, internalformat:GlEnum, offset:GlIntPointer, size:GlSizeIPointer, format:GlEnum, type:GlEnum, data:ConstStar<cpp.Void>):Void;
 
 	@:native("glDispatchCompute")
 	public static function dispatchCompute(num_groups_x:GlUInt, num_groups_y:GlUInt, num_groups_z:GlUInt):Void;
@@ -4872,10 +4897,10 @@ extern class Glad {
 	public static function invalidateSubFramebuffer(target:GlEnum, numAttachments:GlSizeI, attachments:ConstStar<GlEnum>, x:GlInt, y:GlInt, width:GlSizeI, height:GlSizeI):Void;
 
 	@:native("glMultiDrawArraysIndirect")
-	public static function multiDrawArraysIndirect(mode:GlEnum, indirect:Dynamic, drawcount:GlSizeI, stride:GlSizeI):Void;
+	public static function multiDrawArraysIndirect(mode:GlEnum, indirect:ConstStar<cpp.Void>, drawcount:GlSizeI, stride:GlSizeI):Void;
 
 	@:native("glMultiDrawElementsIndirect")
-	public static function multiDrawElementsIndirect(mode:GlEnum, type:GlEnum, indirect:Dynamic, drawcount:GlSizeI, stride:GlSizeI):Void;
+	public static function multiDrawElementsIndirect(mode:GlEnum, type:GlEnum, indirect:ConstStar<cpp.Void>, drawcount:GlSizeI, stride:GlSizeI):Void;
 
 	@:native("glGetProgramInterfaceiv")
 	public static function getProgramInterfaceiv(program:GlUInt, programInterface:GlEnum, pname:GlEnum, params:Pointer<GlInt>):Void;
@@ -4935,7 +4960,7 @@ extern class Glad {
 	public static function debugMessageInsert(source:GlEnum, type:GlEnum, id:GlUInt, severity:GlEnum, length:GlSizeI, buf:ConstCharStar):Void;
 
 	@:native("glDebugMessageCallback")
-	public static function debugMessageCallback(callback:GlDebugProc, userParam:Dynamic):Void;
+	public static function debugMessageCallback(callback:GlDebugProc, userParam:ConstStar<cpp.Void>):Void;
 
 	@:native("glGetDebugMessageLog")
 	public static function getDebugMessageLog(count:GlUInt, bufSize:GlSizeI, sources:Pointer<GlEnum>, types:Pointer<GlEnum>, ids:Pointer<GlUInt>, severities:Pointer<GlEnum>, lengths:Pointer<GlSizeI>, messageLog:Pointer<GlChar>):GlUInt;
@@ -4953,22 +4978,22 @@ extern class Glad {
 	public static function getObjectLabel(identifier:GlEnum, name:GlUInt, bufSize:GlSizeI, length:Pointer<GlSizeI>, label:Pointer<GlChar>):Void;
 
 	@:native("glObjectPtrLabel")
-	public static function objectPtrLabel(ptr:Dynamic, length:GlSizeI, label:ConstCharStar):Void;
+	public static function objectPtrLabel(ptr:ConstStar<cpp.Void>, length:GlSizeI, label:ConstCharStar):Void;
 
 	@:native("glGetObjectPtrLabel")
-	public static function getObjectPtrLabel(ptr:Dynamic, bufSize:GlSizeI, length:Pointer<GlSizeI>, label:Pointer<GlChar>):Void;
+	public static function getObjectPtrLabel(ptr:ConstStar<cpp.Void>, bufSize:GlSizeI, length:Pointer<GlSizeI>, label:Pointer<GlChar>):Void;
 
 	@:native("glGetPointerv")
 	public static function getPointerv(pname:GlEnum, params:Pointer<Pointer<cpp.Void>>):Void;
 
 	@:native("glBufferStorage")
-	public static function bufferStorage(target:GlEnum, size:GlSizeIPointer, data:Dynamic, flags:GlBitField):Void;
+	public static function bufferStorage(target:GlEnum, size:GlSizeIPointer, data:ConstStar<cpp.Void>, flags:GlBitField):Void;
 
 	@:native("glClearTexImage")
-	public static function clearTexImage(texture:GlUInt, level:GlInt, format:GlEnum, type:GlEnum, data:Dynamic):Void;
+	public static function clearTexImage(texture:GlUInt, level:GlInt, format:GlEnum, type:GlEnum, data:ConstStar<cpp.Void>):Void;
 
 	@:native("glClearTexSubImage")
-	public static function clearTexSubImage(texture:GlUInt, level:GlInt, xoffset:GlInt, yoffset:GlInt, zoffset:GlInt, width:GlSizeI, height:GlSizeI, depth:GlSizeI, format:GlEnum, type:GlEnum, data:Dynamic):Void;
+	public static function clearTexSubImage(texture:GlUInt, level:GlInt, xoffset:GlInt, yoffset:GlInt, zoffset:GlInt, width:GlSizeI, height:GlSizeI, depth:GlSizeI, format:GlEnum, type:GlEnum, data:ConstStar<cpp.Void>):Void;
 
 	@:native("glBindBuffersBase")
 	public static function bindBuffersBase(target:GlEnum, first:GlUInt, count:GlSizeI, buffers:ConstStar<GlUInt>):Void;
@@ -5013,22 +5038,22 @@ extern class Glad {
 	public static function createBuffers(n:GlSizeI, buffers:Star<GlUInt>):Void;
 
 	@:native("glNamedBufferStorage")
-	public static function namedBufferStorage(buffer:GlUInt, size:GlSizeIPointer, data:Dynamic, flags:GlBitField):Void;
+	public static function namedBufferStorage(buffer:GlUInt, size:GlSizeIPointer, data:ConstStar<cpp.Void>, flags:GlBitField):Void;
 
 	@:native("glNamedBufferData")
-	public static function namedBufferData(buffer:GlUInt, size:GlSizeIPointer, data:Dynamic, usage:GlEnum):Void;
+	public static function namedBufferData(buffer:GlUInt, size:GlSizeIPointer, data:ConstStar<cpp.Void>, usage:GlEnum):Void;
 
 	@:native("glNamedBufferSubData")
-	public static function namedBufferSubData(buffer:GlUInt, offset:GlIntPointer, size:GlSizeIPointer, data:Dynamic):Void;
+	public static function namedBufferSubData(buffer:GlUInt, offset:GlIntPointer, size:GlSizeIPointer, data:ConstStar<cpp.Void>):Void;
 
 	@:native("glCopyNamedBufferSubData")
 	public static function copyNamedBufferSubData(readBuffer:GlUInt, writeBuffer:GlUInt, readOffset:GlIntPointer, writeOffset:GlIntPointer, size:GlSizeIPointer):Void;
 
 	@:native("glClearNamedBufferData")
-	public static function clearNamedBufferData(buffer:GlUInt, internalformat:GlEnum, format:GlEnum, type:GlEnum, data:Dynamic):Void;
+	public static function clearNamedBufferData(buffer:GlUInt, internalformat:GlEnum, format:GlEnum, type:GlEnum, data:ConstStar<cpp.Void>):Void;
 
 	@:native("glClearNamedBufferSubData")
-	public static function clearNamedBufferSubData(buffer:GlUInt, internalformat:GlEnum, offset:GlIntPointer, size:GlSizeIPointer, format:GlEnum, type:GlEnum, data:Dynamic):Void;
+	public static function clearNamedBufferSubData(buffer:GlUInt, internalformat:GlEnum, offset:GlIntPointer, size:GlSizeIPointer, format:GlEnum, type:GlEnum, data:ConstStar<cpp.Void>):Void;
 
 	@:native("glMapNamedBuffer")
 	public static function mapNamedBuffer(buffer:GlUInt, access:GlEnum):Star<cpp.Void>;
@@ -5145,22 +5170,22 @@ extern class Glad {
 	public static function textureStorage3DMultisample(texture:GlUInt, samples:GlSizeI, internalformat:GlEnum, width:GlSizeI, height:GlSizeI, depth:GlSizeI, fixedsamplelocations:GlBool):Void;
 
 	@:native("glTextureSubImage1D")
-	public static function textureSubImage1D(texture:GlUInt, level:GlInt, xoffset:GlInt, width:GlSizeI, format:GlEnum, type:GlEnum, pixels:Dynamic):Void;
+	public static function textureSubImage1D(texture:GlUInt, level:GlInt, xoffset:GlInt, width:GlSizeI, format:GlEnum, type:GlEnum, pixels:ConstStar<cpp.Void>):Void;
 
 	@:native("glTextureSubImage2D")
-	public static function textureSubImage2D(texture:GlUInt, level:GlInt, xoffset:GlInt, yoffset:GlInt, width:GlSizeI, height:GlSizeI, format:GlEnum, type:GlEnum, pixels:Dynamic):Void;
+	public static function textureSubImage2D(texture:GlUInt, level:GlInt, xoffset:GlInt, yoffset:GlInt, width:GlSizeI, height:GlSizeI, format:GlEnum, type:GlEnum, pixels:ConstStar<cpp.Void>):Void;
 
 	@:native("glTextureSubImage3D")
-	public static function textureSubImage3D(texture:GlUInt, level:GlInt, xoffset:GlInt, yoffset:GlInt, zoffset:GlInt, width:GlSizeI, height:GlSizeI, depth:GlSizeI, format:GlEnum, type:GlEnum, pixels:Dynamic):Void;
+	public static function textureSubImage3D(texture:GlUInt, level:GlInt, xoffset:GlInt, yoffset:GlInt, zoffset:GlInt, width:GlSizeI, height:GlSizeI, depth:GlSizeI, format:GlEnum, type:GlEnum, pixels:ConstStar<cpp.Void>):Void;
 
 	@:native("glCompressedTextureSubImage1D")
-	public static function compressedTextureSubImage1D(texture:GlUInt, level:GlInt, xoffset:GlInt, width:GlSizeI, format:GlEnum, imageSize:GlSizeI, data:Dynamic):Void;
+	public static function compressedTextureSubImage1D(texture:GlUInt, level:GlInt, xoffset:GlInt, width:GlSizeI, format:GlEnum, imageSize:GlSizeI, data:ConstStar<cpp.Void>):Void;
 
 	@:native("glCompressedTextureSubImage2D")
-	public static function compressedTextureSubImage2D(texture:GlUInt, level:GlInt, xoffset:GlInt, yoffset:GlInt, width:GlSizeI, height:GlSizeI, format:GlEnum, imageSize:GlSizeI, data:Dynamic):Void;
+	public static function compressedTextureSubImage2D(texture:GlUInt, level:GlInt, xoffset:GlInt, yoffset:GlInt, width:GlSizeI, height:GlSizeI, format:GlEnum, imageSize:GlSizeI, data:ConstStar<cpp.Void>):Void;
 
 	@:native("glCompressedTextureSubImage3D")
-	public static function compressedTextureSubImage3D(texture:GlUInt, level:GlInt, xoffset:GlInt, yoffset:GlInt, zoffset:GlInt, width:GlSizeI, height:GlSizeI, depth:GlSizeI, format:GlEnum, imageSize:GlSizeI, data:Dynamic):Void;
+	public static function compressedTextureSubImage3D(texture:GlUInt, level:GlInt, xoffset:GlInt, yoffset:GlInt, zoffset:GlInt, width:GlSizeI, height:GlSizeI, depth:GlSizeI, format:GlEnum, imageSize:GlSizeI, data:ConstStar<cpp.Void>):Void;
 
 	@:native("glCopyTextureSubImage1D")
 	public static function copyTextureSubImage1D(texture:GlUInt, level:GlInt, xoffset:GlInt, x:GlInt, y:GlInt, width:GlSizeI):Void;
@@ -5358,10 +5383,10 @@ extern class Glad {
 	public static function specializeShader(shader:GlUInt, pEntryPoint:ConstCharStar, numSpecializationConstants:GlUInt, pConstantIndex:ConstStar<GlUInt>, pConstantValue:ConstStar<GlUInt>):Void;
 
 	@:native("glMultiDrawArraysIndirectCount")
-	public static function multiDrawArraysIndirectCount(mode:GlEnum, indirect:Dynamic, drawcount:GlIntPointer, maxdrawcount:GlSizeI, stride:GlSizeI):Void;
+	public static function multiDrawArraysIndirectCount(mode:GlEnum, indirect:ConstStar<cpp.Void>, drawcount:GlIntPointer, maxdrawcount:GlSizeI, stride:GlSizeI):Void;
 
 	@:native("glMultiDrawElementsIndirectCount")
-	public static function multiDrawElementsIndirectCount(mode:GlEnum, type:GlEnum, indirect:Dynamic, drawcount:GlIntPointer, maxdrawcount:GlSizeI, stride:GlSizeI):Void;
+	public static function multiDrawElementsIndirectCount(mode:GlEnum, type:GlEnum, indirect:ConstStar<cpp.Void>, drawcount:GlIntPointer, maxdrawcount:GlSizeI, stride:GlSizeI):Void;
 
 	@:native("glPolygonOffsetClamp")
 	public static function polygonOffsetClamp(factor:GlFloat, units:GlFloat, clamp:GlFloat):Void;
@@ -5466,7 +5491,7 @@ extern class Glad {
 	public static function color4x(red:GlFixed, green:GlFixed, blue:GlFixed, alpha:GlFixed):Void;
 
 	@:native("glColorPointer")
-	public static function colorPointer(size:GlInt, type:GlEnum, stride:GlSizeI, pointer:Dynamic):Void;
+	public static function colorPointer(size:GlInt, type:GlEnum, stride:GlSizeI, pointer:ConstStar<cpp.Void>):Void;
 
 	@:native("glDepthRangex")
 	public static function depthRangex(n:GlFixed, f:GlFixed):Void;
@@ -5547,7 +5572,7 @@ extern class Glad {
 	public static function normal3x(nx:GlFixed, ny:GlFixed, nz:GlFixed):Void;
 
 	@:native("glNormalPointer")
-	public static function normalPointer(type:GlEnum, stride:GlSizeI, pointer:Dynamic):Void;
+	public static function normalPointer(type:GlEnum, stride:GlSizeI, pointer:ConstStar<cpp.Void>):Void;
 
 	@:native("glOrthox")
 	public static function orthox(l:GlFixed, r:GlFixed, b:GlFixed, t:GlFixed, n:GlFixed, f:GlFixed):Void;
@@ -5583,7 +5608,7 @@ extern class Glad {
 	public static function shadeModel(mode:GlEnum):Void;
 
 	@:native("glTexCoordPointer")
-	public static function texCoordPointer(size:GlInt, type:GlEnum, stride:GlSizeI, pointer:Dynamic):Void;
+	public static function texCoordPointer(size:GlInt, type:GlEnum, stride:GlSizeI, pointer:ConstStar<cpp.Void>):Void;
 
 	@:native("glTexEnvi")
 	public static function texEnvi(target:GlEnum, pname:GlEnum, param:GlInt):Void;
@@ -5607,7 +5632,7 @@ extern class Glad {
 	public static function translatex(x:GlFixed, y:GlFixed, z:GlFixed):Void;
 
 	@:native("glVertexPointer")
-	public static function vertexPointer(size:GlInt, type:GlEnum, stride:GlSizeI, pointer:Dynamic):Void;
+	public static function vertexPointer(size:GlInt, type:GlEnum, stride:GlSizeI, pointer:ConstStar<cpp.Void>):Void;
 
 	@:native("glBlendBarrier")
 	public static function blendBarrier():Void;
