@@ -9,25 +9,25 @@ import cpp.Pointer;
 import cpp.Struct;
 import cpp.ConstCharStar;
 
-@:include("GLFW/glfw3.h")
+@:include("includeWorkaround.h")
 @:native("GLFWmonitor")
 @:structAccess
 extern class GlfwMonitorStruct {}
 typedef GlfwMonitor = RawPointer<GlfwMonitorStruct>;
 
-@:include("GLFW/glfw3.h")
+@:include("includeWorkaround.h")
 @:native("GLFWwindow")
 @:structAccess
 extern class GlfwWindowStruct {}
 typedef GlfwWindow = RawPointer<GlfwWindowStruct>;
 
-@:include("GLFW/glfw3.h")
+@:include("includeWorkaround.h")
 @:native("GLFWcursor")
 @:structAccess
 extern class GlfwCursorStruct {}
 typedef GlfwCursor = RawPointer<GlfwCursorStruct>;
 
-@:include("GLFW/glfw3.h")
+@:include("includeWorkaround.h")
 @:native("GLFWvidmode")
 @:structAccess
 extern class GlfwVidMode {
@@ -40,7 +40,7 @@ extern class GlfwVidMode {
 }
 typedef VideoMode = Struct<GlfwVidMode>;
 
-@:include("GLFW/glfw3.h")
+@:include("includeWorkaround.h")
 @:native("GLFWgammaramp")
 @:structAccess
 extern class GlfwGammaRamp {
@@ -51,7 +51,7 @@ extern class GlfwGammaRamp {
 }
 typedef GammaRamp = Struct<GlfwGammaRamp>;
 
-@:include("GLFW/glfw3.h")
+@:include("includeWorkaround.h")
 @:native("GLFWimage")
 @:structAccess
 extern class GflwImageStruct {
@@ -61,7 +61,7 @@ extern class GflwImageStruct {
 }
 typedef GlfwImage = Struct<GflwImageStruct>;
 
-@:include("GLFW/glfw3.h")
+@:include("includeWorkaround.h")
 @:native("GLFWgamepadstate")
 @:structAccess
 extern class GlfwGamepadState {
@@ -92,7 +92,7 @@ typedef MonitorFunc = Callable<(monitor:GlfwMonitor, event:Int) -> Void>;
 typedef JoystickFunc = Callable<(joystickID:Int, event:Int) -> Void>;
 
 @:buildXml("<include name='${haxelib:blueprint}/src/Build.xml'/>")
-@:include("GLFW/glfw3.h")
+@:include("includeWorkaround.h")
 extern class Glfw {
 	@:native("GLFW_VERSION_MAJOR")
 	public static var VERSION_MAJOR:Int;

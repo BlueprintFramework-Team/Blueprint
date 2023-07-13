@@ -2,7 +2,6 @@
 	<set name="PROJECT_DIR" value="${haxelib:blueprint}/" />
 
 	<files id='haxe'>
-		<compilerflag value="-I${PROJECT_DIR}vendor/include/glad" />
 		<compilerflag value="-I${PROJECT_DIR}vendor/include" />
 
 		<file name="${PROJECT_DIR}vendor/src/glad.c" />

@@ -55,7 +55,7 @@ typedef GlInt64 = cpp.Int64;
 typedef GlUInt64 = cpp.UInt64;
 // typedef khronos_uint64_t GLuint64EXT;
 
-@:include("GLFW/glfw3.h")
+@:include("includeWorkaround.h")
 @:native("GLsync")
 @:structAccess
 extern class GlSyncStruct {}
@@ -70,7 +70,7 @@ typedef GlDebugProc = Callable<(source:GlEnum, type:GlEnum, severity:GlEnum, len
 
 typedef GladLoadProc = (name:ConstCharStar) -> Void;
 
-@:include("GLFW/glfw3.h")
+@:include("includeWorkaround.h")
 @:native("gladGLversionStruct")
 @:structAccess
 extern class GladGLversionStruct {
@@ -79,7 +79,7 @@ extern class GladGLversionStruct {
 }
 typedef VersionStruct = cpp.Struct<GladGLversionStruct>;
 
-@:include("glad/glad.h")
+@:include("includeWorkaround.h")
 extern class Glad {
 	public static inline function loadHelper(loadProc:GladLoadProc):Int {
 		return untyped __cpp__("gladLoadGLLoader((GLADloadproc){0})", loadProc);
