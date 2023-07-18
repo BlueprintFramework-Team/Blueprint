@@ -925,7 +925,7 @@ extern class Glfw {
     public static function getKeyScancode(key:Int):Int;
 
     @:native("glfwGetKey")
-    public static function getKey(window:GlfwWindow, key:Int):Void;
+    public static function getKey(window:GlfwWindow, key:Int):Int;
 
     @:native("glfwGetCursorPos")
     public static function getCursorPos(window:GlfwWindow, xPos:Pointer<Float>, yPos:Pointer<Float>):Void;
