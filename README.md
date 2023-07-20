@@ -14,4 +14,4 @@ Please note: I am extremely dumb so if there's any issues, please make an issue 
 
 Special Thanks:
 
-- [Leather128](https://github.com/Leather128) - Helped a lot with my dumb self failing c bindings.
+- [Leather128](https://github.com/Leather128) - Helped a lot with my dumb self failing c bindings and helped with rendering issues. (Theres a testing source for this framework.)

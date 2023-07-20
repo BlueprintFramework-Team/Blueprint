@@ -7,11 +7,6 @@
 		<file name="${PROJECT_DIR}vendor/src/glad.c" />
 	</files>
 
-	<target id="haxe">
-		<flag value="-libpath:${PROJECT_DIR}vendor/lib" />
-		<lib name="glfw3.lib" />
-	</target>
-
 	<!-- Taken from raylib-hx -->
 	<!-- WINDOWS LINKER -->
 	<target id="haxe" tool="linker" toolid="exe" if="windows">
@@ -20,6 +15,9 @@
 		<lib name="Shell32.lib" />
 		<lib name="OpenGL32.lib" />
 		<lib name="msvcrt.lib" />
+
+		<flag value="-libpath:${PROJECT_DIR}vendor/lib" />
+		<lib name="glfw3.lib" />
 	</target>
 
 	<!-- OSX LINKER -->
@@ -33,8 +31,13 @@
 	</target>
 
 	<!-- LINUX LINKER -->
-	<target id="haxe" tool="linker" if="linux">
-		<lib name="libgl.so" />
-		<lib name="libc.so" />
+	<target id="haxe" if="linux">
+		<flag value="-lglfw" />
+		<flag value="-lGL" />
+		<flag value="-lX11" />
+		<flag value="-lpthread" />
+		<flag value="-lXrandr" />
+		<flag value="-lXi" />
+		<flag value="-ldl" />
 	</target>
 </xml>
