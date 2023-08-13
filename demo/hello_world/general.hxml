@@ -23,5 +23,3 @@
 --cmd cp -r assets bin/cpp
 
 --cmd cd bin/cpp
---cmd ./Main
-# --cmd Main.exe
