@@ -34,13 +34,13 @@ class Game {
 		return color;
 	}
 
-	public function new(width:Int, height:Int, startScene:Class<Scene>) {
+	public function new(width:Int, height:Int, name:String, startScene:Class<Scene>) {
 		Glfw.init();
 		Glfw.windowHint(Glfw.CONTEXT_VERSION_MAJOR, 3);
 		Glfw.windowHint(Glfw.CONTEXT_VERSION_MINOR, 3);
 		Glfw.windowHint(Glfw.OPENGL_PROFILE, Glfw.OPENGL_CORE_PROFILE);
 
-		window = new Window(width, height, "Testing Blueprint");
+		window = new Window(width, height, name);
 		if (window.failed)
 			return;
 
