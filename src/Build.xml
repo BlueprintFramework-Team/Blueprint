@@ -40,4 +40,6 @@
 		<flag value="-lXi" />
 		<flag value="-ldl" />
 	</target>
+
+	<copyFile name="missingImage.png" from="${PROJECT_DIR}blueprintAssets" toolId="exe"/>
 </xml>
