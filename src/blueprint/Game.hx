@@ -2,7 +2,6 @@ package blueprint;
 
 import cpp.Pointer;
 import cpp.Callable;
-
 import bindings.Glad;
 import bindings.Glfw;
 import math.Matrix4x4;
@@ -11,31 +10,47 @@ import blueprint.objects.Sprite;
 import blueprint.graphics.Texture;
 import blueprint.graphics.Shader;
 import blueprint.graphics.Window;
+import blueprint.Color;
 
 using StringTools;
 
 class Game {
-    public static var projection:Matrix4x4;
+	public static var projection:Matrix4x4;
 
-    public static var currentScene:Scene;
+	public static var currentScene:Scene;
 
-    public static var elapsed:Float;
+	public static var elapsed:Float;
 
-    public static var window:Window;
-    
-    public function new(width:Int, height:Int, startScene:Class<Scene>) {
-        Glfw.init();
-        Glfw.windowHint(Glfw.CONTEXT_VERSION_MAJOR, 3);
-        Glfw.windowHint(Glfw.CONTEXT_VERSION_MINOR, 3);
-        Glfw.windowHint(Glfw.OPENGL_PROFILE, Glfw.OPENGL_CORE_PROFILE);
+	public static var window:Window;
 
-        window = new Window(width, height, "Testing Blueprint");
-        if (window.failed)
-            return;
+	public static var width:Int;
+	public static var height:Int;
 
-        projection = Matrix4x4.ortho(0.0, width, 0, height, -1.0, 1.0);
-        Sprite.defaultShader = new Shader(
-            "#version 330 core
+	// TODO: Make a camera system that would make this system get removed.
+	public static var clearColor(default, set):Color;
+
+	private static function set_clearColor(color:Color):Color {
+		Glad.clearColor(color.redFloat, color.greenFloat, color.blueFloat, color.alphaFloat);
+		return color;
+	}
+
+	public function new(width:Int, height:Int, startScene:Class<Scene>) {
+		Glfw.init();
+		Glfw.windowHint(Glfw.CONTEXT_VERSION_MAJOR, 3);
+		Glfw.windowHint(Glfw.CONTEXT_VERSION_MINOR, 3);
+		Glfw.windowHint(Glfw.OPENGL_PROFILE, Glfw.OPENGL_CORE_PROFILE);
+
+		window = new Window(width, height, "Testing Blueprint");
+		if (window.failed)
+			return;
+
+		Game.width = width;
+		Game.height = height;
+
+		clearColor = Color.fromFloat(0.2, 0.3, 0.3, 1.0);
+
+		projection = Matrix4x4.ortho(0.0, width, 0, height, -1.0, 1.0);
+		Sprite.defaultShader = new Shader("#version 330 core
             out vec4 FragColor;
             in vec2 TexCoord;
 
@@ -44,9 +59,7 @@ class Game {
 
             void main() {
                 FragColor = texture(bitmap, TexCoord) * tint;
-            }",
-
-            "#version 330 core
+            }", "#version 330 core
             layout (location = 0) in vec3 vertexPos;
             layout (location = 1) in vec2 texPos;
 
@@ -62,34 +75,33 @@ class Game {
                     mix(sourceRect.x, sourceRect.z, texPos.x),
                     mix(sourceRect.y, sourceRect.w, texPos.y)
                 );
-            }"
-        );
-        Sprite.defaultTexture = new Texture("missingImage.png");
+            }");
 
-        currentScene = Type.createInstance(startScene, []);
+		Sprite.defaultTexture = new Texture("missingImage.png");
 
-        while (!Glfw.windowShouldClose(window.cWindow))
-            update();
+		currentScene = Type.createInstance(startScene, []);
 
-        window.destroy();
+		while (!Glfw.windowShouldClose(window.cWindow))
+			update();
 
-        Glfw.terminate();
-    }
+		window.destroy();
 
-    static var lastTime:Float = 0;
+		Glfw.terminate();
+	}
 
-    function update() {
-        var runTime:Float = Glfw.getTime();
-        elapsed = runTime - lastTime;
-        lastTime = runTime;
-        currentScene.update(elapsed);
+	static var lastTime:Float = 0;
 
-        Glad.clearColor(0.2, 0.3, 0.3, 1.0);
-        Glad.clear(Glad.COLOR_BUFFER_BIT);
+	function update() {
+		var runTime:Float = Glfw.getTime();
+		elapsed = runTime - lastTime;
+		lastTime = runTime;
+		currentScene.update(elapsed);
 
-        currentScene.draw();
-        
-        Glfw.swapBuffers(window.cWindow);
-        Glfw.pollEvents();
-    }
+		Glad.clear(Glad.COLOR_BUFFER_BIT);
+
+		currentScene.draw();
+
+		Glfw.swapBuffers(window.cWindow);
+		Glfw.pollEvents();
+	}
 }

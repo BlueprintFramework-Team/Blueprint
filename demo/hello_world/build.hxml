@@ -1,0 +1,27 @@
+# Set the Main class of our program. #
+--class-path src
+--main Main
+
+# Defines #
+--define analyzer-optimize
+--define HXCPP_M64
+--define no-console
+
+# --define windows
+# --define linux
+# --define mac
+--define HXCPP_CHECK_POINTER
+--define HXCPP_STACK_LINE
+--dce no
+
+# Libraries #
+--library blueprint
+
+# Compile, copy assets, and run. #
+--cpp bin/cpp
+
+--cmd cp -r assets bin/cpp
+
+--cmd cd bin/cpp
+--cmd ./Main
+# --cmd Main.exe

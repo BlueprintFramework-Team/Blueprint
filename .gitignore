@@ -1,2 +1,3 @@
 .vscode/
 workaround.hxml
+demo/**/bin
