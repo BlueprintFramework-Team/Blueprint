@@ -90,8 +90,8 @@ class Sprite {
 	}
 
 	function offScreen():Bool {
-		var onScreenX:Bool = (position.x + width * anchor.x >= 0) && (position.x * (1 - anchor.x) < Game.width);
-		var onScreenY:Bool = (position.y + height * anchor.y >= 0) && (position.y * (1 - anchor.y) < Game.height);
+		var onScreenX:Bool = (position.x + width * anchor.x >= 0) && (position.x * (1 - anchor.x) < Game.window.width);
+		var onScreenY:Bool = (position.y + height * anchor.y >= 0) && (position.y * (1 - anchor.y) < Game.window.height);
 
 		return !(onScreenX && onScreenY);
 	}

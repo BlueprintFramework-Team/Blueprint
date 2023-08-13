@@ -10,7 +10,6 @@ import blueprint.objects.Sprite;
 import blueprint.graphics.Texture;
 import blueprint.graphics.Shader;
 import blueprint.graphics.Window;
-import blueprint.Color;
 
 using StringTools;
 
@@ -23,17 +22,6 @@ class Game {
 
 	public static var window:Window;
 
-	public static var width:Int;
-	public static var height:Int;
-
-	// TODO: Make a camera system that would make this system get removed.
-	public static var clearColor(default, set):Color;
-
-	private static function set_clearColor(color:Color):Color {
-		Glad.clearColor(color.redFloat, color.greenFloat, color.blueFloat, color.alphaFloat);
-		return color;
-	}
-
 	public function new(width:Int, height:Int, name:String, startScene:Class<Scene>) {
 		Glfw.init();
 		Glfw.windowHint(Glfw.CONTEXT_VERSION_MAJOR, 3);
@@ -43,11 +31,6 @@ class Game {
 		window = new Window(width, height, name);
 		if (window.failed)
 			return;
-
-		Game.width = width;
-		Game.height = height;
-
-		clearColor = Color.fromFloat(0.2, 0.3, 0.3, 1.0);
 
 		projection = Matrix4x4.ortho(0.0, width, 0, height, -1.0, 1.0);
 		Sprite.defaultShader = new Shader("#version 330 core
