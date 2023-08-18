@@ -1,0 +1,3 @@
+-cp src
+-cpp bin/cpp
+#This is just to prevent errors reguarding cpp.

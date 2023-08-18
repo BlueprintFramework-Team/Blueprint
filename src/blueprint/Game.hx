@@ -90,6 +90,7 @@ class Game {
 		lastTime = runTime;
 		currentScene.update(elapsed);
 
+		Glad.clearColor(window.clearColor.x, window.clearColor.y, window.clearColor.z, window.clearColor.w); // I gotta make rgba values rq.
 		Glad.clear(Glad.COLOR_BUFFER_BIT);
 
 		currentScene.draw();
