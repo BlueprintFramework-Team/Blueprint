@@ -1,17 +1,22 @@
-NOTE: AS OF RIGHT NOW, THERE IS NOTHING EXCEPT BINDINGS HERE.
+<img src="frameworkArt/logo.png" alt="Framework logo" align="right" width="150" height="150" />
 
-PLEASE BE PATIENT WHILE THIS IS DEVELOPED.
+# Blueprint
 
-until then, enjoy the bindings and this minimal readme file!
+Blueprint is a Game Framework made in [Haxe](https://haxe.org) that compiles to native platforms using hxcpp.
+Blueprint is powered by a wide range of native libraries such as [GLFW](https://www.glfw.org/),
+[OpenAL (soft)](https://openal-soft.org/), and [stb_image](https://github.com/nothings/stb).
 
-![Framework logo](frameworkArt/logo.png)
+## Getting started
 
-# Blueprint - Work in progress
+To get started with the framework, install the library with one simple command:
 
-This is a [Haxe](https://haxe.org/) framework made using custom bindings for [GLFW](https://www.glfw.org/)!
+```sh
+haxelib git blueprint https://github.com/SrtHero278/Blueprint
+```
 
-Please note: I am extremely dumb so if there's any issues, please make an issue or even better, make a pull request!
+Then look through one of the [demos](demo/) to get a basic understanding on how to use the library
+(sorry that there are currently no tutorials!)
 
-Special Thanks:
+## Special Thanks
 
-- [Leather128](https://github.com/Leather128) - Helped a lot with my dumb self failing c bindings and helped with rendering issues. (Theres a testing source for this framework.)
+- [Leather128](https://github.com/Leather128) - Helped a lot initially with C bindings and helped with some rendering issues.
