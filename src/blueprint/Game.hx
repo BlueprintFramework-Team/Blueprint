@@ -82,9 +82,9 @@ class Game {
 		Glfw.terminate();
 	}
 
-	static var lastTime:Float = 0;
+	private static var lastTime:Float = 0;
 
-	function update() {
+	private function update():Void {
 		var runTime:Float = Glfw.getTime();
 		elapsed = runTime - lastTime;
 		lastTime = runTime;
@@ -96,5 +96,13 @@ class Game {
 
 		Glfw.swapBuffers(window.cWindow);
 		Glfw.pollEvents();
+	}
+
+	public static function queueClose():Void {
+		Glfw.setWindowShouldClose(window.cWindow, 1);
+	}
+
+	public static function unQueueClose():Void {
+		Glfw.setWindowShouldClose(window.cWindow, 0);
 	}
 }

@@ -19,7 +19,7 @@ class DemoScene extends Scene {
 		super.update(elapsed);
 
 		if (!song.playing) {
-			Glfw.setWindowShouldClose(Game.window.cWindow, 1);
+			Game.queueClose();
 		}
 	}
 }
