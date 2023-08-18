@@ -3,10 +3,12 @@ package blueprint.sound;
 import bindings.AL;
 import bindings.ALC;
 import bindings.DrWav;
+import bindings.StbVorbis;
+import bindings.CppHelpers;
 import math.Vector3;
+import cpp.Native;
 
 class Sound {
-	private var data:Any;
 	private var buffer:cpp.UInt32 = 0;
 	private var source:cpp.UInt32 = 0;
 
@@ -63,8 +65,24 @@ class Sound {
 
 					// also btw idk why we multiply by 4 and not 2 but 2 cuts it off half way so ig i missed something somewhere but whatever /shrug
 					AL.bufferData(buffer, format, cast sampleData, untyped __cpp__('{0} * (unsigned long)(4)', totalFrameCount), cast sampleRate);
-					DrWav.free(cast sampleData, null);
 				}
+
+				DrWav.free(cast sampleData, null);
+			case 'ogg':
+				var sampleData:cpp.Pointer<cpp.Int16> = null;
+				var channels:Int = 0;
+				var sampleRate:Int = 0;
+				var totalFrameCount:Int = 0;
+
+				untyped __cpp__('short *output;
+						{0} = {1}({2}, {3}, {4}, &output);
+						{5} = output', totalFrameCount,
+					StbVorbis.decodeFileName, filePath, cpp.Pointer.addressOf(channels), cpp.Pointer.addressOf(sampleRate), sampleData);
+
+				format = channels > 1 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16;
+
+				AL.bufferData(buffer, format, cast sampleData, totalFrameCount * 4, sampleRate);
+				CppHelpers.free(cast sampleData);
 			default:
 				trace('Format ${extension.toUpperCase()} is not supported for sounds at this time!');
 		}
@@ -120,8 +138,6 @@ class Sound {
 			AL.deleteSources(1, cpp.Pointer.addressOf(source));
 			AL.deleteBuffers(1, cpp.Pointer.addressOf(buffer));
 		}
-
-		data = null;
 	}
 
 	private function set_looping(value:Bool):Bool {
