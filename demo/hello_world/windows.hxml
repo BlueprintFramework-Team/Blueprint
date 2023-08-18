@@ -18,7 +18,7 @@
 # Compile, copy assets, and run. #
 --cpp bin/cpp
 
---cmd cp -r assets bin/cpp
+--cmd Xcopy assets\ bin\cpp\assets\ /E /H /C /I /Y
 
 --cmd cd bin/cpp
 --cmd Main.exe
