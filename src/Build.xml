@@ -18,6 +18,7 @@
 
 		<flag value="-libpath:${PROJECT_DIR}vendor/lib" />
 		<lib name="glfw3.lib" />
+		<lib name="OpenAL32.lib" />
 	</target>
 
 	<!-- OSX LINKER -->
@@ -28,6 +29,8 @@
 		<flag value="Cocoa" />
 		<flag value="-framework" />
 		<flag value="OpenGL" />
+		<flag value="-framework" />
+		<flag value="OpenAL" />
 	</target>
 
 	<!-- LINUX LINKER -->
@@ -39,7 +42,11 @@
 		<flag value="-lXrandr" />
 		<flag value="-lXi" />
 		<flag value="-ldl" />
+		<flag value="-lopenal" />
 	</target>
 
-	<copyFile name="missingImage.png" from="${PROJECT_DIR}blueprintAssets" toolId="exe"/>
+	<copyFile name="missingImage.png" from="${PROJECT_DIR}blueprintAssets" toolId="exe" />
+
+	<copyFile name="OpenAL32.dll" from="${PROJECT_DIR}vendor/lib" toolId="exe"
+		overwrite="true" if="windows" />
 </xml>

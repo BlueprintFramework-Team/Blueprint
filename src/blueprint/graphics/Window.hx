@@ -4,6 +4,7 @@ import cpp.Pointer;
 import bindings.Glfw;
 import bindings.Glad;
 import math.Vector4;
+import math.Vector2;
 
 class Window {
 	public var failed:Bool = false;
@@ -114,22 +115,21 @@ class Window {
 		Glad.genBuffers(1, Pointer.addressOf(EBO));
 	}
 
-	// https://github.com/Leather128 - kept a consistent ratio when resizing.
-	static function bufferResize(window:GlfwWindow, width:Int, height:Int) {
-		var originalWidth:Int = width;
-		var originalHeight:Int = height;
-		var aspectRatio:Float = width / height;
-		var x:Int = 0;
-		var y:Int = 0;
+	// function by MidnightBloxxer, using code by swordcube for reference.
+	private static function bufferResize(window:GlfwWindow, width:Int, height:Int) {
+		var gameSize:Vector2 = new Vector2(Game.window.width, Game.window.height);
+		var outputSize:Vector2 = new Vector2(0, 0);
+		var outputOffset:Vector2 = new Vector2(0, 0);
 
-		if (height > width) {
-			height = Math.floor(height * aspectRatio);
-			y = Math.floor((originalHeight - height) / 2);
-		} else {
-			width = Math.floor(width / aspectRatio);
-			x = Math.floor((originalWidth - width) / 2);
-		}
+		var gameRatio:Float = gameSize.x / gameSize.y;
+		var windowRatio:Float = width / height;
 
-		Glad.viewport(x, y, width, height);
+		outputSize.x = (windowRatio > gameRatio) ? (height * gameRatio) : (width);
+		outputSize.y = (windowRatio < gameRatio) ? (width / gameRatio) : (height);
+
+		outputOffset.x = (width - outputSize.x) / 2;
+		outputOffset.y = (height - outputSize.y) / 2;
+
+		Glad.viewport(Math.floor(outputOffset.x), Math.floor(outputOffset.y), Math.floor(outputSize.x), Math.floor(outputSize.y));
 	}
 }

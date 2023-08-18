@@ -10,6 +10,7 @@ import blueprint.objects.Sprite;
 import blueprint.graphics.Texture;
 import blueprint.graphics.Shader;
 import blueprint.graphics.Window;
+import blueprint.sound.Mixer;
 
 using StringTools;
 
@@ -22,6 +23,8 @@ class Game {
 
 	public static var window:Window;
 
+	public static var mixer:Mixer;
+
 	public function new(width:Int, height:Int, name:String, startScene:Class<Scene>) {
 		Glfw.init();
 		Glfw.windowHint(Glfw.CONTEXT_VERSION_MAJOR, 3);
@@ -29,8 +32,14 @@ class Game {
 		Glfw.windowHint(Glfw.OPENGL_PROFILE, Glfw.OPENGL_CORE_PROFILE);
 
 		window = new Window(width, height, name);
-		if (window.failed)
+		if (window.failed) {
 			return;
+		}
+
+		mixer = new Mixer();
+		if (mixer.failed) {
+			return;
+		}
 
 		projection = Matrix4x4.ortho(0.0, width, 0, height, -1.0, 1.0);
 		Sprite.defaultShader = new Shader("#version 330 core
@@ -64,11 +73,12 @@ class Game {
 
 		currentScene = Type.createInstance(startScene, []);
 
-		while (!Glfw.windowShouldClose(window.cWindow))
+		while (!Glfw.windowShouldClose(window.cWindow)) {
 			update();
+		}
 
 		window.destroy();
-
+		mixer.destroy();
 		Glfw.terminate();
 	}
 
