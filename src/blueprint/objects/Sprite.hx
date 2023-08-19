@@ -73,16 +73,16 @@ class Sprite {
 	}
 
 	private function prepareShaderVars(anchorX:Float, anchorY:Float):Void {
-		var transform:Matrix4x4 = new Matrix4x4(1.0);
-		transform.rotate(MathExtras.toRad(rotation), [0, 0, 1]);
-		transform.scale([width, height, 1]);
-		transform.translate([
+		shader.transform.reset(1.0);
+		shader.transform.rotate(MathExtras.toRad(rotation), [0, 0, 1]);
+		shader.transform.scale([width, height, 1]);
+		shader.transform.translate([
 			position.x + Math.abs(width) * anchorX,
 			position.y + Math.abs(height) * -anchorY,
 			0
 		]);
 		var transLoc:Int = Glad.getUniformLocation(shader.ID, "transform");
-		Glad.uniformMatrix4fv(transLoc, 1, Glad.FALSE, transform.toStar());
+		Glad.uniformMatrix4fv(transLoc, 1, Glad.FALSE, shader.transform.toStar());
 
 		Glad.uniform4fv(Glad.getUniformLocation(shader.ID, "tint"), 1, tint.toStar());
 		Glad.uniform4f(Glad.getUniformLocation(shader.ID, "sourceRect"), sourceRect.x / texture.width, sourceRect.y / texture.height,

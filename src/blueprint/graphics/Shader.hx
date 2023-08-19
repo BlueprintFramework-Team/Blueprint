@@ -1,5 +1,6 @@
 package blueprint.graphics;
 
+import math.Matrix4x4;
 import bindings.CppHelpers;
 import cpp.ConstCharStar;
 import cpp.Pointer;
@@ -8,6 +9,8 @@ import bindings.Glad;
 
 class Shader {
     public var ID:cpp.UInt32;
+
+    public var transform:Matrix4x4 = new Matrix4x4(1.0);
 
     public function new(fragString:String, vertString:String) {
         var fragID:cpp.UInt32;
