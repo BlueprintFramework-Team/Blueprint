@@ -14,7 +14,7 @@ To get started with the framework, install the library with one simple command:
 haxelib git blueprint https://github.com/SrtHero278/Blueprint
 ```
 
-Then look through one of the [demos](demo/) to get a basic understanding on how to use the library
+Then look through one of the [demos](https://github.com/BlueprintFramework-Team/Blueprint-Demos) to get a basic understanding on how to use the library
 (sorry that there are currently no tutorials!)
 
 ## Special Thanks
