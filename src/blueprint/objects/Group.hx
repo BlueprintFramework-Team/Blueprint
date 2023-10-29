@@ -49,11 +49,12 @@ class Group extends Sprite {
 			return;
 		}
 
-		var sinMult:Float = Math.sin(MathExtras.toRad(rotation));
-		var cosMult:Float = Math.sin(MathExtras.toRad(rotation));
+		if (_queueTrig)
+			updateTrigValues();
+
 		var rotPosition:Vector2 = cast [
-			position.x * cosMult + position.y * -sinMult,
-			position.x * sinMult + position.y * cosMult
+			position.x * _cosMult + position.y * -_sinMult,
+			position.x * _sinMult + position.y * _cosMult
 		];
 		rotPosition *= scale;
 
