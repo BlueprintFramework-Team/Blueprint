@@ -1,6 +1,8 @@
 package math;
 
 abstract Matrix4x4(Array<Vector4>) from Array<Vector4> to Array<Vector4> {
+    static var rotResult:Matrix4x4 = new Matrix4x4(1.0); // Might be renamed if i have to use this in a another function.
+
     public function new(?x:Float = 0) {
         reset(x);
     }
@@ -27,11 +29,14 @@ abstract Matrix4x4(Array<Vector4>) from Array<Vector4> to Array<Vector4> {
         return this;
     }
 
-    //Thanks to https://github.com/RafGamign for helping with this function.
-    public function rotate(radians:Float, inputAxis:Vector3):Matrix4x4 {
+    public function radRotate(radians:Float, inputAxis:Vector3) {
         var sin = Math.sin(radians);
         var cos = Math.cos(radians);
+        return rotate(sin, cos, inputAxis);
+    }
 
+    //Thanks to https://github.com/RafGamign for helping with this function.
+    public function rotate(sin:Float, cos:Float, inputAxis:Vector3):Matrix4x4 {
         var x = inputAxis.x;
         var y = inputAxis.y;
         var z = inputAxis.z;
@@ -50,7 +55,11 @@ abstract Matrix4x4(Array<Vector4>) from Array<Vector4> to Array<Vector4> {
         rotate[2][1] = z * y * (1 - cos) + x * sin;
         rotate[2][2] = cos + z * z * (1 - cos);
 
-        return copyFrom(rotate * this);
+        rotResult[0] = this[0] * rotate[0][0] + this[1] * rotate[0][1] + this[2] * rotate[0][2];
+		rotResult[1] = this[0] * rotate[1][0] + this[1] * rotate[1][1] + this[2] * rotate[1][2];
+		rotResult[2] = this[0] * rotate[2][0] + this[1] * rotate[2][1] + this[2] * rotate[2][2];
+        rotResult[3] = this[3];
+        return copyFrom(rotResult);
     }
 
     @:op(A + B)

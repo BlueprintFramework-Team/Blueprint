@@ -24,7 +24,11 @@ class Sprite {
 	public var width(get, null):Int;
 	public var height(get, null):Int;
 
-	public var rotation:Float = 0;
+	public var rotation(default, set):Float = 0;
+
+	var _queueTrig:Bool = false;
+	var _cosMult:Float = 1;
+	var _sinMult:Float = 0;
 
 	public var anchor:Vector2 = new Vector2(0.5, 0.5);
 
@@ -49,6 +53,9 @@ class Sprite {
 	public function update(elapsed:Float):Void {}
 
 	public function draw():Void {
+		if (_queueTrig)
+			updateTrigValues();
+
 		if (offScreen())
 			return;
 
@@ -74,11 +81,9 @@ class Sprite {
 
 	private function prepareShaderVars(anchorX:Float, anchorY:Float):Void {
 		shader.transform.reset(1.0);
-
-		if (rotation != 0) {
-			shader.transform.rotate(MathExtras.toRad(rotation), [0, 0, 1]);
-		}
-
+		shader.transform.translate([dynamicOffset.x / Math.abs(width), dynamicOffset.y / Math.abs(height), 0]);
+		if (rotation != 0)
+			shader.transform.rotate(_sinMult, _cosMult, [0, 0, 1]);
 		shader.transform.scale([width, height, 1]);
 		shader.transform.translate([
 			position.x + Math.abs(width) * anchorX,
@@ -90,7 +95,14 @@ class Sprite {
 
 		Glad.uniform4fv(Glad.getUniformLocation(shader.ID, "tint"), 1, tint.toStar());
 		Glad.uniform4f(Glad.getUniformLocation(shader.ID, "sourceRect"), sourceRect.x / texture.width, sourceRect.y / texture.height,
-			(sourceRect.x + (width / scale.x)) / texture.width, (sourceRect.y + (height / scale.y)) / texture.height,);
+			(sourceRect.x + (width / scale.x)) / texture.width, (sourceRect.y + (height / scale.y)) / texture.height);
+	}
+
+	function updateTrigValues() {
+		var radians = MathExtras.toRad(rotation);
+		_cosMult = Math.cos(radians);
+		_sinMult = Math.sin(radians);
+		_queueTrig = false;
 	}
 
 	function offScreen():Bool {
@@ -98,6 +110,11 @@ class Sprite {
 		var onScreenY:Bool = (position.y + height * anchor.y >= 0) && (position.y * (1 - anchor.y) < Game.window.height);
 
 		return !(onScreenX && onScreenY);
+	}
+
+	function set_rotation(newRot:Float) {
+		_queueTrig = _queueTrig || (newRot != rotation);
+		return rotation = newRot;
 	}
 
 	inline function get_width():Int {
