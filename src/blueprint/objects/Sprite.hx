@@ -69,12 +69,16 @@ class Sprite {
 		prepareShaderVars(anchorX, anchorY);
 
 		Glad.bindVertexArray(Game.window.VAO);
-		Glad.drawElements(Glad.TRIANGLES, 6, Glad.UNSIGNED_INT, cast 0);
+		Glad.drawElements(Glad.TRIANGLES, 6, Glad.UNSIGNED_INT, untyped __cpp__('0'));
 	}
 
 	private function prepareShaderVars(anchorX:Float, anchorY:Float):Void {
 		shader.transform.reset(1.0);
-		shader.transform.rotate(MathExtras.toRad(rotation), [0, 0, 1]);
+
+		if (rotation != 0) {
+			shader.transform.rotate(MathExtras.toRad(rotation), [0, 0, 1]);
+		}
+
 		shader.transform.scale([width, height, 1]);
 		shader.transform.translate([
 			position.x + Math.abs(width) * anchorX,
