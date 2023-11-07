@@ -49,4 +49,6 @@
 
 	<copyFile name="OpenAL32.dll" from="${PROJECT_DIR}vendor/lib" toolId="exe"
 		overwrite="true" if="windows" />
+	<copyFile name="freetype.dll" from="${PROJECT_DIR}vendor/lib" toolId="exe"
+		overwrite="true" if="windows" />
 </xml>
