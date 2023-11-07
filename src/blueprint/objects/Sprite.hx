@@ -25,6 +25,7 @@ class Sprite {
 	public var height(get, null):Int;
 
 	public var rotation(default, set):Float = 0;
+
 	var _queueTrig:Bool = false;
 	var _cosMult:Float = 1;
 	var _sinMult:Float = 0;
@@ -75,16 +76,12 @@ class Sprite {
 		prepareShaderVars(anchorX, anchorY);
 
 		Glad.bindVertexArray(Game.window.VAO);
-		Glad.drawElements(Glad.TRIANGLES, 6, Glad.UNSIGNED_INT, cast 0);
+		Glad.drawElements(Glad.TRIANGLES, 6, Glad.UNSIGNED_INT, untyped __cpp__('0'));
 	}
 
 	private function prepareShaderVars(anchorX:Float, anchorY:Float):Void {
 		shader.transform.reset(1.0);
-		shader.transform.translate([
-			dynamicOffset.x / Math.abs(width),
-			dynamicOffset.y / Math.abs(height),
-			0
-		]);
+		shader.transform.translate([dynamicOffset.x / Math.abs(width), dynamicOffset.y / Math.abs(height), 0]);
 		if (rotation != 0)
 			shader.transform.rotate(_sinMult, _cosMult, [0, 0, 1]);
 		shader.transform.scale([width, height, 1]);
