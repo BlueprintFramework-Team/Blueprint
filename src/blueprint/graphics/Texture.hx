@@ -1,5 +1,6 @@
 package blueprint.graphics;
 
+import cpp.ConstPointer;
 import cpp.Pointer;
 import bindings.Glad;
 import bindings.StbImage;
@@ -23,6 +24,10 @@ class Texture {
 
 		if (filePath != null)
 			loadFromImage(filePath);
+	}
+
+	public function destroy() {
+		Glad.deleteTextures(1, ConstPointer.fromPointer(Pointer.addressOf(ID)));
 	}
 
 	public function loadFromImage(filePath:String):Texture {

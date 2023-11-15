@@ -40,25 +40,21 @@ abstract Matrix4x4(Array<Vector4>) from Array<Vector4> to Array<Vector4> {
         var x = inputAxis.x;
         var y = inputAxis.y;
         var z = inputAxis.z;
-    
-        var rotate = new Matrix4x4(1.0);
-    
-		rotate[0][0] = cos + x * x * (1 - cos);
-		rotate[0][1] = x * y * (1 - cos) - z * sin;
-		rotate[0][2] = x * z * (1 - cos) + y * sin;
 
-		rotate[1][0] = y * x * (1 - cos) + z * sin;
-		rotate[1][1] = cos + y * y * (1 - cos);
-		rotate[1][2] = y * z * (1 - cos) - x * sin;
-    
-        rotate[2][0] = z * x * (1 - cos) - y * sin;
-        rotate[2][1] = z * y * (1 - cos) + x * sin;
-        rotate[2][2] = cos + z * z * (1 - cos);
+        rotResult[0] = this[0] * (cos + x * x * (1 - cos))
+                     + this[1] * (x * y * (1 - cos) - z * sin)
+                     + this[2] * (x * z * (1 - cos) + y * sin);
 
-        rotResult[0] = this[0] * rotate[0][0] + this[1] * rotate[0][1] + this[2] * rotate[0][2];
-		rotResult[1] = this[0] * rotate[1][0] + this[1] * rotate[1][1] + this[2] * rotate[1][2];
-		rotResult[2] = this[0] * rotate[2][0] + this[1] * rotate[2][1] + this[2] * rotate[2][2];
+		rotResult[1] = this[0] * (y * x * (1 - cos) + z * sin)
+                     + this[1] * (cos + y * y * (1 - cos))
+                     + this[2] * (y * z * (1 - cos) - x * sin);
+
+		rotResult[2] = this[0] * (z * x * (1 - cos) - y * sin)
+                     + this[1] * (z * y * (1 - cos) + x * sin)
+                     + this[2] * (cos + z * z * (1 - cos));
+
         rotResult[3] = this[3];
+        
         return copyFrom(rotResult);
     }
 
