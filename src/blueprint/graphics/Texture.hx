@@ -27,7 +27,7 @@ class Texture {
 	}
 
 	public function destroy() {
-		Glad.deleteTextures(1, ConstPointer.fromPointer(Pointer.addressOf(ID)));
+		Glad.deleteTextures(1, Pointer.addressOf(ID));
 	}
 
 	public function loadFromImage(filePath:String):Texture {
