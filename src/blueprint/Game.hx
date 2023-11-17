@@ -18,6 +18,7 @@ class Game {
 	public static var projection:Matrix4x4;
 
 	public static var currentScene:Scene;
+    private static var queuedSceneChange:Class<Scene> = null;
 
 	public static var elapsed:Float;
 
@@ -85,6 +86,11 @@ class Game {
 	private static var lastTime:Float = 0;
 
 	private function update():Void {
+        if (queuedSceneChange != null) {
+            currentScene = Type.createInstance(queuedSceneChange, []);
+            queuedSceneChange = null;
+        }
+
 		var runTime:Float = Glfw.getTime();
 		elapsed = runTime - lastTime;
 		lastTime = runTime;
@@ -105,4 +111,8 @@ class Game {
 	public static function unQueueClose():Void {
 		Glfw.setWindowShouldClose(window.cWindow, 0);
 	}
+
+    public static function changeSceneTo(scene:Class<Scene>) {
+        queuedSceneChange = scene;
+    }
 }
