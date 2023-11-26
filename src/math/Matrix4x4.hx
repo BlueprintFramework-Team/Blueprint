@@ -41,17 +41,38 @@ abstract Matrix4x4(Array<Vector4>) from Array<Vector4> to Array<Vector4> {
         var y = inputAxis.y;
         var z = inputAxis.z;
 
-        rotResult[0] = this[0] * (cos + x * x * (1 - cos))
-                     + this[1] * (x * y * (1 - cos) - z * sin)
-                     + this[2] * (x * z * (1 - cos) + y * sin);
+        rotResult[0][0] = (cos + x * x * (1 - cos));
+        rotResult[0][1] = (x * y * (1 - cos) - z * sin);
+        rotResult[0][2] = (x * z * (1 - cos) + y * sin);
 
-		rotResult[1] = this[0] * (y * x * (1 - cos) + z * sin)
-                     + this[1] * (cos + y * y * (1 - cos))
-                     + this[2] * (y * z * (1 - cos) - x * sin);
+        rotResult[1][0] = (y * x * (1 - cos) + z * sin);
+        rotResult[1][1] = (cos + y * y * (1 - cos));
+        rotResult[1][2] = (y * z * (1 - cos) - x * sin);
 
-		rotResult[2] = this[0] * (z * x * (1 - cos) - y * sin)
-                     + this[1] * (z * y * (1 - cos) + x * sin)
-                     + this[2] * (cos + z * z * (1 - cos));
+        rotResult[2][0] = (z * x * (1 - cos) - y * sin);
+        rotResult[2][1] = (z * y * (1 - cos) + x * sin);
+        rotResult[2][2] = (cos + z * z * (1 - cos));
+
+        rotResult[0].set(
+            (this[0][0] * rotResult[0][0] + this[1][0] * rotResult[0][1] + this[2][0] * rotResult[0][2]),
+            (this[0][1] * rotResult[0][0] + this[1][1] * rotResult[0][1] + this[2][1] * rotResult[0][2]),
+            (this[0][2] * rotResult[0][0] + this[1][2] * rotResult[0][1] + this[2][2] * rotResult[0][2]),
+            (this[0][3] * rotResult[0][0] + this[1][3] * rotResult[0][1] + this[2][3] * rotResult[0][2]),
+        );
+
+        rotResult[1].set(
+            (this[0][0] * rotResult[1][0] + this[1][0] * rotResult[1][1] + this[2][0] * rotResult[1][2]),
+            (this[0][1] * rotResult[1][0] + this[1][1] * rotResult[1][1] + this[2][1] * rotResult[1][2]),
+            (this[0][2] * rotResult[1][0] + this[1][2] * rotResult[1][1] + this[2][2] * rotResult[1][2]),
+            (this[0][3] * rotResult[1][0] + this[1][3] * rotResult[1][1] + this[2][3] * rotResult[1][2]),
+        );
+
+        rotResult[2].set(
+            (this[0][0] * rotResult[2][0] + this[1][0] * rotResult[2][1] + this[2][0] * rotResult[2][2]),
+            (this[0][1] * rotResult[2][0] + this[1][1] * rotResult[2][1] + this[2][1] * rotResult[2][2]),
+            (this[0][2] * rotResult[2][0] + this[1][2] * rotResult[2][1] + this[2][2] * rotResult[2][2]),
+            (this[0][3] * rotResult[2][0] + this[1][3] * rotResult[2][1] + this[2][3] * rotResult[2][2]),
+        );
 
         rotResult[3] = this[3];
         
@@ -218,18 +239,15 @@ abstract Matrix4x4(Array<Vector4>) from Array<Vector4> to Array<Vector4> {
     }
 
     public function toStar():cpp.Star<cpp.Float32> {
-        var matArray:Array<Float> = [];
-        for (i in 0...4) {
-            matArray.push(this[0][i]);
-            matArray.push(this[1][i]);
-            matArray.push(this[2][i]);
-            matArray.push(this[3][i]);
-        }
         untyped __cpp__("
-            float* _cArray = new float[16];
-            for (int i = 0; i < 16; i++) {
-                _cArray[i] = {0}->__get(i);
-            }", matArray);
+            float* _cArray = (float*)malloc(sizeof(float) * 16);
+            for (int i = 0; i < 4; i++) {
+                _cArray[i * 4] = {0}->__get(i);
+                _cArray[i * 4 + 1] = {1}->__get(i);
+                _cArray[i * 4 + 2] = {2}->__get(i);
+                _cArray[i * 4 + 3] = {3}->__get(i);
+            }", this[0], this[1], this[2], this[3]);
+        untyped __cpp__("free(_cArray)");
         return untyped __cpp__("_cArray");
     }
 

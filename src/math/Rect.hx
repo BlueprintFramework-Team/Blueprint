@@ -174,10 +174,11 @@ abstract Rect(Array<Float>) from Array<Float> to Array<Float> {
 
     public function toStar():cpp.Star<cpp.Float32> {
         untyped __cpp__("
-            float* _cArray = new float[4];
+            float* _cArray = (float*)malloc(sizeof(float) * 4);
             for (int i = 0; i < 4; i++) {
                 _cArray[i] = {0}->__get(i);
             }", this);
+        untyped __cpp__("free(_cArray)");
         return untyped __cpp__("_cArray");
     }
 
