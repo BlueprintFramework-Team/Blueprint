@@ -3469,7 +3469,7 @@ extern class Glad {
 	public static function bindTexture(target:GlEnum, texture:GlUInt):Void;
 
 	@:native("glDeleteTextures")
-	public static function deleteTextures(n:GlSizeI, textures:ConstPointer<GlUInt>):Void;
+	public static function deleteTextures(n:GlSizeI, textures:Pointer<GlUInt>):Void;
 
 	@:native("glGenTextures")
 	public static function genTextures(n:GlSizeI, textures:Pointer<GlUInt>):Void;

@@ -7,303 +7,395 @@ import cpp.Pointer;
 
 typedef FTErr = Int;
 
-@:include("freetype/ftimage.h")
+@:include("freetype/fttypes.h")
 @:native("FT_Generic")
-@:structAccess
 extern class FreetypeGeneric {}
 
-@:include("freetype/ftimage.h")
+@:include("freetype/freetype.h")
 @:native("FT_Library")
-@:structAccess
 extern class FreetypeLib {}
 
 @:include("freetype/ftimage.h")
 @:native("FT_Vector")
-@:structAccess
 extern class FreetypeVector {
-    public var x:cpp.UInt64;
-    public var y:cpp.UInt64;
+    @:native("x")
+    var x:cpp.UInt64;
+    @:native("y")
+    var y:cpp.UInt64;
 }
 
 @:include("freetype/fttypes.h")
 @:native("FT_Matrix")
-@:structAccess
 extern class FreetypeMatrix {
-    public var xx:cpp.UInt64;
-    public var xy:cpp.UInt64;
-    public var yx:cpp.UInt64;
-    public var yy:cpp.UInt64;
+    @:native("xx")
+    var xx:cpp.UInt64;
+    @:native("xy")
+    var xy:cpp.UInt64;
+    @:native("yx")
+    var yx:cpp.UInt64;
+    @:native("yy")
+    var yy:cpp.UInt64;
 }
 
-@:include("freetype/fttypes.h")
+@:include("freetype/ftimage.h")
 @:native("FT_BBox")
-@:structAccess
 extern class FreetypeBBox {
-    public var xMin:cpp.UInt64;
-    public var yMin:cpp.UInt64;
-    public var xMax:cpp.UInt64;
-    public var yMax:cpp.UInt64;
+    @:native("xMin")
+    var xMin:cpp.UInt64;
+    @:native("yMin")
+    var yMin:cpp.UInt64;
+    @:native("xMax")
+    var xMax:cpp.UInt64;
+    @:native("yMax")
+    var yMax:cpp.UInt64;
 }
 
-@:include("freetype/freetype.h")
+@:include("freetype/ftimage.h")
 @:native("FT_Bitmap")
-@:structAccess
 extern class FreetypeBitmap {
-    public var rows:cpp.UInt32;
-    public var width:cpp.UInt32;
-    public var pitch:Int;
-    public var buffer:cpp.Star<cpp.UInt8>;
-    public var num_grays:cpp.UInt16;
-    public var pixel_mode:cpp.UInt8;
-    public var palette_mode:cpp.UInt8;
-    public var palette:cpp.Star<cpp.Void>;
+    @:native("rows")
+    var rows:cpp.UInt32;
+    @:native("width")
+    var width:cpp.UInt32;
+    @:native("pitch")
+    var pitch:Int;
+    @:native("buffer")
+    var buffer:cpp.Star<cpp.UInt8>;
+    @:native("num_grays")
+    var numGrays:cpp.UInt16;
+    @:native("pixel_mode")
+    var pixelMode:cpp.UInt8;
+    @:native("palette_mode")
+    var paletteMode:cpp.UInt8;
+    @:native("palette")
+    var palette:cpp.Star<cpp.Void>;
 }
 
 @:include("freetype/freetype.h")
 @:native("FT_Bitmap_Size")
-@:structAccess
 extern class FreetypeBitmapSize {
-    public var width:cpp.Int16;
-    public var height:cpp.Int16;
+    @:native("width")
+    var width:cpp.Int16;
+    @:native("height")
+    var height:cpp.Int16;
 
-    public var size:cpp.UInt64;
+    @:native("size")
+    var size:cpp.UInt64;
 
-    public var x_ppem:cpp.UInt64;
-    public var y_ppem:cpp.UInt64;
+    @:native("x_ppem")
+    var xPpem:cpp.UInt64;
+    @:native("y_ppem")
+    var yPpem:cpp.UInt64;
 }
 
-@:include("freetype/fttypes.h")
+@:include("freetype/freetype.h")
 @:native("FT_Size_Metrics")
-@:structAccess
 extern class FreetypeSizeMetrics {
-    public var x_ppem:cpp.UInt16;
-    public var y_ppem:cpp.UInt16;
+    @:native("x_ppem")
+    var xPpem:cpp.UInt16;
+    @:native("y_ppem")
+    var yPpem:cpp.UInt16;
 
-    public var x_scale:cpp.Int64;
-    public var y_scale:cpp.Int64;
+    @:native("x_scale")
+    var xScale:cpp.UInt64;
+    @:native("y_scale")
+    var yScale:cpp.UInt64;
 
-    public var ascender:cpp.Int64;
-    public var descender:cpp.Int64;
-    public var height:cpp.Int64;
-    public var max_advance:cpp.Int64;
+    @:native("ascender")
+    var ascender:cpp.Int64;
+    @:native("descender")
+    var descender:cpp.Int64;
+    @:native("height")
+    var height:cpp.Int64;
+    @:native("max_advance")
+    var maxAdvance:cpp.Int64;
 }
 
 @:include("freetype/fttypes.h")
 @:native("FT_Size_Internal")
-@:structAccess
 extern class FreetypeSizeInternal {}
 
-@:include("freetype/fttypes.h")
+@:include("freetype/freetype.h")
 @:native("FT_Size")
-@:structAccess
 extern class FreetypeSize {
-    public var face:FreetypeFace;
-    public var generic:FreetypeGeneric;
-    public var metrics:FreetypeSizeMetrics;
-    public var internal:FreetypeSizeInternal;
+    @:native("face")
+    var face:FreetypeFace;
+    @:native("generic")
+    var generic:FreetypeGeneric;
+    @:native("metrics")
+    var metrics:FreetypeSizeMetrics;
+    @:native("internal")
+    var internal:FreetypeSizeInternal;
 }
 
 @:include("freetype/freetype.h")
 @:native("FT_Face")
-@:structAccess
 extern class FreetypeFace {
-    public var num_faces:cpp.Int64;
-    public var face_index:cpp.Int64;
+    @:native("num_faces")
+    var numFaces:cpp.Int64;
+    @:native("face_index")
+    var faceIndex:cpp.Int64;
 
-    public var face_flags:cpp.Int64;
-    public var style_flags:cpp.Int64;
+    @:native("face_flags")
+    var faceFlags:cpp.Int64;
+    @:native("style_flags")
+    var styleFlags:cpp.Int64;
 
-    public var num_glyphs:cpp.Int64;
+    @:native("num_glyphs")
+    var numGlyphs:cpp.Int64;
 
-    public var family_name:Star<cpp.Char>;
-    public var style_name:Star<cpp.Char>;
+    @:native("family_name")
+    var familyName:Star<cpp.Char>;
+    @:native("style_name")
+    var styleName:Star<cpp.Char>;
 
-    public var num_fixed_sizes:Int;
-    public var available_sizes:cpp.Star<FreetypeBitmapSize>;
+    @:native("num_fixed_sizes")
+    var numFixedSizes:Int;
+    @:native("available_sizes")
+    var availableAizes:cpp.Star<FreetypeBitmapSize>;
 
-    public var num_charmaps:Int;
-    public var charmaps:cpp.Star<FreetypeCharMap>;
+    @:native("num_charmaps")
+    var numCharmaps:Int;
+    @:native("charmaps")
+    var charmaps:cpp.Star<FreetypeCharMap>;
 
-    public var generic:FreetypeGeneric;
+    @:native("generic")
+    var generic:FreetypeGeneric;
 
-    public var bbox:FreetypeBBox;
+    @:native("bbox")
+    var bbox:FreetypeBBox;
 
-    public var units_per_EM:cpp.UInt16;
-    public var ascender:cpp.Int16;
-    public var descender:cpp.Int16;
-    public var height:cpp.Int16;
+    @:native("units_per_EM")
+    var unitsPerEM:cpp.UInt16;
+    @:native("ascender")
+    var ascender:cpp.Int16;
+    @:native("descender")
+    var descender:cpp.Int16;
+    @:native("height")
+    var height:cpp.Int16;
 
-    public var max_advance_width:cpp.Int16;
-    public var max_advance_height:cpp.Int16;
+    @:native("max_advance_width")
+    var maxAdvanceWidth:cpp.Int16;
+    @:native("max_advance_height")
+    var maxAdvanceHeight:cpp.Int16;
 
-    public var underline_position:cpp.Int16;
-    public var underline_thickness:cpp.Int16;
+    @:native("underline_position")
+    var underlinePosition:cpp.Int16;
+    @:native("underline_thickness")
+    var underlineThickness:cpp.Int16;
 
-    public var glyph:FreetypeGlyphSlot;
-    public var size:FreetypeSize;
-    public var charmap:FreetypeCharMap;
+    @:native("glyph")
+    var glyph:FreetypeGlyphSlot;
+    @:native("size")
+    var size:FreetypeSize;
+    @:native("charmap")
+    var charmap:FreetypeCharMap;
 }
 
 @:include("freetype/freetype.h")
 @:native("FT_Glyph_Metrics")
-@:structAccess
 extern class FreetypeGlyphMetrics {
-    public var width:cpp.UInt64;
-    public var height:cpp.UInt64;
+    @:native("width")
+    var width:cpp.UInt64;
+    @:native("height")
+    var height:cpp.UInt64;
 
-    public var horiBearingX:cpp.UInt64;
-    public var horiBearingY:cpp.UInt64;
-    public var horiAdvance:cpp.UInt64;
+    @:native("horiBearingX")
+    var horiBearingX:cpp.UInt64;
+    @:native("horiBearingY")
+    var horiBearingY:cpp.UInt64;
+    @:native("horiAdvance")
+    var horiAdvance:cpp.UInt64;
 
-    public var vertBearingX:cpp.UInt64;
-    public var vertBearingY:cpp.UInt64;
-    public var vertAdvance:cpp.UInt64;
+    @:native("vertBearingX")
+    var vertBearingX:cpp.UInt64;
+    @:native("vertBearingY")
+    var vertBearingY:cpp.UInt64;
+    @:native("vertAdvance")
+    var vertAdvance:cpp.UInt64;
 }
 
-@:include("freetype/freetype.h")
+@:include("freetype/ftimage.h")
 @:native("FT_Glyph_Format")
-enum FreetypeGlyphFormat {
-    @:extern("FT_GLYPH_FORMAT_NONE")
-    NONE;
-    @:extern("FT_GLYPH_FORMAT_COMPOSITE")
-    COMPOSITE;
-    @:extern("FT_GLYPH_FORMAT_BITMAP")
-    BITMAP;
-    @:extern("FT_GLYPH_FORMAT_OUTLINE")
-    OUTLINE;
-    @:extern("FT_GLYPH_FORMAT_PLOTTER")
-    PLOTTER;
-    @:extern("FT_GLYPH_FORMAT_SVG")
-    SVG;
+extern enum abstract FreetypeGlyphFormat(cpp.UInt32) {
+    @:native("FT_GLYPH_FORMAT_NONE")
+    var NONE;
+    @:native("FT_GLYPH_FORMAT_COMPOSITE")
+    var COMPOSITE;
+    @:native("FT_GLYPH_FORMAT_BITMAP")
+    var BITMAP;
+    @:native("FT_GLYPH_FORMAT_OUTLINE")
+    var OUTLINE;
+    @:native("FT_GLYPH_FORMAT_PLOTTER")
+    var PLOTTER;
+    @:native("FT_GLYPH_FORMAT_SVG")
+    var SVG;
 }
 
-@:include("freetype/freetype.h")
+@:include("freetype/ftimage.h")
 @:native("FT_Outline")
-@:structAccess
 extern class FreetypeOutline {
-    public var n_contours:cpp.Int16;
-    public var n_points:cpp.Int16;
+    @:native("n_contours")
+    var numContours:cpp.Int16;
+    @:native("n_points")
+    var numPoints:cpp.Int16;
 
-    public var points:cpp.Star<FreetypeVector>;
-    public var tags:cpp.CastCharStar;
-    public var contours:cpp.Star<cpp.Int16>;
+    @:native("points")
+    var points:cpp.Star<FreetypeVector>;
+    @:native("tags")
+    var tags:cpp.CastCharStar;
+    @:native("contours")
+    var contours:cpp.Star<cpp.Int16>;
 
-    public var flags:Int;
+    @:native("flags")
+    var flags:Int;
 }
 
 @:include("freetype/freetype.h")
 @:native("FT_SubGlyph")
-@:structAccess
 extern class FreetypeSubGlyph {}
 
 @:include("freetype/freetype.h")
 @:native("FT_Slot_Internal")
-@:structAccess
 extern class FreetypeSlotInternal {}
 
 @:include("freetype/freetype.h")
 @:native("FT_GlyphSlot")
-@:structAccess
 extern class FreetypeGlyphSlot {
-    public var library:FreetypeLib;
-    public var face:FreetypeFace;
-    public var next:FreetypeGlyphSlot;
-    public var glyphIndex:cpp.UInt32;
-    public var generic:FreetypeGeneric;
+    @:native("library")
+    var library:FreetypeLib;
+    @:native("face")
+    var face:FreetypeFace;
+    @:native("next")
+    var next:FreetypeGlyphSlot;
+    @:native("glyph_index")
+    var glyphIndex:cpp.UInt32;
+    @:native("generic")
+    var generic:FreetypeGeneric;
 
-    public var metrics:FreetypeGlyphMetrics;
-    public var linearHoriAdvance:cpp.UInt64;
-    public var linearVertAdvance:cpp.UInt64;
-    public var advance:FreetypeVector;
+    @:native("metrics")
+    var metrics:FreetypeGlyphMetrics;
+    @:native("linearHoriAdvance")
+    var linearHoriAdvance:cpp.UInt64;
+    @:native("linearVertAdvance")
+    var linearVertAdvance:cpp.UInt64;
+    @:native("advance")
+    var advance:FreetypeVector;
 
-    public var format:FreetypeGlyphFormat;
+    @:native("format")
+    var format:FreetypeGlyphFormat;
 
-    public var bitmap:FreetypeBitmap;
-    public var bitmap_left:Int;
-    public var bitmap_right:Int;
+    @:native("bitmap")
+    var bitmap:FreetypeBitmap;
+    @:native("bitmap_left")
+    var bitmapLeft:Int;
+    @:native("bitmap_right")
+    var bitmapRight:Int;
 
-    public var outline:FreetypeOutline;
+    @:native("outline")
+    var outline:FreetypeOutline;
 
-    public var num_subglyphs:cpp.UInt32;
-    public var subglyphs:FreetypeSubGlyph;
+    @:native("num_subglyphs")
+    var numSubglyphs:cpp.UInt32;
+    @:native("subglyphs")
+    var subglyphs:FreetypeSubGlyph;
 
-    public var control_data:cpp.Star<cpp.Void>;
-    public var control_len:cpp.Int64;
+    @:native("control_data")
+    var controlData:cpp.Star<cpp.Void>;
+    @:native("control_len")
+    var controlLength:cpp.Int64;
 
-    public var lsb_delta:cpp.Int64;
-    public var rsb_delta:cpp.Int64;
+    @:native("lsb_delta")
+    var lsbDelta:cpp.Int64;
+    @:native("rsb_delta")
+    var rsbDelta:cpp.Int64;
 
-    public var other:cpp.Star<cpp.Void>;
+    @:native("other")
+    var other:cpp.Star<cpp.Void>;
 
-    public var internal:FreetypeSlotInternal;
+    @:native("internal")
+    var internal:FreetypeSlotInternal;
 }
 
 @:include("freetype/freetype.h")
-@:native("FT_Size_Request_Type_")
-enum SizeRequestType {
-    @:extern("FT_SIZE_REQUEST_TYPE_NOMINAL")
-    NOMINAL;
-    @:extern("FT_SIZE_REQUEST_TYPE_REAL_DIM")
-    REAL_DIM;
-    @:extern("FT_SIZE_REQUEST_TYPE_BBOX")
-    BBOX;
-    @:extern("FT_SIZE_REQUEST_TYPE_CELL")
-    CELL;
-    @:extern("FT_SIZE_REQUEST_TYPE_SCALES")
-    SCALES;
-    @:extern("FT_SIZE_REQUEST_TYPE_MAX")
-    MAX;
+@:native("FT_Size_Request_Type")
+extern enum abstract SizeRequestType(cpp.UInt32) {
+    @:native("FT_SIZE_REQUEST_TYPE_NOMINAL")
+    var NOMINAL;
+    @:native("FT_SIZE_REQUEST_TYPE_REAL_DIM")
+    var REAL_DIM;
+    @:native("FT_SIZE_REQUEST_TYPE_BBOX")
+    var BBOX;
+    @:native("FT_SIZE_REQUEST_TYPE_CELL")
+    var CELL;
+    @:native("FT_SIZE_REQUEST_TYPE_SCALES")
+    var SCALES;
+    @:native("FT_SIZE_REQUEST_TYPE_MAX")
+    var MAX;
 }
 
 @:include("freetype/freetype.h")
 @:native("FT_Size_Request")
-@:structAccess
-extern class FreetypeSizeRequest {}
+extern class FreetypeSizeRequest {
+    @:native("type")
+    var type:SizeRequestType;
+    @:native("width")
+    var width:cpp.Int64;
+    @:native("height")
+    var height:cpp.Int64;
+    @:native("horiResolution")
+    var horiResolution:cpp.UInt32;
+    @:native("vertResolution")
+    var vertResolution:cpp.UInt32;
+}
 
 @:include("freetype/freetype.h")
 @:native("FT_Render_Mode")
-enum FtRenderMode {
-    @:extern("FT_RENDER_MODE_NORMAL")
-    NORMAL;
-    @:extern("FT_RENDER_MODE_LIGHT")
-    LIGHT;
-    @:extern("FT_RENDER_MODE_MONO")
-    MONO;
-    @:extern("FT_RENDER_MODE_LCD")
-    LCD;
-    @:extern("FT_RENDER_MODE_LCD_V")
-    LCD_V;
-    @:extern("FT_RENDER_MODE_SDF")
-    SDF;
-    @:extern("FT_RENDER_MODE_MAX")
-    MAX;
+extern enum abstract FreetypeRenderMode(cpp.UInt32) {
+    @:native("FT_RENDER_MODE_NORMAL")
+    var NORMAL;
+    @:native("FT_RENDER_MODE_LIGHT")
+    var LIGHT;
+    @:native("FT_RENDER_MODE_MONO")
+    var MONO;
+    @:native("FT_RENDER_MODE_LCD")
+    var LCD;
+    @:native("FT_RENDER_MODE_LCD_V")
+    var LCD_V;
+    @:native("FT_RENDER_MODE_SDF")
+    var SDF;
+    @:native("FT_RENDER_MODE_MAX")
+    var MAX;
 }
 
 @:include("freetype/freetype.h")
 @:native("FT_CharMap")
-@:structAccess
-extern class FTCharMap {
-    public var face:FreetypeFace;
-    // public var encoding:FreetypeEncoding;
-    public var platformID:cpp.UInt16;
-    public var encodingID:cpp.UInt16;
+extern class FreetypeCharMap {
+    @:native("face")
+    var face:FreetypeFace;
+    // @:native("encoding")
+    // var encoding:FreetypeEncoding;
+    @:native("platformID")
+    var platformID:cpp.UInt16;
+    @:native("encodingID")
+    var encodingID:cpp.UInt16;
 }
-typedef FreetypeCharMap = cpp.RawPointer<FTCharMap>;
 
 @:include("freetype/freetype.h")
 @:native("FT_Parameter")
-@:structAccess
 extern class FreetypeParameter {
-    public var tag:cpp.UInt64;
-    public var data:Pointer<cpp.Void>;
+    @:native("tag")
+    var tag:cpp.UInt64;
+    @:native("data")
+    var data:Pointer<cpp.Void>;
 }
 
 @:include("freetype/freetype.h")
 extern class Freetype {
-    @:native("FT_Init_Freetype")
+    @:native("FT_Init_FreeType")
     static function init(lib:Pointer<FreetypeLib>):FTErr;
 
-    @:native("FT_Done_Freetype")
+    @:native("FT_Done_FreeType")
     static function done(lib:FreetypeLib):FTErr;
 
     @:native("FT_New_Face")
@@ -348,7 +440,7 @@ extern class Freetype {
     static function getTransform(face:FreetypeFace, matrix:Pointer<FreetypeMatrix>, delta:Pointer<FreetypeVector>):Void;
 
     @:native("FT_Render_Glyph")
-    static function renderGlpyh(slot:FreetypeGlyphSlot, renderMode:FtRenderMode):FTErr;
+    static function renderGlpyh(slot:FreetypeGlyphSlot, renderMode:FreetypeRenderMode):FTErr;
 
     @:native("FT_Get_Kerning")
     static function getKerning(face:FreetypeFace, leftGlyph:cpp.UInt32, rightGlyph:cpp.UInt32, kernMode:cpp.UInt32, kerning:Pointer<FreetypeVector>):FTErr;
