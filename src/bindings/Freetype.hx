@@ -4,6 +4,7 @@ import cpp.Star;
 import cpp.ConstStar;
 import cpp.ConstCharStar;
 import cpp.Pointer;
+import cpp.RawPointer;
 
 typedef FTErr = Int;
 
@@ -12,8 +13,10 @@ typedef FTErr = Int;
 extern class FreetypeGeneric {}
 
 @:include("freetype/freetype.h")
-@:native("FT_Library")
-extern class FreetypeLib {}
+@:native("FT_LibraryRec_")
+extern class FreetypeLibRec {}
+
+typedef FreetypeLib = RawPointer<FreetypeLibRec>;
 
 @:include("freetype/ftimage.h")
 @:native("FT_Vector")
@@ -52,6 +55,7 @@ extern class FreetypeBBox {
 
 @:include("freetype/ftimage.h")
 @:native("FT_Bitmap")
+@:structAccess
 extern class FreetypeBitmap {
     @:native("rows")
     var rows:cpp.UInt32;
@@ -129,8 +133,9 @@ extern class FreetypeSize {
 }
 
 @:include("freetype/freetype.h")
-@:native("FT_Face")
-extern class FreetypeFace {
+@:native("FT_FaceRec_")
+@:structAccess
+extern class FreetypeFaceRec {
     @:native("num_faces")
     var numFaces:cpp.Int64;
     @:native("face_index")
@@ -191,6 +196,8 @@ extern class FreetypeFace {
     @:native("charmap")
     var charmap:FreetypeCharMap;
 }
+
+typedef FreetypeFace = RawPointer<FreetypeFaceRec>;
 
 @:include("freetype/freetype.h")
 @:native("FT_Glyph_Metrics")
