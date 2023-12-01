@@ -81,7 +81,7 @@ class Sprite {
 
 	private function prepareShaderVars(anchorX:Float, anchorY:Float):Void {
 		shader.transform.reset(1.0);
-		shader.transform.translate([dynamicOffset.x / Math.abs(width), dynamicOffset.y / Math.abs(height), 0]);
+		shader.transform.translate([dynamicOffset.x / texture.width, dynamicOffset.y / texture.height, 0]);
 		if (rotation != 0)
 			shader.transform.rotate(_sinMult, _cosMult, [0, 0, 1]);
 		shader.transform.scale([width, height, 1]);

@@ -4,12 +4,14 @@ import cpp.Pointer;
 import cpp.Callable;
 import bindings.Glad;
 import bindings.Glfw;
+import bindings.Freetype;
 import math.Matrix4x4;
 import blueprint.Scene;
 import blueprint.objects.Sprite;
 import blueprint.graphics.Texture;
 import blueprint.graphics.Shader;
 import blueprint.graphics.Window;
+import blueprint.textData.Font;
 import blueprint.sound.Mixer;
 
 using StringTools;
@@ -18,7 +20,7 @@ class Game {
 	public static var projection:Matrix4x4;
 
 	public static var currentScene:Scene;
-    private static var queuedSceneChange:Class<Scene> = null;
+	private static var queuedSceneChange:Class<Scene> = null;
 
 	public static var elapsed:Float;
 
@@ -42,7 +44,7 @@ class Game {
 			return;
 		}
 
-		projection = Matrix4x4.ortho(0.0, width, 0, height, -1.0, 1.0);
+		projection = Matrix4x4.ortho(0.0, width, height, 0.0, -1.0, 1.0);
 		Sprite.defaultShader = new Shader("#version 330 core
             out vec4 FragColor;
             in vec2 TexCoord;
@@ -71,6 +73,7 @@ class Game {
             }");
 
 		Sprite.defaultTexture = new Texture("missingImage.png");
+		Freetype.init(Pointer.addressOf(Font.library));
 
 		currentScene = Type.createInstance(startScene, []);
 
@@ -81,12 +84,13 @@ class Game {
 		window.destroy();
 		mixer.destroy();
 		Glfw.terminate();
+		Freetype.done(Font.library);
 	}
 
 	private static var lastTime:Float = 0;
 
 	private function update():Void {
-        if (queuedSceneChange != null) {
+		if (queuedSceneChange != null) {
             currentScene = Type.createInstance(queuedSceneChange, []);
             queuedSceneChange = null;
         }

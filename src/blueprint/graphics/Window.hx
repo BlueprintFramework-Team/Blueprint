@@ -58,20 +58,15 @@ class Window {
 
 	public function initBuffers() {
         var vertices:Array<cpp.Float32> = [
-            // position,  texture coords
-            0.5, 0.5, 0.0, 1.0,
-            0.0, 0.5, -0.5, 0.0,
-            1.0, 1.0, -0.5, -0.5,
-            0.0, 0.0, 1.0, -0.5,
-            0.5, 0.0, 0.0, 0.0,
+            // position,		texture coords
+            0.5, -0.5, 0.0,		1.0, 0.0,
+			0.5, 0.5, 0.0,		1.0, 1.0,
+			-0.5, 0.5, 0.0,		0.0, 1.0,
+			-0.5, -0.5, 0.0,	0.0, 0.0,
         ];
 		var indices:Array<Int> = [
-			0,
-			1,
-			3, // first Triangle
-			1,
-			2,
-			3 // second Triangle
+			0, 1, 3, // first Triangle
+			1, 2, 3 // second Triangle
 		];
 
 		Glad.genVertexArrays(1, Pointer.addressOf(VAO));
