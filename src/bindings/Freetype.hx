@@ -296,8 +296,8 @@ extern class FreetypeGlyphSlot {
     var bitmap:FreetypeBitmap;
     @:native("bitmap_left")
     var bitmapLeft:Int;
-    @:native("bitmap_right")
-    var bitmapRight:Int;
+    @:native("bitmap_top")
+    var bitmapTop:Int;
 
     @:native("outline")
     var outline:FreetypeOutline;
