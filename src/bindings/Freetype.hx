@@ -20,6 +20,7 @@ typedef FreetypeLib = RawPointer<FreetypeLibRec>;
 
 @:include("freetype/ftimage.h")
 @:native("FT_Vector")
+@:structAccess
 extern class FreetypeVector {
     @:native("x")
     var x:cpp.UInt64;
