@@ -1,10 +1,12 @@
 package blueprint.graphics;
 
-import cpp.ConstPointer;
 import cpp.Pointer;
+import sys.FileSystem;
+
 import bindings.Glad;
 import bindings.StbImage;
-import sys.FileSystem;
+
+import blueprint.objects.Sprite;
 
 class Texture {
 	public var ID:cpp.UInt32;
@@ -55,16 +57,19 @@ class Texture {
 		return this;
 	}
 
-	public static function getImageTex(filePath:String) {
+	public static function getCachedTex(filePath:String) {
 		if (!imageCache.exists(filePath)) {
 			var tex = new Texture(filePath);
 			if (!tex.loaded) {
-				Glad.deleteTextures(1, Pointer.addressOf(tex.ID));
-				tex = null;
+				tex.destroy();
+				tex = Sprite.defaultTexture;
 			}
 			imageCache.set(filePath, tex);
 		}
 
 		return imageCache[filePath];
 	}
+
+	@:deprecated('"getImageTex" is now deprecated! Please use "getCachedTex" instead.')
+	public static function getImageTex(filePath:String) {return getCachedTex(filePath);}
 }

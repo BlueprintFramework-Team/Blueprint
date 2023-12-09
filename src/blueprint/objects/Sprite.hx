@@ -1,11 +1,12 @@
 package blueprint.objects;
 
 import bindings.Glad;
+
 import math.MathExtras;
 import math.Vector2;
 import math.Vector4;
-import math.Matrix4x4;
 import math.Rect;
+
 import blueprint.graphics.Texture;
 import blueprint.graphics.Shader;
 
@@ -87,7 +88,7 @@ class Sprite {
 		shader.transform.scale([width, height, 1]);
 		shader.transform.translate([
 			position.x + Math.abs(width) * anchorX,
-			position.y + Math.abs(height) * -anchorY,
+			position.y + Math.abs(height) * anchorY,
 			0
 		]);
 		var transLoc:Int = Glad.getUniformLocation(shader.ID, "transform");

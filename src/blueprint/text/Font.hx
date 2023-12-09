@@ -1,14 +1,13 @@
-package blueprint.textData;
+package blueprint.text;
 
-import blueprint.objects.Sprite;
-import bindings.Glad;
-import cpp.Stdio;
-import blueprint.graphics.Texture;
 import cpp.Pointer;
 import sys.FileSystem;
+
+import bindings.Glad;
 import bindings.Freetype;
 
-// NOTE: THIS IS AT A VERY EARLY STAGE RIGHT NOW. DO NOT ATTEMPT TO USE.
+import blueprint.objects.Sprite;
+import blueprint.graphics.Texture;
 
 @:structInit class FontTexture {
 	public var texture:Texture;
@@ -19,13 +18,17 @@ import bindings.Freetype;
 
 class Font {
 	@:allow(blueprint.Game) static var library:FreetypeLib;
+	static var fontCache:Map<String, Font> = [];
 
+	public var loaded:Bool = true;
 	var face:FreetypeFace;
 	var sizes:Map<Int, Map<Int, FontTexture>> = [];
 
 	public function new(path:String) {
 		var daPath = FileSystem.absolutePath(path);
-		Freetype.newFace(library, daPath, 0, Pointer.addressOf(face));
+		loaded = Freetype.newFace(library, daPath, 0, Pointer.addressOf(face)) == 0;
+		if (!loaded)
+			Sys.println('FAILED TO LOAD FREETYPE FONT "$path"');
 	}
 
 	public function preloadSize(size:Int) {
@@ -34,6 +37,8 @@ class Font {
 		Glad.pixelStorei(Glad.UNPACK_ALIGNMENT, 1);
 		Freetype.setPixelSizes(face, 0, size);
 		for (i in 32...127) {
+			if (sizes[size].exists(i)) continue;
+
 			if (Freetype.loadChar(face, cast i, Freetype.LOAD_RENDER) != 0) {
 				Sys.println('FAILED TO LOAD FREETYPE LETTER "${String.fromCharCode(i)}"');
 				sizes[size].set(i, {
@@ -130,5 +135,16 @@ class Font {
 				tex.texture.destroy();
 		}
 		sizes = [];
+	}
+
+	public static function getCachedFont(filePath:String) {
+		if (!fontCache.exists(filePath)) {
+			var font = new Font(filePath);
+			if (!font.loaded) 
+				font.destroy();
+			fontCache.set(filePath, font);
+		}
+
+		return fontCache[filePath];
 	}
 }

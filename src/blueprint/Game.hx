@@ -2,19 +2,20 @@ package blueprint;
 
 import cpp.Pointer;
 import cpp.Callable;
+
 import bindings.Glad;
 import bindings.Glfw;
 import bindings.Freetype;
+
 import math.Matrix4x4;
+
 import blueprint.Scene;
 import blueprint.objects.Sprite;
 import blueprint.graphics.Texture;
 import blueprint.graphics.Shader;
 import blueprint.graphics.Window;
-import blueprint.textData.Font;
 import blueprint.sound.Mixer;
-
-using StringTools;
+import blueprint.text.Font;
 
 class Game {
 	public static var projection:Matrix4x4;
@@ -46,31 +47,31 @@ class Game {
 
 		projection = Matrix4x4.ortho(0.0, width, height, 0.0, -1.0, 1.0);
 		Sprite.defaultShader = new Shader("#version 330 core
-            out vec4 FragColor;
-            in vec2 TexCoord;
+			out vec4 FragColor;
+			in vec2 TexCoord;
 
-            uniform vec4 tint;
-            uniform sampler2D bitmap;
+			uniform vec4 tint;
+			uniform sampler2D bitmap;
 
-            void main() {
-                FragColor = texture(bitmap, TexCoord) * tint;
-            }", "#version 330 core
-            layout (location = 0) in vec3 vertexPos;
-            layout (location = 1) in vec2 texPos;
+			void main() {
+				FragColor = texture(bitmap, TexCoord) * tint;
+			}", "#version 330 core
+			layout (location = 0) in vec3 vertexPos;
+			layout (location = 1) in vec2 texPos;
 
-            uniform mat4 projection;
-            uniform mat4 transform;
-            uniform vec4 sourceRect;
+			uniform mat4 projection;
+			uniform mat4 transform;
+			uniform vec4 sourceRect;
 
-            out vec2 TexCoord;
+			out vec2 TexCoord;
 
-            void main() {
-                gl_Position = projection * transform * vec4(vertexPos, 1.0);
-                TexCoord = vec2(
-                    mix(sourceRect.x, sourceRect.z, texPos.x),
-                    mix(sourceRect.y, sourceRect.w, texPos.y)
-                );
-            }");
+			void main() {
+				gl_Position = projection * transform * vec4(vertexPos, 1.0);
+				TexCoord = vec2(
+					mix(sourceRect.x, sourceRect.z, texPos.x),
+					mix(sourceRect.y, sourceRect.w, texPos.y)
+				);
+			}");
 
 		Sprite.defaultTexture = new Texture("missingImage.png");
 		Freetype.init(Pointer.addressOf(Font.library));
@@ -91,9 +92,9 @@ class Game {
 
 	private function update():Void {
 		if (queuedSceneChange != null) {
-            currentScene = Type.createInstance(queuedSceneChange, []);
-            queuedSceneChange = null;
-        }
+			currentScene = Type.createInstance(queuedSceneChange, []);
+			queuedSceneChange = null;
+		}
 
 		var runTime:Float = Glfw.getTime();
 		elapsed = runTime - lastTime;
@@ -116,7 +117,7 @@ class Game {
 		Glfw.setWindowShouldClose(window.cWindow, 0);
 	}
 
-    public static function changeSceneTo(scene:Class<Scene>) {
-        queuedSceneChange = scene;
-    }
+	public static function changeSceneTo(scene:Class<Scene>) {
+		queuedSceneChange = scene;
+	}
 }

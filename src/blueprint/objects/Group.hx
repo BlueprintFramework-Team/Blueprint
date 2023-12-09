@@ -1,8 +1,10 @@
 package blueprint.objects;
 
 import bindings.Glad;
+
 import math.Vector2;
 import math.MathExtras;
+
 import blueprint.objects.Sprite;
 
 class Group extends Sprite {
@@ -59,16 +61,21 @@ class Group extends Sprite {
 		rotPosition *= scale;
 
 		for (object in members) {
+			final ogCos = object._cosMult;
+			final ogSin = object._sinMult;
+			
 			object.position += rotPosition;
 			object.scale *= scale;
-			object.rotation += rotation;
+			object._sinMult = (object._sinMult + _sinMult) % 1;
+			object._cosMult = (object._cosMult + _cosMult) % 1;
 			object.tint *= tint;
 
 			object.draw();
 
 			object.position -= rotPosition;
 			object.scale /= scale;
-			object.rotation -= rotation;
+			object._sinMult = ogSin;
+			object._cosMult = ogCos;
 			object.tint /= tint;
 		}
 	}

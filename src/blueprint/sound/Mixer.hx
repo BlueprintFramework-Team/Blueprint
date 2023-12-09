@@ -1,8 +1,9 @@
 package blueprint.sound;
 
-import math.Vector3;
 import bindings.AL;
 import bindings.ALC;
+
+import math.Vector3;
 
 // WARNING: This class may not work with multiple instances, so I'd recommend only using one for now.
 // - Midnight

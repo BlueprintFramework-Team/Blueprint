@@ -1,8 +1,10 @@
 package blueprint.graphics;
 
 import cpp.Pointer;
+
 import bindings.Glfw;
 import bindings.Glad;
+
 import math.Vector4;
 import math.Vector2;
 
@@ -27,10 +29,6 @@ class Window {
 	public function new(width:Int, height:Int, name:String) {
 		this.width = width;
 		this.height = height;
-
-		Glfw.windowHint(Glfw.CONTEXT_VERSION_MAJOR, 3);
-		Glfw.windowHint(Glfw.CONTEXT_VERSION_MINOR, 3);
-		Glfw.windowHint(Glfw.OPENGL_PROFILE, Glfw.OPENGL_CORE_PROFILE);
 
 		cWindow = Glfw.createWindow(width, height, name, null, null);
 		if (cWindow == null) {
@@ -57,13 +55,13 @@ class Window {
 	}
 
 	public function initBuffers() {
-        var vertices:Array<cpp.Float32> = [
-            // position,		texture coords
-            0.5, -0.5, 0.0,		1.0, 0.0,
+		var vertices:Array<cpp.Float32> = [
+			// position,		texture coords
+			0.5, -0.5, 0.0,		1.0, 0.0,
 			0.5, 0.5, 0.0,		1.0, 1.0,
 			-0.5, 0.5, 0.0,		0.0, 1.0,
 			-0.5, -0.5, 0.0,	0.0, 0.0,
-        ];
+		];
 		var indices:Array<Int> = [
 			0, 1, 3, // first Triangle
 			1, 2, 3 // second Triangle
