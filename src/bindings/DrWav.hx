@@ -7,7 +7,7 @@ package bindings;
 extern class DrWav {
 	@:native('drwav_open_file_and_read_pcm_frames_s16')
 	static function openFileAndReadPCMFramesShort16(fileName:cpp.ConstCharStar, channels:cpp.Pointer<cpp.UInt32>, sampleRate:cpp.Pointer<cpp.UInt32>,
-		totalFrameCount:cpp.Pointer<cpp.UInt64>, allocationCallbacks:cpp.ConstPointer<DrWavAllocationCallbacks>):cpp.Pointer<cpp.Int16>;
+		totalFrameCount:cpp.Pointer<cpp.UInt64>, allocationCallbacks:cpp.ConstPointer<DrWavAllocationCallbacks>):cpp.Star<cpp.Int16>;
 
 	@:native('drwav_free')
 	static function free(data:cpp.Pointer<cpp.Void>, allocationCallbacks:cpp.ConstPointer<DrWavAllocationCallbacks>):Void;

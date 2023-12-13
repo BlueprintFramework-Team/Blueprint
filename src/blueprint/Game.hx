@@ -78,6 +78,8 @@ class Game {
 
 		currentScene = Type.createInstance(startScene, []);
 
+		Glfw.setKeyCallback(window.cWindow, Callable.fromStaticFunction(keyInput));
+
 		while (!Glfw.windowShouldClose(window.cWindow)) {
 			update();
 		}
@@ -107,6 +109,14 @@ class Game {
 
 		Glfw.swapBuffers(window.cWindow);
 		Glfw.pollEvents();
+	}
+
+	static function keyInput(window:GlfwWindow, key:Int, scancode:Int, action:Int, mods:Int) {
+		switch (action) {
+			case Glfw.PRESS: Game.currentScene.keyDown(key, scancode, mods);
+			case Glfw.REPEAT: Game.currentScene.keyRepeat(key, scancode, mods);
+			case Glfw.RELEASE: Game.currentScene.keyUp(key, scancode, mods);
+		}
 	}
 
 	public static function queueClose():Void {

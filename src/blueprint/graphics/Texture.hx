@@ -58,7 +58,7 @@ class Texture {
 	}
 
 	public static function getCachedTex(filePath:String) {
-		if (!imageCache.exists(filePath)) {
+		if (imageCache.get(filePath) == null) {
 			var tex = new Texture(filePath);
 			if (!tex.loaded) {
 				tex.destroy();

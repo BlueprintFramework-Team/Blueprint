@@ -140,8 +140,10 @@ class Font {
 	public static function getCachedFont(filePath:String) {
 		if (!fontCache.exists(filePath)) {
 			var font = new Font(filePath);
-			if (!font.loaded) 
+			if (!font.loaded)  {
 				font.destroy();
+				font = null;
+			}
 			fontCache.set(filePath, font);
 		}
 

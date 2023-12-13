@@ -22,12 +22,14 @@ class Text extends blueprint.objects.Sprite {
 
 		font = Font.getCachedFont(fontPath);
 		size = fontSize;
-		if (autoPreloadSizes)
+		if (autoPreloadSizes && font != null)
 			font.preloadSize(fontSize);
 		this.text = text;
 	}
 
 	override public function draw() {
+		if (font == null) return;
+
 		if (_queueTrig)
 			updateTrigValues();
 
