@@ -20,11 +20,15 @@ class Font {
 	@:allow(blueprint.Game) static var library:FreetypeLib;
 	static var fontCache:Map<String, Font> = [];
 
-	public var loaded:Bool = true;
+	var _cacheKey:Null<String>;
 	var face:FreetypeFace;
 	var sizes:Map<Int, Map<Int, FontTexture>> = [];
 
+	public var path:String;
+	public var loaded:Bool = true;
+	
 	public function new(path:String) {
+		this.path = path;
 		var daPath = FileSystem.absolutePath(path);
 		loaded = Freetype.newFace(library, daPath, 0, Pointer.addressOf(face)) == 0;
 		if (!loaded)
@@ -135,6 +139,9 @@ class Font {
 				tex.texture.destroy();
 		}
 		sizes = [];
+
+		if (_cacheKey != null)
+			fontCache.remove(_cacheKey);
 	}
 
 	public static function getCachedFont(filePath:String) {
@@ -143,7 +150,8 @@ class Font {
 			if (!font.loaded)  {
 				font.destroy();
 				font = null;
-			}
+			} else 
+				font._cacheKey = filePath;
 			fontCache.set(filePath, font);
 		}
 

@@ -10,6 +10,7 @@ import bindings.CppHelpers;
 class SoundData {
 	static var soundCache:Map<String, SoundData> = [];
 
+	var _cacheKey:Null<String>;
     public var path:String;
 	public var loaded:Bool = false;
 	public var buffer:cpp.UInt32 = 0;
@@ -72,15 +73,19 @@ class SoundData {
 
 	public function destroy() {
 		AL.deleteBuffers(1, cpp.Pointer.addressOf(buffer));
+
+		if (_cacheKey != null)
+			soundCache.remove(_cacheKey);
 	}
 
 	public static function getCachedSound(filePath:String) {
-		if (soundCache.get(filePath) == null) {
+		if (!soundCache.exists(filePath)) {
 			var data = new SoundData(filePath);
 			if (!data.loaded) {
 				data.destroy();
 				data = null;
-			}
+			} else
+				data._cacheKey = filePath;
 			soundCache.set(filePath, data);
 		}
 

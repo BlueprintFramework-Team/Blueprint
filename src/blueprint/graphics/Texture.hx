@@ -1,5 +1,6 @@
 package blueprint.graphics;
 
+import bindings.CppHelpers;
 import cpp.Pointer;
 import sys.FileSystem;
 
@@ -9,8 +10,11 @@ import bindings.StbImage;
 import blueprint.objects.Sprite;
 
 class Texture {
+	static var imageCache:Map<String, Texture> = [];
+
 	public var ID:cpp.UInt32;
 
+	var _cacheKey:Null<String>;
 	public var path:String;
 
 	public var width:Int;
@@ -18,21 +22,15 @@ class Texture {
 	public var numChannels:Int;
 	public var loaded:Bool = false;
 
-	static var imageCache:Map<String, Texture> = [];
-
 	public function new(?filePath:String) {
 		Glad.genTextures(1, Pointer.addressOf(ID));
 		Glad.bindTexture(Glad.TEXTURE_2D, ID);
 
 		if (filePath != null)
-			loadFromImage(filePath);
+			loadFromFile(filePath);
 	}
 
-	public function destroy() {
-		Glad.deleteTextures(1, Pointer.addressOf(ID));
-	}
-
-	public function loadFromImage(filePath:String):Texture {
+	public function loadFromFile(filePath:String) {
 		path = filePath;
 		Glad.bindTexture(Glad.TEXTURE_2D, ID);
 
@@ -57,13 +55,24 @@ class Texture {
 		return this;
 	}
 
+	@:deprecated('"loadFromImage" is now deprecated! Please use "loadFromFile" instead.')
+	public function loadFromImage(filePath:String) {return loadFromFile(filePath);}
+
+	public function destroy() {
+		Glad.deleteTextures(1, Pointer.addressOf(ID));
+
+		if (_cacheKey != null)
+			imageCache.remove(_cacheKey);
+	}
+
 	public static function getCachedTex(filePath:String) {
-		if (imageCache.get(filePath) == null) {
+		if (!imageCache.exists(filePath)) {
 			var tex = new Texture(filePath);
 			if (!tex.loaded) {
 				tex.destroy();
 				tex = Sprite.defaultTexture;
-			}
+			} else 
+				tex._cacheKey = filePath;
 			imageCache.set(filePath, tex);
 		}
 
