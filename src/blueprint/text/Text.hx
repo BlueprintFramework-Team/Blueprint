@@ -2,9 +2,10 @@ package blueprint.text;
 
 /**
  * TODO:
- *	- Fix Y Positioning
- *	- Fix Rotation
  *	- Allow Coloring
+ *	- Allow Field Widths
+ *	- Fix Rotation
+ *	- Fix Y Positioning
  */
 
 import bindings.Glad;
