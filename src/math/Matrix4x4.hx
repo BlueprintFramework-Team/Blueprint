@@ -238,6 +238,13 @@ abstract Matrix4x4(Array<Vector4>) from Array<Vector4> to Array<Vector4> {
         return this;
     }
 
+    /**
+     * Converts the matrix into a c array, mainly used for OpenGL Shaders.
+     * 
+     * NOTE: For proper memory management, please call `CppHelpers.free` when you are fully finished with the c array.
+     * 
+     * @return cpp.Star<cpp.Float32>
+     */
     public function toStar():cpp.Star<cpp.Float32> {
         untyped __cpp__("
             float* _cArray = (float*)malloc(sizeof(float) * 16);
@@ -247,7 +254,6 @@ abstract Matrix4x4(Array<Vector4>) from Array<Vector4> to Array<Vector4> {
                 _cArray[i * 4 + 2] = {2}->__get(i);
                 _cArray[i * 4 + 3] = {3}->__get(i);
             }", this[0], this[1], this[2], this[3]);
-        untyped __cpp__("free(_cArray)");
         return untyped __cpp__("_cArray");
     }
 

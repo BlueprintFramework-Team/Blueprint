@@ -170,13 +170,19 @@ abstract Vector3(Array<Float>) from Array<Float> to Array<Float> {
         set(vec.x, vec.y, vec.z);
     }
 
+    /**
+     * Converts the vector into a c array, mainly used for OpenGL Shaders.
+     * 
+     * NOTE: For proper memory management, please call `CppHelpers.free` when you are fully finished with the c array.
+     * 
+     * @return cpp.Star<cpp.Float32>
+     */
     public function toStar():cpp.Star<cpp.Float32> {
         untyped __cpp__("
             float* _cArray = (float*)malloc(sizeof(float) * 3);
             for (int i = 0; i < 3; i++) {
                 _cArray[i] = {0}->__get(i);
             }", this);
-        untyped __cpp__("free(_cArray)");
         return untyped __cpp__("_cArray");
     }
 

@@ -91,10 +91,12 @@ class Sprite {
 			position.y + Math.abs(height) * anchorY,
 			0
 		]);
-		var transLoc:Int = Glad.getUniformLocation(shader.ID, "transform");
-		Glad.uniformMatrix4fv(transLoc, 1, Glad.FALSE, shader.transform.toStar());
+		final transLoc:Int = Glad.getUniformLocation(shader.ID, "transform");
+		final transStar = shader.transform.toStar();
+		Glad.uniformMatrix4fv(transLoc, 1, Glad.FALSE, transStar);
+		untyped __cpp__("free({0})", transStar);
 
-		Glad.uniform4fv(Glad.getUniformLocation(shader.ID, "tint"), 1, tint.toStar());
+		Glad.uniform4f(Glad.getUniformLocation(shader.ID, "tint"), tint.x, tint.y, tint.z, tint.w);
 		Glad.uniform4f(Glad.getUniformLocation(shader.ID, "sourceRect"), sourceRect.x / texture.width, sourceRect.y / texture.height,
 			(sourceRect.x + (width / scale.x)) / texture.width, (sourceRect.y + (height / scale.y)) / texture.height);
 	}

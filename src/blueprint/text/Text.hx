@@ -34,7 +34,7 @@ class Text extends blueprint.objects.Sprite {
 			updateTrigValues();
 
 		Glad.useProgram(shader.ID);
-		Glad.uniform4fv(Glad.getUniformLocation(shader.ID, "tint"), 1, tint.toStar());
+		Glad.uniform4f(Glad.getUniformLocation(shader.ID, "tint"), tint.x, tint.y, tint.z, tint.w);
 		Glad.uniform4f(Glad.getUniformLocation(shader.ID, "sourceRect"), 0, 0, 1, 1);
 		final transLoc:Int = Glad.getUniformLocation(shader.ID, "transform");
 
@@ -70,7 +70,9 @@ class Text extends blueprint.objects.Sprite {
 				position.y + letterHeight * 0.5,
 				0
 			]);
-			Glad.uniformMatrix4fv(transLoc, 1, Glad.FALSE, shader.transform.toStar());
+			final transStar = shader.transform.toStar();
+			Glad.uniformMatrix4fv(transLoc, 1, Glad.FALSE, transStar);
+			untyped __cpp__("free({0})", transStar);
 
 			Glad.bindVertexArray(Game.window.VAO);
 			Glad.drawElements(Glad.TRIANGLES, 6, Glad.UNSIGNED_INT, untyped __cpp__('0'));

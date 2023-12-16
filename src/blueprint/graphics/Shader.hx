@@ -62,7 +62,9 @@ class Shader {
         Glad.useProgram(ID);
         Glad.uniform1i(Glad.getUniformLocation(ID, "shader"), 0);
 
-        var projectLoc = Glad.getUniformLocation(ID, "projection");
-        Glad.uniformMatrix4fv(projectLoc, 1, Glad.FALSE, Game.projection.toStar());
+        final projectLoc = Glad.getUniformLocation(ID, "projection");
+        final projectStar = Game.projection.toStar();
+        Glad.uniformMatrix4fv(projectLoc, 1, Glad.FALSE, projectStar);
+        untyped __cpp__("free({0})", projectStar);
     }
 }
