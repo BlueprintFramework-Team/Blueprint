@@ -22,8 +22,10 @@ class Sprite {
 	public var dynamicOffset:Vector2 = new Vector2(0, 0);
 
 	public var scale:Vector2 = new Vector2(1, 1);
-	public var width(get, null):Int;
-	public var height(get, null):Int;
+	public var width(get, null):Float;
+	public var height(get, null):Float;
+	public var sourceWidth(get, null):Float;
+	public var sourceHeight(get, null):Float;
 
 	public var rotation(default, set):Float = 0;
 
@@ -60,8 +62,8 @@ class Sprite {
 		if (offScreen())
 			return;
 
-		var anchorX:Float = 0.5 - anchor.x;
-		var anchorY:Float = 0.5 - anchor.y;
+		final anchorX:Float = 0.5 - anchor.x;
+		final anchorY:Float = 0.5 - anchor.y;
 
 		Glad.activeTexture(Glad.TEXTURE0);
 		Glad.bindTexture(Glad.TEXTURE_2D, texture.ID);
@@ -69,7 +71,7 @@ class Sprite {
 		Glad.texParameteri(Glad.TEXTURE_2D, Glad.TEXTURE_WRAP_S, horizontalWrap);
 		Glad.texParameteri(Glad.TEXTURE_2D, Glad.TEXTURE_WRAP_T, verticalWrap);
 
-		var filter = (antialiasing) ? Glad.LINEAR : Glad.NEAREST;
+		final filter = (antialiasing) ? Glad.LINEAR : Glad.NEAREST;
 		Glad.texParameteri(Glad.TEXTURE_2D, Glad.TEXTURE_MIN_FILTER, filter);
 		Glad.texParameteri(Glad.TEXTURE_2D, Glad.TEXTURE_MAG_FILTER, filter);
 
@@ -91,26 +93,31 @@ class Sprite {
 			position.y + Math.abs(height) * anchorY,
 			0
 		]);
+
 		final transLoc:Int = Glad.getUniformLocation(shader.ID, "transform");
 		final transStar = shader.transform.toStar();
 		Glad.uniformMatrix4fv(transLoc, 1, Glad.FALSE, transStar);
 		untyped __cpp__("free({0})", transStar);
 
 		Glad.uniform4f(Glad.getUniformLocation(shader.ID, "tint"), tint.x, tint.y, tint.z, tint.w);
-		Glad.uniform4f(Glad.getUniformLocation(shader.ID, "sourceRect"), sourceRect.x / texture.width, sourceRect.y / texture.height,
-			(sourceRect.x + (width / scale.x)) / texture.width, (sourceRect.y + (height / scale.y)) / texture.height);
+		Glad.uniform4f(Glad.getUniformLocation(shader.ID, "sourceRect"),
+			sourceRect.x / texture.width,
+			sourceRect.y / texture.height,
+			(sourceRect.x + sourceWidth) / texture.width,
+			(sourceRect.y + sourceHeight) / texture.height
+		);
 	}
 
 	function updateTrigValues() {
-		var radians = MathExtras.toRad(rotation);
+		final radians = MathExtras.toRad(rotation);
 		_cosMult = Math.cos(radians);
 		_sinMult = Math.sin(radians);
 		_queueTrig = false;
 	}
 
 	function offScreen():Bool {
-		var onScreenX:Bool = (position.x + width * anchor.x >= 0) && (position.x * (1 - anchor.x) < Game.window.width);
-		var onScreenY:Bool = (position.y + height * anchor.y >= 0) && (position.y * (1 - anchor.y) < Game.window.height);
+		final onScreenX:Bool = (position.x + width * anchor.x >= 0) && (position.x * (1 - anchor.x) < Game.window.width);
+		final onScreenY:Bool = (position.y + height * anchor.y >= 0) && (position.y * (1 - anchor.y) < Game.window.height);
 
 		return !(onScreenX && onScreenY);
 	}
@@ -120,14 +127,20 @@ class Sprite {
 		return rotation = newRot;
 	}
 
-	inline function get_width():Int {
-		var rectWidth = (sourceRect.width < 0) ? texture.width : sourceRect.width;
-		return Math.floor(rectWidth * scale.x);
+	inline function get_width():Float {
+		return sourceWidth * scale.x;
 	}
 
-	inline function get_height():Int {
-		var rectHeight = (sourceRect.height < 0) ? texture.height : sourceRect.height;
-		return Math.floor(rectHeight * scale.y);
+	inline function get_height():Float {
+		return sourceHeight * scale.y;
+	}
+
+	function get_sourceWidth():Float {
+		return (sourceRect.width < 0) ? texture.width : sourceRect.width;
+	}
+
+	function get_sourceHeight():Float {
+		return (sourceRect.height < 0) ? texture.height : sourceRect.height;
 	}
 
 	inline function get_shader():Shader {
