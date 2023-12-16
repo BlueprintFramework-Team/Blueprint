@@ -57,7 +57,7 @@ class Text extends blueprint.objects.Sprite {
 			Glad.texParameteri(Glad.TEXTURE_2D, Glad.TEXTURE_MAG_FILTER, filter);
 			
 			shader.transform.reset(1.0);
-			shader.transform.translate([(curX + letter.bearingX) / letter.texture.width, (curY - (letter.texture.height - letter.bearingY)) / letter.texture.height, 0]);
+			shader.transform.translate([(curX + letter.bearingX) / letter.texture.width, (curY + (letter.texture.height - letter.bearingY)) / letter.texture.height, 0]);
 			// final xMove = curX * _cosMult + curY * -_sinMult;
 			// final yMove = curX * _sinMult + curY * _cosMult;
 			if (rotation != 0)
@@ -67,7 +67,7 @@ class Text extends blueprint.objects.Sprite {
 			shader.transform.scale([letterWidth, letterHeight, 1]);
 			shader.transform.translate([
 				position.x + letterWidth * 0.5,
-				position.y + letterHeight * 0.5,
+				position.y + letterHeight * -0.5,
 				0
 			]);
 			final transStar = shader.transform.toStar();
