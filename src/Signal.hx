@@ -2,18 +2,18 @@ package;
 
 import haxe.Constraints.Function;
 
-class Signal<T> {
-    public var funcsToCall:Array<Function> = [];
+class Signal<T:Function> {
+    public var funcsToCall:Array<T> = [];
 
     public function new() {}
 
     public function emit(...params:Dynamic) {
-        var toRemove:Array<Int> = [];
+        var toRemove:Array<T> = [];
         var params:Array<Dynamic> = params.toArray();
 
-        for (i => func in funcsToCall) {
+        for (func in funcsToCall) {
             if (func == null) {
-                toRemove.push(i);
+                toRemove.push(func);
                 continue;
             }
 
@@ -21,17 +21,15 @@ class Signal<T> {
         }
 
         for (remove in toRemove)
-            funcsToCall.splice(remove, 1);
+            funcsToCall.remove(remove);
     }
 
-    public function add(func:Function, ?allowDups:Bool = false) {
-        if (funcsToCall.contains(func) && !allowDups)
-            return;
-
-        funcsToCall.push(func);
+    public function add(func:T, ?allowDups:Bool = false) {
+        if (!funcsToCall.contains(func) || allowDups)
+            funcsToCall.push(func);
     }
 
-    public function remove(func:Function) {
+    public function remove(func:T) {
         funcsToCall.remove(func);
     }
 }

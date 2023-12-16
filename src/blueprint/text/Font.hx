@@ -1,5 +1,10 @@
 package blueprint.text;
 
+/**
+ * TODO:
+ * 	- Fix Freetype.errorString returning `null`.
+ */
+
 import cpp.Pointer;
 import sys.FileSystem;
 
@@ -29,10 +34,12 @@ class Font {
 	
 	public function new(path:String) {
 		this.path = path;
-		var daPath = FileSystem.absolutePath(path);
-		loaded = Freetype.newFace(library, daPath, 0, Pointer.addressOf(face)) == 0;
+		final daPath = FileSystem.absolutePath(path);
+		final errCode = Freetype.newFace(library, daPath, 0, Pointer.addressOf(face));
+		loaded = errCode == 0;
 		if (!loaded)
-			Sys.println('FAILED TO LOAD FREETYPE FONT "$path"');
+			Sys.println('Failed to load "$path": Error Code $errCode');
+			//Sys.println('Failed to load "$path": ${Freetype.errorString(errCode)}');
 	}
 
 	public function preloadSize(size:Int) {
@@ -43,8 +50,10 @@ class Font {
 		for (i in 32...127) {
 			if (sizes[size].exists(i)) continue;
 
-			if (Freetype.loadChar(face, cast i, Freetype.LOAD_RENDER) != 0) {
-				Sys.println('FAILED TO LOAD FREETYPE LETTER "${String.fromCharCode(i)}"');
+			final errCode = Freetype.loadChar(face, cast i, Freetype.LOAD_RENDER);
+			if (errCode != 0) {
+				Sys.println('Failed to load "${String.fromCharCode(i)}" for "$path": Error Code $errCode');
+				//Sys.println('Failed to load "${String.fromCharCode(i)}" for "$path": ${Freetype.errorString(errCode)}');
 				sizes[size].set(i, {
 					texture: Sprite.defaultTexture,
 					bearingX: 0,
@@ -90,8 +99,10 @@ class Font {
 			Glad.pixelStorei(Glad.UNPACK_ALIGNMENT, 1);
 			Freetype.setPixelSizes(face, 0, size);
 
-			if (Freetype.loadChar(face, cast letter, Freetype.LOAD_RENDER) != 0) {
-				Sys.println('FAILED TO LOAD FREETYPE LETTER "${String.fromCharCode(letter)}"');
+			final errCode = Freetype.loadChar(face, cast letter, Freetype.LOAD_RENDER);
+			if (errCode != 0) {
+				Sys.println('Failed to load "${String.fromCharCode(letter)}" for "$path": Error Code $errCode');
+				//Sys.println('Failed to load "${String.fromCharCode(letter)}" for "$path": ${Freetype.errorString(errCode)}');
 				sizes[size].set(letter, {
 					texture: Sprite.defaultTexture,
 					bearingX: 0,

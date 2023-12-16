@@ -33,6 +33,11 @@ class Text extends blueprint.objects.Sprite {
 		if (_queueTrig)
 			updateTrigValues();
 
+		Glad.useProgram(shader.ID);
+		Glad.uniform4fv(Glad.getUniformLocation(shader.ID, "tint"), 1, tint.toStar());
+		Glad.uniform4f(Glad.getUniformLocation(shader.ID, "sourceRect"), 0, 0, 1, 1);
+		final transLoc:Int = Glad.getUniformLocation(shader.ID, "transform");
+
 		var curX:Float = 0.0;
 		var curY:Float = 0.0;
 		for (i in 0...text.length) {
@@ -50,10 +55,9 @@ class Text extends blueprint.objects.Sprite {
 			var filter = (antialiasing) ? Glad.LINEAR : Glad.NEAREST;
 			Glad.texParameteri(Glad.TEXTURE_2D, Glad.TEXTURE_MIN_FILTER, filter);
 			Glad.texParameteri(Glad.TEXTURE_2D, Glad.TEXTURE_MAG_FILTER, filter);
-
-			Glad.useProgram(shader.ID);
+			
 			shader.transform.reset(1.0);
-			shader.transform.translate([(curX + letter.bearingX) / letter.texture.width, (curY + (letter.texture.height - letter.bearingY)) / letter.texture.height, 0]);
+			shader.transform.translate([(curX + letter.bearingX) / letter.texture.width, (curY - (letter.texture.height - letter.bearingY)) / letter.texture.height, 0]);
 			// final xMove = curX * _cosMult + curY * -_sinMult;
 			// final yMove = curX * _sinMult + curY * _cosMult;
 			if (rotation != 0)
@@ -63,14 +67,10 @@ class Text extends blueprint.objects.Sprite {
 			shader.transform.scale([letterWidth, letterHeight, 1]);
 			shader.transform.translate([
 				position.x + letterWidth * 0.5,
-				position.y + letterHeight * -0.5,
+				position.y + letterHeight * 0.5,
 				0
 			]);
-			var transLoc:Int = Glad.getUniformLocation(shader.ID, "transform");
 			Glad.uniformMatrix4fv(transLoc, 1, Glad.FALSE, shader.transform.toStar());
-
-			Glad.uniform4fv(Glad.getUniformLocation(shader.ID, "tint"), 1, tint.toStar());
-			Glad.uniform4f(Glad.getUniformLocation(shader.ID, "sourceRect"), 0, 0, 1, 1);
 
 			Glad.bindVertexArray(Game.window.VAO);
 			Glad.drawElements(Glad.TRIANGLES, 6, Glad.UNSIGNED_INT, untyped __cpp__('0'));

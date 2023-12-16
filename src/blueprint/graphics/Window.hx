@@ -32,7 +32,7 @@ class Window {
 
 		cWindow = Glfw.createWindow(width, height, name, null, null);
 		if (cWindow == null) {
-			Sys.println("FAILED TO CREATE WINDOW. TERMINATING APPLICATION.");
+			Sys.println("Failed to create window. Terminating application.");
 			Glfw.terminate();
 			failed = true;
 			return;
@@ -42,7 +42,7 @@ class Window {
 		Glfw.swapInterval(0);
 
 		if (Glad.loadHelper(Glfw.getProcAddress) == 0) {
-			Sys.println("FAILED TO LOAD GLAD. TERMINATING APPLICATION.");
+			Sys.println("Failed to load Glad. Terminating application.");
 			Glfw.terminate();
 			failed = true;
 			return;

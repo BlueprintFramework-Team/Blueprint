@@ -554,4 +554,7 @@ extern class Freetype {
 
     @:native("FT_Face_SetUnpatentedHinting")
     static function faceSetUnpatentedHinting(face:FreetypeFace, value:cpp.UInt8):cpp.UInt8;
+
+    @:native("FT_Error_String")
+    static function errorString(code:FTErr):ConstCharStar;
 }

@@ -23,6 +23,7 @@ class SoundData {
     }
 
     public function loadFromFile(filePath:String) {
+		path = filePath;
         filePath = sys.FileSystem.absolutePath(filePath);
 
         var format:Int = 0;
@@ -35,11 +36,10 @@ class SoundData {
 				var channels:cpp.UInt32 = 0;
 				var sampleRate:cpp.UInt32 = 0;
 				var totalFrameCount:cpp.UInt64 = 0;
-				sampleData = DrWav.openFileAndReadPCMFramesShort16(filePath, cpp.Pointer.addressOf(channels),
-					cast cpp.Pointer.addressOf(sampleRate), cpp.Pointer.addressOf(totalFrameCount), null);
+				sampleData = DrWav.openFileAndReadPCMFramesShort16(filePath, cpp.Pointer.addressOf(channels), cpp.Pointer.addressOf(sampleRate), cpp.Pointer.addressOf(totalFrameCount), null);
 
 				if (sampleData == null) {
-					Sys.println('Failed to load WAV audio from ${filePath}.');
+					Sys.println('Failed to load "$path": Sample Data was null.');
 				} else {
 					format = channels > 1 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16;
 
@@ -67,7 +67,7 @@ class SoundData {
 				CppHelpers.free(cast sampleData);
 				loaded = true;
 			default:
-				Sys.println('Format ${extension.toUpperCase()} is not supported for sounds at this time! (${filePath})');
+				Sys.println('Failed to load "$path": Format $extension is currently unsupported.');
 		}
     }
 
