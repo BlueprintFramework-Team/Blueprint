@@ -169,4 +169,13 @@ class Font {
 
 		return fontCache[filePath];
 	}
+
+	public static function clearCache() {
+		for (key in fontCache.keys()) {
+			if (fontCache[key] == null)
+				fontCache.remove(key);
+			else 
+				fontCache[key].destroy();
+		}
+	}
 }

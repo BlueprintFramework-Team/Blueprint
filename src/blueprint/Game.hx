@@ -14,7 +14,9 @@ import blueprint.objects.Sprite;
 import blueprint.graphics.Texture;
 import blueprint.graphics.Shader;
 import blueprint.graphics.Window;
+import blueprint.sound.SoundData;
 import blueprint.sound.Mixer;
+import blueprint.sound.Sound;
 import blueprint.text.Font;
 import blueprint.text.Text;
 
@@ -83,6 +85,11 @@ class Game {
 
 	private function update():Void {
 		if (queuedSceneChange != null) {
+			currentScene.destroy();
+			Sound.clearSounds();
+			Texture.clearCache();
+			SoundData.clearCache();
+			Font.clearCache();
 			currentScene = Type.createInstance(queuedSceneChange, []);
 			queuedSceneChange = null;
 		}

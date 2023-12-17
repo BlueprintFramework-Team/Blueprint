@@ -79,6 +79,15 @@ class Texture {
 		return imageCache[filePath];
 	}
 
+	public static function clearCache() {
+		for (key in imageCache.keys()) {
+			if (imageCache[key] == Sprite.defaultTexture)
+				imageCache.remove(key);
+			else 
+				imageCache[key].destroy();
+		}
+	}
+
 	@:deprecated('"getImageTex" is now deprecated! Please use "getCachedTex" instead.')
 	public static function getImageTex(filePath:String) {return getCachedTex(filePath);}
 }

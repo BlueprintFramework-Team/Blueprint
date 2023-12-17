@@ -36,11 +36,9 @@ class Sprite {
 	public var anchor:Vector2 = new Vector2(0.5, 0.5);
 
 	@:noCompletion private var _shader:Shader;
-
 	public var shader(get, set):Shader;
 
 	@:noCompletion private var _texture:Texture;
-
 	public var texture(get, set):Texture;
 	public var tint:Vector4 = new Vector4(1.0);
 
@@ -51,6 +49,8 @@ class Sprite {
 
 	public function new(?x:Float = 0, ?y:Float = 0) {
 		position = new Vector2(x, y);
+		horizontalWrap = Glad.CLAMP_TO_EDGE;
+		verticalWrap = Glad.CLAMP_TO_EDGE;
 	}
 
 	public function update(elapsed:Float):Void {}
@@ -120,6 +120,11 @@ class Sprite {
 		final onScreenY:Bool = (position.y + height * anchor.y >= 0) && (position.y * (1 - anchor.y) < Game.window.height);
 
 		return !(onScreenX && onScreenY);
+	}
+
+	public function destroy() {
+		shader = null;
+		texture = null;
 	}
 
 	function set_rotation(newRot:Float) {

@@ -97,6 +97,11 @@ class Text extends blueprint.objects.Sprite {
 		}
 	}
 
+	override function destroy() {
+		shader = null;
+		_lineWidths.splice(0, _lineWidths.length);
+	}
+
 	function updateTextSize() {
 		_queueSize = false;
 		_lineWidths.splice(0, _lineWidths.length);

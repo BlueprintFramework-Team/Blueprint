@@ -11,6 +11,7 @@ class SoundData {
 	static var soundCache:Map<String, SoundData> = [];
 
 	var _cacheKey:Null<String>;
+	public var useCount:Int = 0;
     public var path:String;
 	public var loaded:Bool = false;
 	public var buffer:cpp.UInt32 = 0;
@@ -90,5 +91,14 @@ class SoundData {
 		}
 
 		return soundCache[filePath];
+	}
+
+	public static function clearCache() {
+		for (key in soundCache.keys()) {
+			if (soundCache[key] == null)
+				soundCache.remove(key);
+			else if (soundCache[key].useCount <= 0)
+				soundCache[key].destroy();
+		}
 	}
 }

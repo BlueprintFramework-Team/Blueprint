@@ -74,4 +74,10 @@ class Group extends Sprite {
 			object.tint /= tint;
 		}
 	}
+
+	override function destroy() {
+		for (object in members)
+			object.destroy();
+		members.splice(0, members.length);
+	}
 }
