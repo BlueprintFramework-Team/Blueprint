@@ -16,6 +16,7 @@ import blueprint.graphics.Shader;
 import blueprint.graphics.Window;
 import blueprint.sound.Mixer;
 import blueprint.text.Font;
+import blueprint.text.Text;
 
 class Game {
 	public static var projection:Matrix4x4;
@@ -46,7 +47,10 @@ class Game {
 		}
 
 		projection = Matrix4x4.ortho(0.0, width, height, 0.0, -1.0, 1.0);
-		Sprite.defaultShader = new Shader("#version 330 core
+		Sprite.defaultShader = new Shader(Shader.defaultFragmentSource, Shader.defaultVertexSource);
+		Sprite.defaultTexture = new Texture("missingImage.png");
+		Text.defaultShader = new Shader("
+			#version 330 core
 			out vec4 FragColor;
 			in vec2 TexCoord;
 
@@ -54,26 +58,11 @@ class Game {
 			uniform sampler2D bitmap;
 
 			void main() {
-				FragColor = texture(bitmap, TexCoord) * tint;
-			}", "#version 330 core
-			layout (location = 0) in vec3 vertexPos;
-			layout (location = 1) in vec2 texPos;
-
-			uniform mat4 projection;
-			uniform mat4 transform;
-			uniform vec4 sourceRect;
-
-			out vec2 TexCoord;
-
-			void main() {
-				gl_Position = projection * transform * vec4(vertexPos, 1.0);
-				TexCoord = vec2(
-					mix(sourceRect.x, sourceRect.z, texPos.x),
-					mix(sourceRect.y, sourceRect.w, texPos.y)
-				);
-			}");
-
-		Sprite.defaultTexture = new Texture("missingImage.png");
+				float red = texture(bitmap, TexCoord).r;
+				float derivativeSum = fwidth(red);
+				FragColor = tint * smoothstep(0.5 - derivativeSum, 0.5 + derivativeSum, red);
+        	}
+		", Shader.defaultVertexSource);
 		Freetype.init(Pointer.addressOf(Font.library));
 
 		currentScene = Type.createInstance(startScene, []);

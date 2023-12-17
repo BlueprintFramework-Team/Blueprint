@@ -23,6 +23,7 @@ import blueprint.graphics.Texture;
 
 class Font {
 	@:allow(blueprint.Game) static var library:FreetypeLib;
+	static final loadFlags:cpp.UInt32 = Freetype.LOAD_RENDER | Freetype.LOAD_TARGET(FreetypeRenderMode.SDF);
 	static var fontCache:Map<String, Font> = [];
 
 	var _cacheKey:Null<String>;
@@ -50,7 +51,7 @@ class Font {
 		for (i in 32...127) {
 			if (sizes[size].exists(i)) continue;
 
-			final errCode = Freetype.loadChar(face, cast i, Freetype.LOAD_RENDER);
+			final errCode = Freetype.loadChar(face, cast i, loadFlags);
 			if (errCode != 0) {
 				Sys.println('Failed to load "${String.fromCharCode(i)}" for "$path": Error Code $errCode');
 				//Sys.println('Failed to load "${String.fromCharCode(i)}" for "$path": ${Freetype.errorString(errCode)}');
@@ -99,7 +100,7 @@ class Font {
 			Glad.pixelStorei(Glad.UNPACK_ALIGNMENT, 1);
 			Freetype.setPixelSizes(face, 0, size);
 
-			final errCode = Freetype.loadChar(face, cast letter, Freetype.LOAD_RENDER);
+			final errCode = Freetype.loadChar(face, cast letter, loadFlags);
 			if (errCode != 0) {
 				Sys.println('Failed to load "${String.fromCharCode(letter)}" for "$path": Error Code $errCode');
 				//Sys.println('Failed to load "${String.fromCharCode(letter)}" for "$path": ${Freetype.errorString(errCode)}');

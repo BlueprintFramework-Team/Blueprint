@@ -1,8 +1,9 @@
 package blueprint.text;
 
+import blueprint.graphics.Shader;
+
 /**
  * TODO:
- *	- Allow Coloring
  *	- Allow Field Widths
  *	- Fix Rotation
  *	- Fix Y Positioning
@@ -18,6 +19,7 @@ enum abstract TextAlignment(cpp.Int8) from cpp.Int8 to cpp.Int8 {
 
 class Text extends blueprint.objects.Sprite {
 	public static var autoPreloadSizes:Bool = true;
+	public static var defaultShader:Shader;
 
 	var _queueSize:Bool = true;
 	var _lineWidths:Array<Float> = [];
@@ -30,6 +32,7 @@ class Text extends blueprint.objects.Sprite {
 
 	public function new(x:Float, y:Float, fontPath:String, fontSize:Int, text:String) {
 		super(x, y);
+		shader = Text.defaultShader;
 
 		font = Font.getCachedFont(fontPath);
 		size = fontSize;

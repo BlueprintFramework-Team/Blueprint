@@ -54,28 +54,23 @@ class Group extends Sprite {
 		if (_queueTrig)
 			updateTrigValues();
 
-		var rotPosition:Vector2 = cast [
+		final rotPosition:Vector2 = cast [
 			position.x * _cosMult + position.y * -_sinMult,
 			position.x * _sinMult + position.y * _cosMult
 		];
 		rotPosition *= scale;
 
 		for (object in members) {
-			final ogCos = object._cosMult;
-			final ogSin = object._sinMult;
-			
 			object.position += rotPosition;
 			object.scale *= scale;
-			object._sinMult = (object._sinMult + _sinMult) % 1;
-			object._cosMult = (object._cosMult + _cosMult) % 1;
+			object.rotation += rotation;
 			object.tint *= tint;
 
 			object.draw();
 
 			object.position -= rotPosition;
 			object.scale /= scale;
-			object._sinMult = ogSin;
-			object._cosMult = ogCos;
+			object.rotation -= rotation;
 			object.tint /= tint;
 		}
 	}

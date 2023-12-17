@@ -359,7 +359,7 @@ extern class FreetypeSizeRequest {
 
 @:include("freetype/freetype.h")
 @:native("FT_Render_Mode")
-extern enum abstract FreetypeRenderMode(cpp.UInt32) {
+extern enum abstract FreetypeRenderMode(cpp.UInt32) to cpp.UInt32 {
     @:native("FT_RENDER_MODE_NORMAL")
     var NORMAL;
     @:native("FT_RENDER_MODE_LIGHT")
@@ -401,44 +401,46 @@ extern class FreetypeParameter {
 @:include("freetype/freetype.h")
 extern class Freetype {
 	@:native("FT_LOAD_DEFAULT")
-	static var LOAD_DEFAULT:cpp.UInt32;
+	static final LOAD_DEFAULT:cpp.UInt32;
 	@:native("FT_LOAD_NO_SCALE")
-	static var LOAD_NO_SCALE:cpp.UInt32;
+	static final LOAD_NO_SCALE:cpp.UInt32;
 	@:native("FT_LOAD_NO_HINTING")
-	static var LOAD_NO_HINTING:cpp.UInt32;
+	static final LOAD_NO_HINTING:cpp.UInt32;
 	@:native("FT_LOAD_RENDER")
-	static var LOAD_RENDER:cpp.UInt32;
+	static final LOAD_RENDER:cpp.UInt32;
 	@:native("FT_LOAD_NO_BITMAP")
-	static var LOAD_NO_BITMAP:cpp.UInt32;
+	static final LOAD_NO_BITMAP:cpp.UInt32;
 	@:native("FT_LOAD_VERTICAL_LAYOUT")
-	static var LOAD_VERTICAL_LAYOUT:cpp.UInt32;
+	static final LOAD_VERTICAL_LAYOUT:cpp.UInt32;
 	@:native("FT_LOAD_FORCE_AUTOHINT")
-	static var LOAD_FORCE_AUTOHINT:cpp.UInt32;
+	static final LOAD_FORCE_AUTOHINT:cpp.UInt32;
 	@:native("FT_LOAD_CROP_BITMAP")
-	static var LOAD_CROP_BITMAP:cpp.UInt32;
+	static final LOAD_CROP_BITMAP:cpp.UInt32;
 	@:native("FT_LOAD_PEDANTIC")
-	static var LOAD_PEDANTIC:cpp.UInt32;
+	static final LOAD_PEDANTIC:cpp.UInt32;
 	@:native("FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH")
-	static var LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH:cpp.UInt32;
+	static final LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH:cpp.UInt32;
 	@:native("FT_LOAD_NO_RECURSE")
-	static var LOAD_NO_RECURSE:cpp.UInt32;
+	static final LOAD_NO_RECURSE:cpp.UInt32;
 	@:native("FT_LOAD_IGNORE_TRANSFORM")
-	static var LOAD_IGNORE_TRANSFORM:cpp.UInt32;
+	static final LOAD_IGNORE_TRANSFORM:cpp.UInt32;
 	@:native("FT_LOAD_MONOCHROME")
-	static var LOAD_MONOCHROME:cpp.UInt32;
+	static final LOAD_MONOCHROME:cpp.UInt32;
 	@:native("FT_LOAD_LINEAR_DESIGN")
-	static var LOAD_LINEAR_DESIGN:cpp.UInt32;
+	static final LOAD_LINEAR_DESIGN:cpp.UInt32;
 	@:native("FT_LOAD_SBITS_ONLY")
-	static var LOAD_SBITS_ONLY:cpp.UInt32;
+	static final LOAD_SBITS_ONLY:cpp.UInt32;
 	@:native("FT_LOAD_NO_AUTOHINT")
-	static var LOAD_NO_AUTOHINT:cpp.UInt32;
+	static final LOAD_NO_AUTOHINT:cpp.UInt32;
 	@:native("FT_LOAD_COLOR")
-	static var LOAD_COLOR:cpp.UInt32;
+	static final LOAD_COLOR:cpp.UInt32;
 	@:native("FT_LOAD_COMPUTE_METRICS")
-	static var LOAD_COMPUTE_METRICS:cpp.UInt32;
+	static final LOAD_COMPUTE_METRICS:cpp.UInt32;
 	@:native("FT_LOAD_BITMAP_METRICS_ONLY")
-	static var LOAD_BITMAP_METRICS_ONLY:cpp.UInt32;
+	static final LOAD_BITMAP_METRICS_ONLY:cpp.UInt32;
 
+    @:native("FT_LOAD_TARGET_")
+    static function LOAD_TARGET(x:cpp.UInt32):cpp.UInt32;
 
     @:native("FT_Init_FreeType")
     static function init(lib:Pointer<FreetypeLib>):FTErr;

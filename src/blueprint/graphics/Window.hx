@@ -95,11 +95,10 @@ class Window {
 
 	// function by MidnightBloxxer, using code by swordcube for reference.
 	private static function bufferResize(window:GlfwWindow, width:Int, height:Int) {
-		var gameSize:Vector2 = new Vector2(Game.window.width, Game.window.height);
-		var outputSize:Vector2 = new Vector2(0, 0);
-		var outputOffset:Vector2 = new Vector2(0, 0);
+		final outputSize:Vector2 = new Vector2(0, 0);
+		final outputOffset:Vector2 = new Vector2(0, 0);
 
-		var gameRatio:Float = gameSize.x / gameSize.y;
+		var gameRatio:Float = Game.window.width / Game.window.height;
 		var windowRatio:Float = width / height;
 
 		outputSize.x = (windowRatio > gameRatio) ? (height * gameRatio) : (width);
