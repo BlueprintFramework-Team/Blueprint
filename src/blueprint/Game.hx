@@ -59,11 +59,25 @@ class Game {
 			uniform vec4 tint;
 			uniform sampler2D bitmap;
 
-			void main() {
-				float red = texture(bitmap, TexCoord).r;
-				float derivativeSum = fwidth(red);
-				FragColor = tint * smoothstep(0.5 - derivativeSum, 0.5 + derivativeSum, red);
-        	}
+            // credit for the msdf shader: Blatko1/awesome-msdf
+            // :)
+
+            uniform float fontSize;
+
+            float uvToPixels(void) {
+                vec2 unitRange = vec2(fontSize) / vec2(textureSize(bitmap, 0));
+                vec2 screenTexSize = vec2(1.0) / fwidth(TexCoord);
+                return max(0.5 * dot(unitRange, screenTexSize), 1.0);
+            }
+
+            void main(void) {
+                float distance = texture(bitmap, TexCoord).r;
+                
+                float pixelDistance = uvToPixels() * (distance - 0.5);
+                float alpha = clamp(pixelDistance + 0.5, 0.0, 1.0);
+                
+                FragColor = vec4(tint.rgb, tint.a * alpha);
+            }
 		", Shader.defaultVertexSource);
 		Freetype.init(Pointer.addressOf(Font.library));
 

@@ -1,5 +1,6 @@
 package blueprint.text;
 
+import math.Vector2;
 import blueprint.graphics.Shader;
 
 /**
@@ -52,7 +53,11 @@ class Text extends blueprint.objects.Sprite {
 		Glad.useProgram(shader.ID);
 		Glad.uniform4f(Glad.getUniformLocation(shader.ID, "tint"), tint.x, tint.y, tint.z, tint.w);
 		Glad.uniform4f(Glad.getUniformLocation(shader.ID, "sourceRect"), 0, 0, 1, 1);
+        Glad.uniform1f(Glad.getUniformLocation(shader.ID, "fontSize"), size);
 		final transLoc:Int = Glad.getUniformLocation(shader.ID, "transform");
+
+        scale *= 0.25;
+        size *= 4;
 
 		var curX:Float = (_textWidth - _lineWidths[0]) * (alignment * 0.5);
 		var lineNum:Int = 0;
@@ -95,6 +100,9 @@ class Text extends blueprint.objects.Sprite {
 
 			curX += letter.advance >> 6;
 		}
+
+        scale /= 0.25;
+        size = Math.floor(size / 4);
 	}
 
 	override function destroy() {
