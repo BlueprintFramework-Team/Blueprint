@@ -19,8 +19,10 @@ enum abstract TextAlignment(cpp.Int8) from cpp.Int8 to cpp.Int8 {
 }
 
 class Text extends blueprint.objects.Sprite {
+	public static var textQuality(default, set):Int = 4;
 	public static var autoPreloadSizes:Bool = true;
 	public static var defaultShader:Shader;
+	static var qualityFract:Float = 1 / textQuality;
 
 	var _queueSize:Bool = true;
 	var _lineWidths:Array<Float> = [];
@@ -56,19 +58,18 @@ class Text extends blueprint.objects.Sprite {
         Glad.uniform1f(Glad.getUniformLocation(shader.ID, "fontSize"), size);
 		final transLoc:Int = Glad.getUniformLocation(shader.ID, "transform");
 
-        scale *= 0.25;
-        size *= 4;
+		final scaledSize = size * textQuality;
 
-		var curX:Float = (_textWidth - _lineWidths[0]) * (alignment * 0.5);
+		var curX:Float = (_textWidth - _lineWidths[0]) * (alignment * 0.5) * textQuality;
 		var lineNum:Int = 0;
 		for (i in 0...text.length) {
 			if (text.charAt(i) == '\n') {
 				lineNum++;
-				curX = (_textWidth - _lineWidths[lineNum]) * (alignment * 0.5);
+				curX = (_textWidth - _lineWidths[lineNum]) * (alignment * 0.5) * textQuality;
 				continue;
 			}
 
-			final letter = font.getLetter(text.charCodeAt(i), size);
+			final letter = font.getLetter(text.charCodeAt(i), scaledSize);
 
 			Glad.activeTexture(Glad.TEXTURE0);
 			Glad.bindTexture(Glad.TEXTURE_2D, letter.texture.ID);
@@ -78,13 +79,13 @@ class Text extends blueprint.objects.Sprite {
 			Glad.texParameteri(Glad.TEXTURE_2D, Glad.TEXTURE_MAG_FILTER, filter);
 			
 			shader.transform.reset(1.0);
-			shader.transform.translate([(curX + letter.bearingX) / letter.texture.width, ((size * lineNum + size) + (letter.texture.height - letter.bearingY)) / letter.texture.height, 0]);
+			shader.transform.translate([(curX + letter.bearingX) / letter.texture.width, ((scaledSize * lineNum + scaledSize) + (letter.texture.height - letter.bearingY)) / letter.texture.height, 0]);
 			// final xMove = curX * _cosMult + curY * -_sinMult;
 			// final yMove = curX * _sinMult + curY * _cosMult;
 			if (rotation != 0)
 				shader.transform.rotate(_sinMult, _cosMult, [0, 0, 1]);
-			final letterWidth = Math.abs(letter.texture.width * scale.x);
-			final letterHeight = Math.abs(letter.texture.height * scale.y);
+			final letterWidth = Math.abs(letter.texture.width * scale.x * qualityFract);
+			final letterHeight = Math.abs(letter.texture.height * scale.y * qualityFract);
 			shader.transform.scale([letterWidth, letterHeight, 1]);
 			shader.transform.translate([
 				position.x + letterWidth * 0.5 - Math.abs(width) * anchor.x,
@@ -100,9 +101,6 @@ class Text extends blueprint.objects.Sprite {
 
 			curX += letter.advance >> 6;
 		}
-
-        scale /= 0.25;
-        size = Math.floor(size / 4);
 	}
 
 	override function destroy() {
@@ -159,5 +157,11 @@ class Text extends blueprint.objects.Sprite {
 		if (_queueSize)
 			updateTextSize();
 		return _textHeight;
+	}
+
+	static function set_textQuality(newQual:Int) {
+		newQual = Math.floor(Math.max(newQual, 1));
+		qualityFract = 1 / newQual;
+		return textQuality = newQual;
 	}
 }
