@@ -26,6 +26,10 @@ class SoundData {
     public function loadFromFile(filePath:String) {
 		path = filePath;
         filePath = sys.FileSystem.absolutePath(filePath);
+		if (!sys.FileSystem.exists(filePath)) {
+            Sys.println('Failed to load "$path": File nonexistant.');
+            return this;
+        }
 
         var format:Int = 0;
         var sampleData:cpp.Star<cpp.Int16> = null;
@@ -70,6 +74,8 @@ class SoundData {
 			default:
 				Sys.println('Failed to load "$path": Format $extension is currently unsupported.');
 		}
+
+		return this;
     }
 
 	public function destroy() {

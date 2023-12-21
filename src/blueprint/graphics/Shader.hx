@@ -1,10 +1,15 @@
 package blueprint.graphics;
 
-import math.Matrix4x4;
-import bindings.CppHelpers;
 import cpp.ConstCharStar;
 import cpp.Pointer;
 import cpp.Native;
+
+import math.Vector4;
+import math.Vector3;
+import math.Vector2;
+import math.Matrix4x4;
+
+import bindings.CppHelpers;
 import bindings.Glad;
 
 class Shader {
@@ -66,6 +71,33 @@ class Shader {
         final projectStar = Game.projection.toStar();
         Glad.uniformMatrix4fv(projectLoc, 1, Glad.FALSE, projectStar);
         untyped __cpp__("free({0})", projectStar);
+    }
+
+    overload public inline extern function setUniform(name:ConstCharStar, value:Int) {
+        untyped __cpp__("glUniform1i(glGetUniformLocation({0}, {1}), {2})", ID, name, value);
+    }
+
+    overload public inline extern function setUniform(name:ConstCharStar, value:Float) {
+        untyped __cpp__("glUniform1f(glGetUniformLocation({0}, {1}), {2})", ID, name, value);
+    }
+
+    overload public inline extern function setUniform(name:ConstCharStar, value:Vector2) {
+        untyped __cpp__("glUniform2f(glGetUniformLocation({0}, {1}), {2}, {3})", ID, name, value.x, value.y);
+    }
+
+    overload public inline extern function setUniform(name:ConstCharStar, value:Vector3) {
+        untyped __cpp__("glUniform3f(glGetUniformLocation({0}, {1}), {2}, {3}, {4})", ID, name, value.x, value.y, value.z);
+    }
+
+    overload public inline extern function setUniform(name:ConstCharStar, value:Vector4) {
+        untyped __cpp__("glUniform4f(glGetUniformLocation({0}, {1}), {2}, {3}, {4}, {5})", ID, name, value.x, value.y, value.z, value.w);
+    }
+
+    overload public inline extern function setUniform(name:ConstCharStar, value:Matrix4x4) {
+        untyped __cpp__("
+            float* _star = {0};
+            glUniformMatrix4fv(glGetUniformLocation({1}, {2}), 1, GL_FALSE, _star);
+            free(_star)", value.toStar(), this.ID, name);
     }
 
     public static final defaultVertexSource:String = "

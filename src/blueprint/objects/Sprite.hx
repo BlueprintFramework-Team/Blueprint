@@ -35,11 +35,8 @@ class Sprite {
 
 	public var anchor:Vector2 = new Vector2(0.5, 0.5);
 
-	@:noCompletion private var _shader:Shader;
-	public var shader(get, set):Shader;
-
-	@:noCompletion private var _texture:Texture;
-	public var texture(get, set):Texture;
+	@:isVar public var shader(get, default):Shader;
+	@:isVar public var texture(get, default):Texture;
 	public var tint:Vector4 = new Vector4(1.0);
 
 	public var sourceRect:Rect = new Rect(0.0, 0.0, -1.0, -1.0);
@@ -47,10 +44,14 @@ class Sprite {
 	public var verticalWrap:Int;
 	public var antialiasing:Bool = true;
 
-	public function new(?x:Float = 0, ?y:Float = 0) {
+	public function new(?x:Float = 0, ?y:Float = 0, ?imagePath:String) {
 		position = new Vector2(x, y);
+		
 		horizontalWrap = Glad.CLAMP_TO_EDGE;
 		verticalWrap = Glad.CLAMP_TO_EDGE;
+
+		if (imagePath != null)
+			texture = Texture.getCachedTex(imagePath);
 	}
 
 	public function update(elapsed:Float):Void {}
@@ -84,22 +85,23 @@ class Sprite {
 
 	private function prepareShaderVars(anchorX:Float, anchorY:Float):Void {
 		shader.transform.reset(1.0);
-		shader.transform.translate([dynamicOffset.x / texture.width, dynamicOffset.y / texture.height, 0]);
+		shader.transform.translate([dynamicOffset.x / sourceWidth, dynamicOffset.y / sourceHeight, 0]);
 		if (rotation != 0)
 			shader.transform.rotate(_sinMult, _cosMult, [0, 0, 1]);
 		shader.transform.scale([width, height, 1]);
 		shader.transform.translate([
-			position.x + Math.abs(width) * anchorX,
-			position.y + Math.abs(height) * anchorY,
+			position.x + positionOffset.x + Math.abs(width) * anchorX,
+			position.y + positionOffset.y + Math.abs(height) * anchorY,
 			0
 		]);
+		shader.setUniform("transform", shader.transform);
 
-		final transLoc:Int = Glad.getUniformLocation(shader.ID, "transform");
-		final transStar = shader.transform.toStar();
-		Glad.uniformMatrix4fv(transLoc, 1, Glad.FALSE, transStar);
-		untyped __cpp__("free({0})", transStar);
+		// final transLoc:Int = Glad.getUniformLocation(shader.ID, "transform");
+		// final transStar = shader.transform.toStar();
+		// Glad.uniformMatrix4fv(transLoc, 1, Glad.FALSE, transStar);
+		// untyped __cpp__("free({0})", transStar);
 
-		Glad.uniform4f(Glad.getUniformLocation(shader.ID, "tint"), tint.x, tint.y, tint.z, tint.w);
+		shader.setUniform("tint", tint);
 		Glad.uniform4f(Glad.getUniformLocation(shader.ID, "sourceRect"),
 			sourceRect.x / texture.width,
 			sourceRect.y / texture.height,
@@ -149,18 +151,10 @@ class Sprite {
 	}
 
 	inline function get_shader():Shader {
-		return (_shader != null) ? _shader : defaultShader;
-	}
-
-	inline function set_shader(newShader:Shader):Shader {
-		return _shader = newShader;
+		return (shader != null) ? shader : defaultShader;
 	}
 
 	inline function get_texture():Texture {
-		return (_texture != null) ? _texture : defaultTexture;
-	}
-
-	inline function set_texture(newTex:Texture):Texture {
-		return _texture = newTex;
+		return (texture != null) ? texture : defaultTexture;
 	}
 }

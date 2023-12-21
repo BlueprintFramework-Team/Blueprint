@@ -35,8 +35,10 @@ class Texture {
 		Glad.bindTexture(Glad.TEXTURE_2D, ID);
 
 		var daPath = FileSystem.absolutePath(path);
-		if (!FileSystem.exists(daPath))
-			daPath = FileSystem.absolutePath("assets/missingImage.png");
+		if (!FileSystem.exists(daPath)) {
+			Sys.println('Failed to load "$path": File nonexistant.');
+			return this;
+		}
 
 		var data:cpp.Star<cpp.UInt8> = StbImage.load(daPath, Pointer.addressOf(width), Pointer.addressOf(height), Pointer.addressOf(numChannels), 0);
 

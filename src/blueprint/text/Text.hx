@@ -53,9 +53,9 @@ class Text extends blueprint.objects.Sprite {
 			updateTextSize();
 
 		Glad.useProgram(shader.ID);
-		Glad.uniform4f(Glad.getUniformLocation(shader.ID, "tint"), tint.x, tint.y, tint.z, tint.w);
+		shader.setUniform("tint", tint);
+		shader.setUniform("fontSize", size);
 		Glad.uniform4f(Glad.getUniformLocation(shader.ID, "sourceRect"), 0, 0, 1, 1);
-        Glad.uniform1f(Glad.getUniformLocation(shader.ID, "fontSize"), size);
 		final transLoc:Int = Glad.getUniformLocation(shader.ID, "transform");
 
 		final scaledSize = size * textQuality;

@@ -11,6 +11,7 @@ import math.Matrix4x4;
 
 import blueprint.Scene;
 import blueprint.objects.Sprite;
+import blueprint.objects.AnimatedSprite;
 import blueprint.graphics.Texture;
 import blueprint.graphics.Shader;
 import blueprint.graphics.Window;
@@ -62,7 +63,7 @@ class Game {
             // credit for the msdf shader: Blatko1/awesome-msdf
             // :)
 
-            uniform float fontSize;
+            uniform int fontSize;
 
             float uvToPixels(void) {
                 vec2 unitRange = vec2(fontSize) / vec2(textureSize(bitmap, 0));
@@ -79,6 +80,16 @@ class Game {
                 FragColor = vec4(tint.rgb, tint.a * alpha);
             }
 		", Shader.defaultVertexSource);
+		AnimatedSprite.backupFrame = {
+			name: "BACKUP FRAME",
+			texture: Sprite.defaultTexture,
+			sourceX: 0,
+			sourceY: 0,
+			sourceWidth: Sprite.defaultTexture.width,
+			sourceHeight: Sprite.defaultTexture.height,
+			offsetX: 0,
+			offsetY: 0
+		};
 		Freetype.init(Pointer.addressOf(Font.library));
 
 		currentScene = Type.createInstance(startScene, []);
@@ -88,6 +99,13 @@ class Game {
 		while (!Glfw.windowShouldClose(window.cWindow)) {
 			update();
 		}
+
+		currentScene.destroy();
+		Sound.clearSounds();
+		SoundData.clearCache();
+		Texture.clearCache();
+		AnimatedSprite.clearCache();
+		Font.clearCache();
 
 		window.destroy();
 		mixer.destroy();
@@ -101,8 +119,9 @@ class Game {
 		if (queuedSceneChange != null) {
 			currentScene.destroy();
 			Sound.clearSounds();
-			Texture.clearCache();
 			SoundData.clearCache();
+			Texture.clearCache();
+			AnimatedSprite.clearCache();
 			Font.clearCache();
 			currentScene = Type.createInstance(queuedSceneChange, []);
 			queuedSceneChange = null;
