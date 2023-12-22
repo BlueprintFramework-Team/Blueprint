@@ -143,11 +143,11 @@ class Sprite {
 	}
 
 	function get_sourceWidth():Float {
-		return (sourceRect.width < 0) ? texture.width : sourceRect.width;
+		return ((sourceRect.width < 0) ? texture.width : sourceRect.width) - sourceRect.x;
 	}
 
 	function get_sourceHeight():Float {
-		return (sourceRect.height < 0) ? texture.height : sourceRect.height;
+		return ((sourceRect.height < 0) ? texture.height : sourceRect.height) - sourceRect.y;
 	}
 
 	inline function get_shader():Shader {

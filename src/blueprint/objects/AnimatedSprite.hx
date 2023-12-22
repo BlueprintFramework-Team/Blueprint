@@ -115,8 +115,8 @@ class AnimatedSprite extends Sprite {
 			shader.transform.rotate(_sinMult, _cosMult, [0, 0, 1]);
 		shader.transform.scale([width, height, 1]);
 		shader.transform.translate([
-			position.x + positionOffset.x + Math.abs(width) * 0.5 - Math.abs(animWidth * scale.x) * anchor.x,
-			position.y + positionOffset.y + Math.abs(height) * 0.5 - Math.abs(animHeight * scale.y) * anchor.y,
+			position.x + positionOffset.x + Math.abs(width) * 0.5 - (Math.abs((animWidth - sourceRect.x) * scale.x)) * anchor.x,
+			position.y + positionOffset.y + Math.abs(height) * 0.5 - (Math.abs((animHeight - sourceRect.y) * scale.x)) * anchor.y,
 			0
 		]);
 		shader.setUniform("transform", shader.transform);
@@ -132,12 +132,12 @@ class AnimatedSprite extends Sprite {
 
 	override function get_sourceWidth():Float {
 		final frame = (frames == null || frames.length <= 0) ? backupFrame : frames[curFrame];
-		return (sourceRect.width <= 0) ? frame.sourceWidth : sourceRect.width;
+		return ((sourceRect.width <= 0) ? frame.sourceWidth : sourceRect.width) - sourceRect.x;
 	}
 
 	override function get_sourceHeight():Float {
 		final frame = (frames == null || frames.length <= 0) ? backupFrame : frames[curFrame];
-		return (sourceRect.height <= 0) ? frame.sourceHeight : sourceRect.height;
+		return ((sourceRect.height <= 0) ? frame.sourceHeight : sourceRect.height) - sourceRect.y;
 	}
 
 	static function loadFromFile(filePath:String) {
