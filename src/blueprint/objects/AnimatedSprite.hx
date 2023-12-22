@@ -1,10 +1,5 @@
 package blueprint.objects;
 
-/**
- * TODO:
- * 	- Fix Anchoring
- */
-
 import haxe.io.Path;
 import sys.FileSystem;
 
@@ -67,8 +62,9 @@ class AnimatedSprite extends Sprite {
 		final anim:AnimationData = {fps: fps, length: 1 / fps, loop: loop, indexes: [], width: 0, height: 0};
 
 		for (i => frame in frames) {
-			if (frame.name.startsWith(prefix))
-				anim.indexes.push(i);
+			if (!frame.name.startsWith(prefix)) continue;
+
+			anim.indexes.push(i);
 
 			anim.width = Math.max(anim.width, frame.sourceWidth);
 			anim.height = Math.max(anim.height, frame.sourceHeight);
