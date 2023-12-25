@@ -45,7 +45,7 @@ class Group extends Sprite {
 	}
 
 	override public function draw():Void {
-		if (skipProperties) {
+		if (skipProperties || hasDefaultProps()) {
 			for (object in members)
 				object.draw();
 			return;
@@ -54,25 +54,34 @@ class Group extends Sprite {
 		if (_queueTrig)
 			updateTrigValues();
 
-		final rotPosition:Vector2 = cast [
-			position.x * _cosMult + position.y * -_sinMult,
-			position.x * _sinMult + position.y * _cosMult
-		];
-		rotPosition *= scale;
-
 		for (object in members) {
-			object.position += rotPosition;
+			final ogX = object.position.x;
+			final ogY = object.position.y;
+			final ogScaleX = object.scale.x;
+			final ogScaleY = object.scale.y;
+
+			object.position *= _cosMult;
+			object.position.x += ogY * -_sinMult;
+			object.position.y += ogX * _sinMult;
+			object.position *= scale;
+
 			object.scale *= scale;
 			object.rotation += rotation;
 			object.tint *= tint;
 
 			object.draw();
 
-			object.position -= rotPosition;
-			object.scale /= scale;
+			object.position.set(ogX, ogY);
+			object.scale.set(ogScaleX, ogScaleY);
 			object.rotation -= rotation;
 			object.tint /= tint;
 		}
+	}
+
+	function hasDefaultProps():Bool {
+		return (position.x == 0.0 && position.y == 0.0)
+			&& (scale.x == 1.0 && scale.y == 1.0)
+			&& (tint.r == 1.0 && tint.g == 1.0 && tint.b == 1.0 && tint.a == 1.0);
 	}
 
 	override function destroy() {

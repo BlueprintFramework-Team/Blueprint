@@ -129,7 +129,7 @@ extern class AL {
 	static function isExtensionPresent(extension:cpp.ConstCharStar):Bool;
 
 	@:native('alGetProcAddress')
-	static function getProcAddress(func:cpp.ConstCharStar):cpp.Pointer<cpp.Void>;
+	static function getProcAddress(func:cpp.ConstCharStar):Any;
 
 	@:native('alGetEnumValue')
 	static function getEnumValue(enumName:cpp.ConstCharStar):Int;
@@ -254,8 +254,9 @@ extern class AL {
 	@:native('alIsBuffer')
 	static function isBuffer(buffer:cpp.UInt32):Bool;
 
-	@:native('alBufferData')
-	static function bufferData(buffer:cpp.UInt32, format:Int, data:cpp.Pointer<cpp.Void>, size:cpp.UInt64, sampleRate:Int):Void;
+	inline static function bufferData(buffer:cpp.UInt32, format:Int, data:Any, size:cpp.UInt64, sampleRate:Int):Void {
+		untyped __cpp__("alBufferData({0}, {1}, {2}, {3}, {4})", buffer, format, data, size, sampleRate);
+	}
 
 	@:native('alBufferf')
 	static function bufferf(buffer:cpp.UInt32, parameter:Int, value:Single):Void;

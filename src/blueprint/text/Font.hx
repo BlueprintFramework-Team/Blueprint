@@ -65,6 +65,7 @@ class Font {
 			}
 
 			var newTex = new Texture();
+			var buffer:cpp.Star<cpp.UInt8> = face[0].glyph.bitmap.buffer;
 			Glad.texImage2D(
 				Glad.TEXTURE_2D,
 				0,
@@ -74,7 +75,7 @@ class Font {
 				0,
 				Glad.RED,
 				Glad.UNSIGNED_BYTE,
-				cast face[0].glyph.bitmap.buffer
+				buffer
 			);
 			newTex.width = cast face[0].glyph.bitmap.width;
 			newTex.height = cast face[0].glyph.bitmap.rows;
@@ -114,6 +115,7 @@ class Font {
 			}
 
 			var newTex = new Texture();
+			var buffer:cpp.Star<cpp.UInt8> = face[0].glyph.bitmap.buffer;
 			Glad.texImage2D(
 				Glad.TEXTURE_2D,
 				0,
@@ -123,7 +125,7 @@ class Font {
 				0,
 				Glad.RED,
 				Glad.UNSIGNED_BYTE,
-				cast face[0].glyph.bitmap.buffer
+				buffer
 			);
 			newTex.width = cast face[0].glyph.bitmap.width;
 			newTex.height = cast face[0].glyph.bitmap.rows;

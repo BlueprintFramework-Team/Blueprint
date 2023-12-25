@@ -1,5 +1,6 @@
 package blueprint.text;
 
+import bindings.CppHelpers;
 import math.Vector2;
 import blueprint.graphics.Shader;
 
@@ -94,10 +95,10 @@ class Text extends blueprint.objects.Sprite {
 			]);
 			final transStar = shader.transform.toStar();
 			Glad.uniformMatrix4fv(transLoc, 1, Glad.FALSE, transStar);
-			untyped __cpp__("free({0})", transStar);
+			CppHelpers.free(transStar);
 
 			Glad.bindVertexArray(Game.window.VAO);
-			Glad.drawElements(Glad.TRIANGLES, 6, Glad.UNSIGNED_INT, untyped __cpp__('0'));
+			Glad.drawElements(Glad.TRIANGLES, 6, Glad.UNSIGNED_INT, 0);
 
 			curX += letter.advance >> 6;
 		}

@@ -62,7 +62,7 @@ class Window {
 			-0.5, 0.5, 0.0,		0.0, 1.0,
 			-0.5, -0.5, 0.0,	0.0, 0.0,
 		];
-		var indices:Array<Int> = [
+		var indices:Array<cpp.UInt32> = [
 			0, 1, 3, // first Triangle
 			1, 2, 3 // second Triangle
 		];
@@ -76,7 +76,7 @@ class Window {
 		Glad.bufferFloatArray(Glad.ARRAY_BUFFER, vertices, Glad.STATIC_DRAW, 20);
 
 		Glad.bindBuffer(Glad.ELEMENT_ARRAY_BUFFER, EBO);
-		Glad.bufferIntArray(Glad.ELEMENT_ARRAY_BUFFER, cast indices, Glad.STATIC_DRAW, 6);
+		Glad.bufferIntArray(Glad.ELEMENT_ARRAY_BUFFER, indices, Glad.STATIC_DRAW, 6);
 
 		Glad.vertexFloatAttrib(0, 3, Glad.FALSE, 5, 0);
 		Glad.enableVertexAttribArray(0);

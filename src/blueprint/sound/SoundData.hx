@@ -56,11 +56,11 @@ class SoundData {
 					// - MidnightBloxxer or something I guess.
 
 					// also btw idk why we multiply by 4 and not 2 but 2 cuts it off half way so ig i missed something somewhere but whatever /shrug
-					AL.bufferData(buffer, format, cast sampleData, untyped __cpp__('{0} * (unsigned long)(4)', totalFrameCount), cast sampleRate);
+					AL.bufferData(buffer, format, sampleData, untyped __cpp__('{0} * (unsigned long)(4)', totalFrameCount), cast sampleRate);
 					loaded = true;
 				}
 
-				DrWav.free(cast sampleData, null);
+				DrWav.free(sampleData, null);
 			case 'ogg':
 				var channels:Int = 0;
 				var sampleRate:Int = 0;
@@ -68,8 +68,8 @@ class SoundData {
 
 				format = channels > 1 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16;
 
-				AL.bufferData(buffer, format, cast sampleData, untyped __cpp__('{0} * (unsigned long)(4)', totalFrameCount), cast sampleRate);
-				CppHelpers.free(cast sampleData);
+				AL.bufferData(buffer, format, sampleData, untyped __cpp__('{0} * (unsigned long)(4)', totalFrameCount), sampleRate);
+				CppHelpers.free(sampleData);
 				loaded = true;
 			default:
 				Sys.println('Failed to load "$path": Format $extension is currently unsupported.');

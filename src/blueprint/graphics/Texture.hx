@@ -45,14 +45,14 @@ class Texture {
 		var imageFormat = (numChannels == 4) ? Glad.RGBA : Glad.RGB;
 
 		if (data != 0) {
-			Glad.texImage2D(Glad.TEXTURE_2D, 0, imageFormat, width, height, 0, imageFormat, Glad.UNSIGNED_BYTE, cast data);
+			Glad.texImage2D(Glad.TEXTURE_2D, 0, imageFormat, width, height, 0, imageFormat, Glad.UNSIGNED_BYTE, data);
 			Glad.generateMipmap(Glad.TEXTURE_2D);
 		} else {
 			Sys.println('Failed to load "$path": ${StbImage.failureReason()}');
 			return this;
 		}
 
-		StbImage.freeImage(cast data);
+		StbImage.freeImage(data);
 		loaded = true;
 		return this;
 	}

@@ -5,7 +5,6 @@ import bindings.Glad;
 import math.MathExtras;
 import math.Vector2;
 import math.Vector4;
-import math.Rect;
 
 import blueprint.graphics.Texture;
 import blueprint.graphics.Shader;
@@ -80,7 +79,7 @@ class Sprite {
 		prepareShaderVars(anchorX, anchorY);
 
 		Glad.bindVertexArray(Game.window.VAO);
-		Glad.drawElements(Glad.TRIANGLES, 6, Glad.UNSIGNED_INT, untyped __cpp__('0'));
+		Glad.drawElements(Glad.TRIANGLES, 6, Glad.UNSIGNED_INT, 0);
 	}
 
 	private function prepareShaderVars(anchorX:Float, anchorY:Float):Void {
@@ -95,11 +94,6 @@ class Sprite {
 			0
 		]);
 		shader.setUniform("transform", shader.transform);
-
-		// final transLoc:Int = Glad.getUniformLocation(shader.ID, "transform");
-		// final transStar = shader.transform.toStar();
-		// Glad.uniformMatrix4fv(transLoc, 1, Glad.FALSE, transStar);
-		// untyped __cpp__("free({0})", transStar);
 
 		shader.setUniform("tint", tint);
 		Glad.uniform4f(Glad.getUniformLocation(shader.ID, "sourceRect"),

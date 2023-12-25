@@ -6,7 +6,6 @@ import bindings.DrWav;
 import bindings.StbVorbis;
 import bindings.CppHelpers;
 import math.Vector3;
-import cpp.Native;
 
 class Sound {
 	private static var curSounds:Array<Sound> = []; // For sound clearing.

@@ -1,22 +1,30 @@
 package bindings;
 
+import cpp.ConstCharStar;
+
 /**
  * Helpers for C++ things you can't do in Haxe.
  */
-@:include('stdlib.h')
+@:include('stdio.h')
 extern class CppHelpers {
-	inline static function sizeOf(value:Dynamic):cpp.UInt64 {
+	inline static function sizeOf(value:Any):cpp.UInt64 {
 		return untyped __cpp__("sizeof({0})", value);
 	}
 
-	inline static function tempPointer(value:Dynamic) {
+	inline static function malloc<T>(count:Int, starClass:Any):T {
+		return cast untyped __cpp__("malloc({0} * sizeof({1}))", count, starClass);
+	}
+
+	inline static function tempPointer(value:Any) {
 		return untyped __cpp__("&{0}", value);
 	}
 
-	inline static function traceChar(toTrace:cpp.Star<cpp.Char>):Void {
-		return untyped __cpp__('printf({0}, "\\n")', toTrace);
+	//@:native("printf")
+	inline static function nativeTrace(toTrace:ConstCharStar, formatParams:cpp.Rest<Any>):Void {
+		return untyped __cpp__("printf({0}, {1})", toTrace, formatParams);
 	}
 
-	@:native('free')
-	static function free(pointer:cpp.Pointer<cpp.Void>):Void;
+	inline static function free(pointer:Any):Void {
+		return untyped __cpp__('free({0})', pointer);
+	}
 }

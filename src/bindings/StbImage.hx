@@ -127,8 +127,9 @@ extern class StbImage {
     @:native("stbi_failure_reason")
     static function failureReason():ConstCharStar;
 
-    @:native("stbi_image_free")
-    static function freeImage(retvalFromLoad:Star<cpp.Void>):Void;
+    inline static function freeImage(retvalFromLoad:Any):Void {
+        untyped __cpp__("stbi_image_free({0})", retvalFromLoad);
+    }
 
     @:native("stbi_info_from_memory")
     static function infoFromMemory(buffer:ConstPointer<UChar>, length:Int, x:Pointer<Int>, y:Pointer<Int>, comp:Pointer<Int>):Int;

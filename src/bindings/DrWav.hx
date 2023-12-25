@@ -9,17 +9,18 @@ extern class DrWav {
 	static function openFileAndReadPCMFramesShort16(fileName:cpp.ConstCharStar, channels:cpp.Pointer<cpp.UInt32>, sampleRate:cpp.Pointer<cpp.UInt32>,
 		totalFrameCount:cpp.Pointer<cpp.UInt64>, allocationCallbacks:cpp.ConstPointer<DrWavAllocationCallbacks>):cpp.Star<cpp.Int16>;
 
-	@:native('drwav_free')
-	static function free(data:cpp.Pointer<cpp.Void>, allocationCallbacks:cpp.ConstPointer<DrWavAllocationCallbacks>):Void;
+	inline static function free(data:Any, allocationCallbacks:cpp.ConstPointer<DrWavAllocationCallbacks>):Void {
+		untyped __cpp__("drwav_free({0}, {1})", data, allocationCallbacks);
+	}
 }
 
 @:include('dr_wav.h')
 @:native('drwav_allocation_callbacks')
 @:structAccess
 extern class DrWavAllocationCallbacks {
-	var userData:cpp.Pointer<cpp.Void>;
+	var userData:Any;
 
-	var onMalloc:cpp.Pointer<cpp.Void>;
-	var onRealloc:cpp.Pointer<cpp.Void>;
-	var onFree:cpp.Pointer<cpp.Void>;
+	var onMalloc:Any;
+	var onRealloc:Any;
+	var onFree:Any;
 }

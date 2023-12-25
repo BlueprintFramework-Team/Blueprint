@@ -739,10 +739,10 @@ extern class Glfw {
         return _getMonitorName(monitor).toString();
 
     @:native("glfwSetMonitorUserPointer")
-    static function setMonitorUserPointer(monitor:GlfwMonitor, pointer:Pointer<cpp.Void>):Void;
+    static function setMonitorUserPointer(monitor:GlfwMonitor, pointer:Any):Void;
 
     @:native("glfwGetMonitorUserPointer")
-    static function getMonitorUserPointer(monitor:GlfwMonitor):Pointer<cpp.Void>;
+    static function getMonitorUserPointer(monitor:GlfwMonitor):Any;
 
     @:native("glfwSetMonitorCallback")
     static function setMonitorCallback(callback:MonitorFunc):MonitorFunc;
@@ -859,10 +859,10 @@ extern class Glfw {
     static function setWindowAttribute(window:GlfwWindow, attribute:Int, value:Int):Void;
 
     @:native("glfwSetWindowUserPointer")
-    static function setWindowUserPointer(window:GlfwWindow, pointer:Pointer<cpp.Void>):Void;
+    static function setWindowUserPointer(window:GlfwWindow, pointer:Any):Void;
 
     @:native("glfwGetWindowUserPointer")
-    static function getWindowUserPointer(window:GlfwWindow):Pointer<cpp.Void>;
+    static function getWindowUserPointer(window:GlfwWindow):Any;
 
     @:native("glfwSetWindowPosCallback")
     static function setWindowPosCallback(window:GlfwWindow, callback:WindowPosFunc):WindowPosFunc;
@@ -997,10 +997,10 @@ extern class Glfw {
         return _getJoystickGUID(joystickID).toString();
 
     @:native("glfwSetJoystickUserPointer")
-    static function setJoystickUserPointer(joystickID:Int, pointer:Pointer<cpp.Void>):Void;
+    static function setJoystickUserPointer(joystickID:Int, pointer:Any):Void;
 
     @:native("glfwGetJoystickUserPointer")
-    static function getJoystickUserPointer(joystickID:Int):Pointer<cpp.Void>;
+    static function getJoystickUserPointer(joystickID:Int):Any;
 
     @:native("glfwJoystickIsGamepad")
     static function _joystickIsGamepad(joystickID:Int):Int;

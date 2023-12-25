@@ -395,7 +395,7 @@ extern class FreetypeParameter {
     @:native("tag")
     var tag:cpp.UInt64;
     @:native("data")
-    var data:Pointer<cpp.Void>;
+    var data:Any;
 }
 
 @:include("freetype/freetype.h")
@@ -521,8 +521,9 @@ extern class Freetype {
     @:native("FT_Get_Name_Index")
     static function getNameIndex(face:FreetypeFace, glyphName:cpp.ConstCharStar):cpp.Int32;
 
-    @:native("FT_Get_Glyph_Name")
-    static function getGlyphName(face:FreetypeFace, glyphIndex:cpp.UInt32, buffer:Pointer<cpp.Void>, bufferMax:cpp.UInt32):FTErr;
+    inline static function getGlyphName(face:FreetypeFace, glyphIndex:cpp.UInt32, buffer:Any, bufferMax:cpp.UInt32):FTErr {
+        return untyped __cpp__("FT_Get_Glyph_Name({0}, {1}, {2}, {3})", face, glyphIndex, buffer, bufferMax);
+    }
 
     @:native("FT_Get_Postscript_Name")
     static function getPostscriptName(face:FreetypeFace):cpp.ConstCharStar;
