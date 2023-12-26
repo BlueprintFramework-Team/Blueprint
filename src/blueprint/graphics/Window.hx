@@ -45,7 +45,7 @@ class Window {
 		}
 		Glfw.makeContextCurrent(cWindow);
 		Glfw.setFramebufferSizeCallback(cWindow, cpp.Callable.fromStaticFunction(bufferResize));
-		Glfw.swapInterval(0);
+		vSync = false;
 
 		if (Glad.loadHelper(Glfw.getProcAddress) == 0) {
 			Sys.println("Failed to load Glad. Terminating application.");
