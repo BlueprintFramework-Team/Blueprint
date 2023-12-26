@@ -19,10 +19,16 @@ class Window {
 
 	public var width:Int;
 	public var height:Int;
+	public var vSync(default, set):Bool;
 	public var clearColor(default, set):Vector4;
 
 	private function set_clearColor(value:Vector4):Vector4 {
 		Glad.clearColor(value.x, value.y, value.z, value.w);
+		return value;
+	}
+
+	private function set_vSync(value:Bool):Bool {
+		Glfw.swapInterval(value ? Glfw.TRUE : Glfw.FALSE);
 		return value;
 	}
 

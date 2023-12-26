@@ -51,7 +51,8 @@ class Group extends Sprite {
 			return;
 		}
 
-		if (_queueTrig)
+		final queueTrig = _queueTrig;
+		if (queueTrig)
 			updateTrigValues();
 
 		for (object in members) {
@@ -64,16 +65,20 @@ class Group extends Sprite {
 			object.position.x += ogY * -_sinMult;
 			object.position.y += ogX * _sinMult;
 			object.position *= scale;
+			object.position += position;
 
 			object.scale *= scale;
-			object.rotation += rotation;
+
+			@:bypassAccessor object.rotation += rotation;
+			object._queueTrig = object._queueTrig || queueTrig;
+
 			object.tint *= tint;
 
 			object.draw();
 
 			object.position.set(ogX, ogY);
 			object.scale.set(ogScaleX, ogScaleY);
-			object.rotation -= rotation;
+			@:bypassAccessor object.rotation -= rotation;
 			object.tint /= tint;
 		}
 	}
