@@ -11,7 +11,7 @@ Blueprint is powered by a wide range of native libraries such as [GLFW](https://
 To get started with the framework, install the library with one simple command:
 
 ```sh
-haxelib git blueprint https://github.com/SrtHero278/Blueprint
+haxelib git blueprint https://github.com/BlueprintFramework-Team/Blueprint
 ```
 
 Then look through one of the [demos](https://github.com/BlueprintFramework-Team/Blueprint-Demos) to get a basic understanding on how to use the library

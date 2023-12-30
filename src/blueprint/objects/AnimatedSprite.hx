@@ -79,7 +79,7 @@ class AnimatedSprite extends Sprite {
 	}
 
 	public function playAnim(newAnim:String, ?forceRestart:Bool = true) {
-		animTime = (curAnim != newAnim || forceRestart) ? 0.0 : animTime;
+		animTime = (curAnim != newAnim || animFinished || forceRestart) ? 0.0 : animTime;
 		curFrame = 0;
 		curAnim = newAnim;
 		animFinished = false;
@@ -162,7 +162,7 @@ class AnimatedSprite extends Sprite {
 				}
 
 				for (atlas in xml.elementsNamed("TextureAtlas")) {
-					var tex = new Texture(Path.directory(daPath) + "/" + atlas.get("imagePath"));
+					var tex = Texture.getCachedTex(Path.directory(filePath) + "/" + atlas.get("imagePath"));
 					for (node in atlas.elementsNamed("SubTexture")) {
 						frames.push({
 							name: node.get("name"),
