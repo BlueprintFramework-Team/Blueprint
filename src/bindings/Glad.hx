@@ -3331,7 +3331,7 @@ extern class Glad {
 		untyped __cpp__("glTexImage1D({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7})", target, level, internalFormat, width, border, format, type, pixels);
 	}
 
-	inline static function texImage2D(target:GlEnum, level:GlInt, internalFormat:GlInt, width:GlSizeI, height:GlSizeI, border:GlInt, format:GlEnum, type:GlEnum, pixels:Any) {
+	inline static function texImage2D(target:GlEnum, level:GlInt, internalFormat:GlInt, width:GlSizeI, height:GlSizeI, border:GlInt, format:GlEnum, type:GlEnum, pixels:Any):Void {
 		untyped __cpp__("glTexImage2D({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8})", target, level, internalFormat, width, height, border, format, type, pixels);
 	}
 
@@ -3529,9 +3529,9 @@ extern class Glad {
 		untyped __cpp__("glCompressedTexSubImage1D({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7})", target, level, internalFormat, xOffset, width, border, imageSize, data);
 	}
 
-	inline static function getCompressedTexImage(target:GlEnum, level:GlInt):Any {
+	inline static function getCompressedTexImage<T>(target:GlEnum, level:GlInt):T {
 		untyped __cpp__("void* _ptr; glGetCompressedTexImage({0}, {1}, &_ptr)", target, level);
-		return untyped __cpp__("_ptr");
+		return cast untyped __cpp__("_ptr");
 	}
 
 	@:native("glBlendFuncSeparate")
@@ -3610,8 +3610,8 @@ extern class Glad {
 		return untyped __cpp__("_data");
 	}
 
-	inline static function mapBuffer(target:GlEnum, access:GlEnum):Any {
-		return untyped __cpp__("glMapBuffer({0}, {1})", target, access);
+	inline static function mapBuffer<T>(target:GlEnum, access:GlEnum):T {
+		return cast untyped __cpp__("glMapBuffer({0}, {1})", target, access);
 	}
 
 	@:native("glUnmapBuffer")

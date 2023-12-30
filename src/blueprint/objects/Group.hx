@@ -38,8 +38,6 @@ class Group extends Sprite {
 	}
 
 	override public function update(elapsed:Float):Void {
-		super.update(elapsed);
-
 		for (object in members)
 			object.update(elapsed);
 	}

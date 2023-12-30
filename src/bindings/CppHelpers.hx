@@ -15,7 +15,7 @@ extern class CppHelpers {
 		return cast untyped __cpp__("malloc({0} * sizeof({1}))", count, starClass);
 	}
 
-	inline static function tempPointer(value:Any) {
+	inline static function tempPointer<T>(value:Any):T {
 		return untyped __cpp__("&{0}", value);
 	}
 

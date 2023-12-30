@@ -36,6 +36,7 @@ class AnimatedSprite extends Sprite {
 	public var animWidth:Float;
 	public var animHeight:Float;
 	public var curAnim:String = "";
+	public var animFinished:Bool = false;
 	var frames:Array<SpriteFrame>;
 	var animData:Map<String, AnimationData> = [];
 	var animTime:Float = 0.0;
@@ -81,6 +82,7 @@ class AnimatedSprite extends Sprite {
 		animTime = (curAnim != newAnim || forceRestart) ? 0.0 : animTime;
 		curFrame = 0;
 		curAnim = newAnim;
+		animFinished = false;
 
 		if (animData.exists(curAnim)) {
 			animWidth = animData[curAnim].width;
@@ -99,6 +101,7 @@ class AnimatedSprite extends Sprite {
 			final data = animData[curAnim];
 
 			animTime = (data.loop) ? (animTime + Game.elapsed) % data.length : Math.min(animTime + Game.elapsed, data.length);
+			animFinished = (animTime >= data.length && !data.loop);
 			curFrame = data.indexes[Math.floor(animTime * data.fps)];
 		}
 		
