@@ -125,6 +125,7 @@ class Game {
 			Font.clearCache();
 			currentScene = Type.createInstance(queuedSceneChange, []);
 			queuedSceneChange = null;
+			cpp.vm.Gc.run(true);
 		}
 
 		var runTime:Float = Glfw.getTime();

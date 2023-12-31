@@ -89,8 +89,8 @@ class Text extends blueprint.objects.Sprite {
 			final letterHeight = Math.abs(letter.texture.height * scale.y * qualityFract);
 			shader.transform.scale([letterWidth, letterHeight, 1]);
 			shader.transform.translate([
-				position.x + letterWidth * 0.5 - Math.abs(width) * anchor.x,
-				position.y + letterHeight * -0.5 - Math.abs(height) * anchor.y,
+				position.x + letterWidth * 0.5 - width * anchor.x,
+				position.y + letterHeight * -0.5 - height * anchor.y,
 				0
 			]);
 			final transStar = shader.transform.toStar();

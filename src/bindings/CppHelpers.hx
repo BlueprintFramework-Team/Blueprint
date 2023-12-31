@@ -19,6 +19,10 @@ extern class CppHelpers {
 		return untyped __cpp__("&{0}", value);
 	}
 
+	inline static function boolToInt(bool:Bool):Int {
+		return untyped __cpp__("1 * {0}", bool);
+	}
+
 	//@:native("printf")
 	inline static function nativeTrace(toTrace:ConstCharStar, formatParams:cpp.Rest<Any>):Void {
 		return untyped __cpp__("printf({0}, {1})", toTrace, formatParams);

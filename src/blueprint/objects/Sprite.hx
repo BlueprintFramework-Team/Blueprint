@@ -21,6 +21,8 @@ class Sprite {
 	public var dynamicOffset:Vector2 = new Vector2(0, 0);
 
 	public var scale:Vector2 = new Vector2(1, 1);
+	public var flipX:Bool = false;
+	public var flipY:Bool = false;
 	public var width(get, null):Float;
 	public var height(get, null):Float;
 	public var sourceWidth(get, null):Float;
@@ -83,24 +85,27 @@ class Sprite {
 	}
 
 	private function prepareShaderVars(anchorX:Float, anchorY:Float):Void {
+		final uMult = (flipX) ? 1 : 0;
+		final vMult = (flipY) ? 1 : 0;
+
 		shader.transform.reset(1.0);
 		shader.transform.translate([dynamicOffset.x / sourceWidth, dynamicOffset.y / sourceHeight, 0]);
 		if (rotation != 0)
 			shader.transform.rotate(_sinMult, _cosMult, [0, 0, 1]);
 		shader.transform.scale([width, height, 1]);
 		shader.transform.translate([
-			position.x + positionOffset.x + Math.abs(width) * anchorX,
-			position.y + positionOffset.y + Math.abs(height) * anchorY,
+			position.x + positionOffset.x + width * anchorX,
+			position.y + positionOffset.y + height * anchorY,
 			0
 		]);
 		shader.setUniform("transform", shader.transform);
 
 		shader.setUniform("tint", tint);
 		Glad.uniform4f(Glad.getUniformLocation(shader.ID, "sourceRect"),
-			sourceRect.x / texture.width,
-			sourceRect.y / texture.height,
-			(sourceRect.x + sourceWidth) / texture.width,
-			(sourceRect.y + sourceHeight) / texture.height
+			(sourceRect.x + sourceWidth * uMult) / texture.width,
+			(sourceRect.y + sourceHeight * vMult) / texture.height,
+			(sourceRect.x + sourceWidth * (1 - uMult)) / texture.width,
+			(sourceRect.y + sourceHeight * (1 - vMult)) / texture.height
 		);
 	}
 

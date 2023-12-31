@@ -111,6 +111,8 @@ class AnimatedSprite extends Sprite {
 
 	override function prepareShaderVars(anchorX:Float, anchorY:Float) {
 		final frame = (frames == null || frames.length <= 0) ? backupFrame : frames[curFrame];
+		final uMult = (flipX) ? 1 : 0;
+		final vMult = (flipY) ? 1 : 0;
 
 		shader.transform.reset(1.0);
 		shader.transform.translate([(dynamicOffset.x + frame.offsetX) / sourceWidth, (dynamicOffset.y + frame.offsetY) / sourceHeight, 0]);
@@ -118,18 +120,18 @@ class AnimatedSprite extends Sprite {
 			shader.transform.rotate(_sinMult, _cosMult, [0, 0, 1]);
 		shader.transform.scale([width, height, 1]);
 		shader.transform.translate([
-			position.x + positionOffset.x + Math.abs(width) * 0.5 - (Math.abs((animWidth - sourceRect.x) * scale.x)) * anchor.x,
-			position.y + positionOffset.y + Math.abs(height) * 0.5 - (Math.abs((animHeight - sourceRect.y) * scale.x)) * anchor.y,
+			position.x + positionOffset.x + width * 0.5 - ((animWidth - sourceRect.x) * scale.x) * anchor.x,
+			position.y + positionOffset.y + height * 0.5 - ((animHeight - sourceRect.y) * scale.x) * anchor.y,
 			0
 		]);
 		shader.setUniform("transform", shader.transform);
 
 		shader.setUniform("tint", tint);
 		bindings.Glad.uniform4f(bindings.Glad.getUniformLocation(shader.ID, "sourceRect"),
-			(sourceRect.x + frame.sourceX) / texture.width,
-			(sourceRect.y + frame.sourceY) / texture.height,
-			((sourceRect.x + frame.sourceX) + sourceWidth) / texture.width,
-			((sourceRect.y + frame.sourceY) + sourceHeight) / texture.height
+			((sourceRect.x + frame.sourceX) + sourceWidth * uMult) / texture.width,
+			((sourceRect.y + frame.sourceY) + sourceHeight * vMult) / texture.height,
+			((sourceRect.x + frame.sourceX) + sourceWidth * (1 - uMult)) / texture.width,
+			((sourceRect.y + frame.sourceY) + sourceHeight * (1 - vMult)) / texture.height
 		);
 	}
 
