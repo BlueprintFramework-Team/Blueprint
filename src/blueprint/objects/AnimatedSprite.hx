@@ -79,7 +79,7 @@ class AnimatedSprite extends Sprite {
 	}
 
 	public function playAnim(newAnim:String, ?forceRestart:Bool = true) {
-		animTime = (curAnim != newAnim || animFinished || forceRestart) ? 0.0 : animTime;
+		animTime = animTime * bindings.CppHelpers.boolToInt(!(curAnim != newAnim || animFinished || forceRestart));
 		curFrame = 0;
 		curAnim = newAnim;
 		animFinished = false;
@@ -111,8 +111,8 @@ class AnimatedSprite extends Sprite {
 
 	override function prepareShaderVars(anchorX:Float, anchorY:Float) {
 		final frame = (frames == null || frames.length <= 0) ? backupFrame : frames[curFrame];
-		final uMult = (flipX) ? 1 : 0;
-		final vMult = (flipY) ? 1 : 0;
+		final uMult = bindings.CppHelpers.boolToInt(flipX);
+		final vMult = bindings.CppHelpers.boolToInt(flipY);
 
 		shader.transform.reset(1.0);
 		shader.transform.translate([(dynamicOffset.x + frame.offsetX) / sourceWidth, (dynamicOffset.y + frame.offsetY) / sourceHeight, 0]);

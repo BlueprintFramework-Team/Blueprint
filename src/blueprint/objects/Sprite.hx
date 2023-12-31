@@ -85,9 +85,9 @@ class Sprite {
 	}
 
 	private function prepareShaderVars(anchorX:Float, anchorY:Float):Void {
-		final uMult = (flipX) ? 1 : 0;
-		final vMult = (flipY) ? 1 : 0;
-
+		final uMult = bindings.CppHelpers.boolToInt(flipX);
+		final vMult = bindings.CppHelpers.boolToInt(flipY);
+		
 		shader.transform.reset(1.0);
 		shader.transform.translate([dynamicOffset.x / sourceWidth, dynamicOffset.y / sourceHeight, 0]);
 		if (rotation != 0)

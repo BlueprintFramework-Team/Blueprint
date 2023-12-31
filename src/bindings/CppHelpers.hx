@@ -20,7 +20,7 @@ extern class CppHelpers {
 	}
 
 	inline static function boolToInt(bool:Bool):Int {
-		return untyped __cpp__("1 * {0}", bool);
+		return untyped __cpp__("{0}", bool);
 	}
 
 	//@:native("printf")
