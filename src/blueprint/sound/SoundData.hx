@@ -1,5 +1,6 @@
 package blueprint.sound;
 
+import bindings.DrMP3;
 import cpp.Pointer;
 
 import bindings.AL;
@@ -71,6 +72,25 @@ class SoundData {
 				AL.bufferData(buffer, format, sampleData, untyped __cpp__('{0} * (unsigned long)(4)', totalFrameCount), sampleRate);
 				CppHelpers.free(sampleData);
 				loaded = true;
+			case 'mp3':
+				var config:cpp.Pointer<DrMP3Config> = null;
+				untyped __cpp__('
+					drmp3_config config_but_good;
+					{0} = &config_but_good;
+				', config);
+
+				var totalFrameCount:DrMP3UInt64 = 0;
+				sampleData = DrMP3.openFileAndReadPCMFramesShort16(filePath, config, cpp.Pointer.addressOf(totalFrameCount), null);
+
+				if (sampleData == null) {
+					Sys.println('Failed to load "$path": Sample Data was null.');
+				} else {
+					format = config.ref.channels > 1 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16;
+					AL.bufferData(buffer, format, sampleData, untyped __cpp__('{0} * (unsigned long)(4)', totalFrameCount), cast config.ref.sampleRate);
+					loaded = true;
+				}
+
+				DrMP3.free(sampleData, null);
 			default:
 				Sys.println('Failed to load "$path": Format $extension is currently unsupported.');
 		}

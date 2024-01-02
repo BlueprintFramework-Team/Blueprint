@@ -1,7 +1,7 @@
 package bindings;
 
 // super not finished, but they don't have to be finished because abstraction <3
-// - MidnightBloxxer
+// - what-is-a-git
 
 @:include('dr_wav.h')
 extern class DrWav {
@@ -10,7 +10,7 @@ extern class DrWav {
 		totalFrameCount:cpp.Pointer<cpp.UInt64>, allocationCallbacks:cpp.ConstPointer<DrWavAllocationCallbacks>):cpp.Star<cpp.Int16>;
 
 	inline static function free(data:Any, allocationCallbacks:cpp.ConstPointer<DrWavAllocationCallbacks>):Void {
-		untyped __cpp__("drwav_free({0}, {1})", data, allocationCallbacks);
+		untyped __cpp__('drwav_free({0}, {1})', data, allocationCallbacks);
 	}
 }
 
