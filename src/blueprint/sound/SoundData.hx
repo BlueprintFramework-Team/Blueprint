@@ -1,5 +1,6 @@
 package blueprint.sound;
 
+import bindings.DrFLAC;
 import bindings.DrMP3;
 import cpp.Pointer;
 
@@ -91,6 +92,22 @@ class SoundData {
 				}
 
 				DrMP3.free(sampleData, null);
+			case 'flac' | 'oga':
+				var channels:cpp.UInt32 = 0;
+				var sampleRate:cpp.UInt32 = 0;
+				var totalFrameCount:DrFLACUInt64 = 0;
+				sampleData = DrFLAC.openFileAndReadPCMFramesShort16(filePath, cpp.Pointer.addressOf(channels), cpp.Pointer.addressOf(sampleRate), cpp.Pointer.addressOf(totalFrameCount), null);
+
+				if (sampleData == null) {
+					Sys.println('Failed to load "$path": Sample Data was null.');
+				} else {
+					format = channels > 1 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16;
+
+					AL.bufferData(buffer, format, sampleData, untyped __cpp__('{0} * (unsigned long)(4)', totalFrameCount), cast sampleRate);
+					loaded = true;
+				}
+
+				DrFLAC.free(sampleData, null);
 			default:
 				Sys.println('Failed to load "$path": Format $extension is currently unsupported.');
 		}
