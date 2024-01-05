@@ -90,9 +90,9 @@ class Sprite {
 		
 		shader.transform.reset(1.0);
 		shader.transform.translate([dynamicOffset.x / sourceWidth, dynamicOffset.y / sourceHeight, 0]);
+		shader.transform.scale([width, height, 1]);
 		if (rotation != 0)
 			shader.transform.rotate(_sinMult, _cosMult, [0, 0, 1]);
-		shader.transform.scale([width, height, 1]);
 		shader.transform.translate([
 			position.x + positionOffset.x + width * anchorX,
 			position.y + positionOffset.y + height * anchorY,

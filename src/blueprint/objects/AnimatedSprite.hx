@@ -116,9 +116,9 @@ class AnimatedSprite extends Sprite {
 
 		shader.transform.reset(1.0);
 		shader.transform.translate([(dynamicOffset.x + frame.offsetX) / sourceWidth, (dynamicOffset.y + frame.offsetY) / sourceHeight, 0]);
+		shader.transform.scale([width, height, 1]);
 		if (rotation != 0)
 			shader.transform.rotate(_sinMult, _cosMult, [0, 0, 1]);
-		shader.transform.scale([width, height, 1]);
 		shader.transform.translate([
 			position.x + positionOffset.x + width * 0.5 - ((animWidth - sourceRect.x) * scale.x) * anchor.x,
 			position.y + positionOffset.y + height * 0.5 - ((animHeight - sourceRect.y) * scale.x) * anchor.y,

@@ -81,13 +81,11 @@ class Text extends blueprint.objects.Sprite {
 			
 			shader.transform.reset(1.0);
 			shader.transform.translate([(curX + letter.bearingX) / letter.texture.width, ((scaledSize * lineNum + scaledSize) + (letter.texture.height - letter.bearingY)) / letter.texture.height, 0]);
-			// final xMove = curX * _cosMult + curY * -_sinMult;
-			// final yMove = curX * _sinMult + curY * _cosMult;
-			if (rotation != 0)
-				shader.transform.rotate(_sinMult, _cosMult, [0, 0, 1]);
 			final letterWidth = Math.abs(letter.texture.width * scale.x * qualityFract);
 			final letterHeight = Math.abs(letter.texture.height * scale.y * qualityFract);
 			shader.transform.scale([letterWidth, letterHeight, 1]);
+			if (rotation != 0)
+				shader.transform.rotate(_sinMult, _cosMult, [0, 0, 1]);
 			shader.transform.translate([
 				position.x + letterWidth * 0.5 - width * anchor.x,
 				position.y + letterHeight * -0.5 - height * anchor.y,
