@@ -114,6 +114,11 @@ class AnimatedSprite extends Sprite {
 		final uMult = bindings.CppHelpers.boolToInt(flipX);
 		final vMult = bindings.CppHelpers.boolToInt(flipY);
 
+		final sourceWidth = sourceWidth; // so im not constantly calling the setters.
+		final sourceHeight = sourceHeight;
+		final width = width;
+		final height = height;
+
 		shader.transform.reset(1.0);
 		shader.transform.translate([(dynamicOffset.x + frame.offsetX) / sourceWidth, (dynamicOffset.y + frame.offsetY) / sourceHeight, 0]);
 		shader.transform.scale([width, height, 1]);

@@ -59,6 +59,8 @@ class Text extends blueprint.objects.Sprite {
 		Glad.uniform4f(Glad.getUniformLocation(shader.ID, "sourceRect"), 0, 0, 1, 1);
 		final transLoc:Int = Glad.getUniformLocation(shader.ID, "transform");
 
+		final width = width; // so im not constantly calling the setters.
+		final height = height;
 		final scaledSize = size * textQuality;
 
 		var curX:Float = (_textWidth - _lineWidths[0]) * (alignment * 0.5) * textQuality;
@@ -80,15 +82,19 @@ class Text extends blueprint.objects.Sprite {
 			Glad.texParameteri(Glad.TEXTURE_2D, Glad.TEXTURE_MAG_FILTER, filter);
 			
 			shader.transform.reset(1.0);
-			shader.transform.translate([(curX + letter.bearingX) / letter.texture.width, ((scaledSize * lineNum + scaledSize) + (letter.texture.height - letter.bearingY)) / letter.texture.height, 0]);
+			shader.transform.translate([
+				((curX + letter.bearingX) + (letter.texture.width * 0.5) - (_textWidth * 0.5 * textQuality) + (dynamicOffset.x * textQuality)) / letter.texture.width,
+				((scaledSize * lineNum + scaledSize) + (letter.texture.height - letter.bearingY) - (letter.texture.height * 0.5) - (_textHeight * 0.5 * textQuality) + (dynamicOffset.y * textQuality)) / letter.texture.height,
+				0
+			]);
 			final letterWidth = Math.abs(letter.texture.width * scale.x * qualityFract);
 			final letterHeight = Math.abs(letter.texture.height * scale.y * qualityFract);
 			shader.transform.scale([letterWidth, letterHeight, 1]);
 			if (rotation != 0)
 				shader.transform.rotate(_sinMult, _cosMult, [0, 0, 1]);
 			shader.transform.translate([
-				position.x + letterWidth * 0.5 - width * anchor.x,
-				position.y + letterHeight * -0.5 - height * anchor.y,
+				position.x + positionOffset.x + width * (0.5 - anchor.x),
+				position.y + positionOffset.y + height * (0.5 - anchor.y),
 				0
 			]);
 			final transStar = shader.transform.toStar();
