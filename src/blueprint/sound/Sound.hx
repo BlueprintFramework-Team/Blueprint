@@ -1,10 +1,6 @@
 package blueprint.sound;
 
-import bindings.AL;
-import bindings.ALC;
-import bindings.DrWav;
-import bindings.StbVorbis;
-import bindings.CppHelpers;
+import bindings.audio.AL;
 import math.Vector3;
 
 class Sound {
@@ -18,6 +14,7 @@ class Sound {
 	public var gain(default, set):Float;
 
 	public var time(get, set):Float;
+	public var length(get, never):Float;
 	public var playing(get, set):Bool;
 	public var keepOnSwitch:Bool = false;
 
@@ -43,9 +40,6 @@ class Sound {
 
 	public function loadFromFile(filePath:String):Sound {
 		data = SoundData.getCachedSound(filePath);
-		if (data != null)
-			AL.sourcei(source, AL.BUFFER, data.buffer);
-
 		return this;
 	}
 
@@ -88,7 +82,10 @@ class Sound {
 
 	private function set_data(newData:SoundData) {
 		if (data != null) data.useCount--;
-		if (newData != null) newData.useCount++;
+		if (newData != null) {
+			newData.useCount++;
+			AL.sourcei(source, AL.BUFFER, newData.buffer);
+		}
 		return data = newData;
 	}
 
@@ -127,6 +124,10 @@ class Sound {
 			AL.sourcef(source, AL.SEC_OFFSET, value);
 
 		return time;
+	}
+
+	private function get_length():Float {
+		return (data != null) ? data.length : 0.0;
 	}
 
 	private function get_playing():Bool {

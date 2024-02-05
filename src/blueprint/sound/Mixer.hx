@@ -1,7 +1,7 @@
 package blueprint.sound;
 
-import bindings.AL;
-import bindings.ALC;
+import bindings.audio.AL;
+import bindings.audio.ALC;
 
 import math.Vector3;
 

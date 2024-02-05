@@ -1,9 +1,9 @@
-package bindings;
+package bindings.audio;
 
 // this is basically just DrWav.hx lmao but mp3
 // - what-is-a-git
 
-@:include('DrMP3.h')
+@:include('audio/DrMP3.h')
 extern class DrMP3 {
     @:native('drmp3_open_file_and_read_pcm_frames_s16')
     static function openFileAndReadPCMFramesShort16(fileName:cpp.ConstCharStar, config:cpp.Pointer<DrMP3Config>,
@@ -14,7 +14,7 @@ extern class DrMP3 {
     }
 }
 
-@:include('dr_mp3.h')
+@:include('audio/DrMP3.h')
 @:native('drmp3_allocation_callbacks')
 @:structAccess
 extern class DrMP3AllocationCallbacks {
@@ -25,7 +25,7 @@ extern class DrMP3AllocationCallbacks {
 	var onFree:Any;
 }
 
-@:include('dr_mp3.h')
+@:include('audio/DrMP3.h')
 @:native('drmp3_config')
 @:structAccess
 extern class DrMP3Config {

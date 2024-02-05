@@ -1,13 +1,12 @@
 package blueprint.sound;
 
-import bindings.DrFLAC;
-import bindings.DrMP3;
-import cpp.Pointer;
-
-import bindings.AL;
-import bindings.StbVorbis;
-import bindings.DrWav;
+import bindings.audio.StbVorbis;
+import bindings.audio.DrWav;
+import bindings.audio.DrFLAC;
+import bindings.audio.DrMP3;
+import bindings.audio.AL;
 import bindings.CppHelpers;
+import cpp.Pointer;
 
 class SoundData {
 	static var soundCache:Map<String, SoundData> = [];
@@ -17,6 +16,7 @@ class SoundData {
     public var path:String;
 	public var loaded:Bool = false;
 	public var buffer:cpp.UInt32 = 0;
+	public var length:Float = 0;
 
     public function new(?filePath:String) {
         AL.genBuffers(1, cpp.Pointer.addressOf(buffer));
@@ -70,6 +70,7 @@ class SoundData {
 
 				format = channels > 1 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16;
 
+				length = totalFrameCount / sampleRate;
 				AL.bufferData(buffer, format, sampleData, untyped __cpp__('{0} * (unsigned long)(4)', totalFrameCount), sampleRate);
 				CppHelpers.free(sampleData);
 				loaded = true;

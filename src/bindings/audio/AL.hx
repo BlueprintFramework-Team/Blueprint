@@ -1,4 +1,4 @@
-package bindings;
+package bindings.audio;
 
 /**
  * Bindings for `include/AL/al.h`.

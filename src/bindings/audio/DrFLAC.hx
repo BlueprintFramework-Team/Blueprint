@@ -1,9 +1,9 @@
-package bindings;
+package bindings.audio;
 
 // this is basically just DrWav.hx lmao but flac
 // - what-is-a-git
 
-@:include('DrFLAC.h')
+@:include('audio/DrFLAC.h')
 extern class DrFLAC {
 	@:native('drflac_open_file_and_read_pcm_frames_s16')
 	static function openFileAndReadPCMFramesShort16(fileName:cpp.ConstCharStar, channels:cpp.Pointer<cpp.UInt32>, sampleRate:cpp.Pointer<cpp.UInt32>,
@@ -14,7 +14,7 @@ extern class DrFLAC {
 	}
 }
 
-@:include('dr_flac.h')
+@:include('audio/DrFLAC.h')
 @:native('drflac_allocation_callbacks')
 @:structAccess
 extern class DrFLACAllocationCallbacks {

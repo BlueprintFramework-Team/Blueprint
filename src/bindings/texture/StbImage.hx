@@ -1,4 +1,4 @@
-package bindings;
+package bindings.texture;
 
 import cpp.Char;
 import cpp.ConstCharStar;
@@ -8,7 +8,7 @@ import cpp.Callable;
 import cpp.Star;
 import cpp.FILE;
 
-@:include("stb_image.h")
+@:include("texture/stb_image.h")
 @:native("stbi__context")
 @:structAccess
 extern class StbiContextStruct {
@@ -32,7 +32,7 @@ extern class StbiContextStruct {
 }
 typedef StbiContext = cpp.RawPointer<StbiContextStruct>;
 
-@:include("stb_image.h")
+@:include("texture/stb_image.h")
 @:native("stbi_io_callbacks")
 @:structAccess
 extern class StbiIoCallbacksStruct {
@@ -45,7 +45,7 @@ typedef StbiIoCallbacks = cpp.Struct<StbiIoCallbacksStruct>;
 typedef UChar = cpp.UInt8; //Prevents confusion.
 typedef UShort = cpp.UInt16;
 
-@:include("stb_image.h")
+@:include("texture/stb_image.h")
 extern class StbImage {
     @:native("stbi_load_from_memory")
     static function loadFromMemory(buffer:ConstPointer<UChar>, length:Int, x:Pointer<Int>, y:Pointer<Int>, channelsInFile:Pointer<Int>, desiredChannels:Int):Star<UChar>;

@@ -19,6 +19,8 @@
 		<flag value="-libpath:${PROJECT_DIR}vendor/lib" />
 		<lib name="glfw3.lib" />
 		<lib name="freetype.lib" />
+		<lib name="libpng16_static.lib" />
+		<lib name="zlibstatic.lib" />
 		<lib name="OpenAL32.lib" />
 	</target>
 

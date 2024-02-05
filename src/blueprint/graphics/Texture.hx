@@ -1,11 +1,12 @@
 package blueprint.graphics;
 
-import bindings.CppHelpers;
+import haxe.io.Path;
 import cpp.Pointer;
 import sys.FileSystem;
 
 import bindings.Glad;
-import bindings.StbImage;
+import bindings.texture.PngHelper;
+import bindings.texture.StbImage;
 
 import blueprint.objects.Sprite;
 
@@ -40,20 +41,24 @@ class Texture {
 			return this;
 		}
 
-		var data:cpp.Star<cpp.UInt8> = StbImage.load(daPath, Pointer.addressOf(width), Pointer.addressOf(height), Pointer.addressOf(numChannels), 0);
-
-		var imageFormat = (numChannels == 4) ? Glad.RGBA : Glad.RGB;
-
-		if (data != 0) {
-			Glad.texImage2D(Glad.TEXTURE_2D, 0, imageFormat, width, height, 0, imageFormat, Glad.UNSIGNED_BYTE, data);
-			Glad.generateMipmap(Glad.TEXTURE_2D);
-		} else {
-			Sys.println('Failed to load "$path": ${StbImage.failureReason()}');
-			return this;
+		switch (Path.extension(path)) {
+			case "png":
+				loaded = PngHelper.loadPng(daPath, Pointer.addressOf(width), Pointer.addressOf(height)) == 1;
+			default:
+				var data:cpp.Star<cpp.UInt8> = StbImage.load(daPath, Pointer.addressOf(width), Pointer.addressOf(height), Pointer.addressOf(numChannels), 0);
+	
+				var imageFormat = (numChannels == 4) ? Glad.RGBA : Glad.RGB;
+		
+				if (data != 0) {
+					Glad.texImage2D(Glad.TEXTURE_2D, 0, imageFormat, width, height, 0, imageFormat, Glad.UNSIGNED_BYTE, data);
+				} else {
+					Sys.println('Failed to load "$path": ${StbImage.failureReason()}');
+					return this;
+				}
+		
+				StbImage.freeImage(data);
+				loaded = true;
 		}
-
-		StbImage.freeImage(data);
-		loaded = true;
 		return this;
 	}
 
