@@ -47,6 +47,7 @@
 		<flag value="-ldl" />
 		<flag value="-lopenal" />
 		<flag value="-lfreetype" />
+		<flag value="-lpng" />
 	</target>
 
 	<copyFile name="missingImage.png" from="${PROJECT_DIR}blueprintAssets" toolId="exe" />
