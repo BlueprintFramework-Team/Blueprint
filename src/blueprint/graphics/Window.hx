@@ -1,6 +1,6 @@
 package blueprint.graphics;
 
-import cpp.Pointer;
+import cpp.RawPointer;
 
 import bindings.Glfw;
 import bindings.Glad;
@@ -73,9 +73,9 @@ class Window {
 			1, 2, 3 // second Triangle
 		];
 
-		Glad.genVertexArrays(1, Pointer.addressOf(VAO));
-		Glad.genBuffers(1, Pointer.addressOf(VBO));
-		Glad.genBuffers(1, Pointer.addressOf(EBO));
+		Glad.genVertexArrays(1, RawPointer.addressOf(VAO));
+		Glad.genBuffers(1, RawPointer.addressOf(VBO));
+		Glad.genBuffers(1, RawPointer.addressOf(EBO));
 		Glad.bindVertexArray(VAO);
 
 		Glad.bindBuffer(Glad.ARRAY_BUFFER, VBO);
@@ -94,9 +94,9 @@ class Window {
 	}
 
 	public function destroy() {
-		Glad.deleteVertexArrays(1, Pointer.addressOf(VAO));
-		Glad.deleteBuffers(1, Pointer.addressOf(VBO));
-		Glad.genBuffers(1, Pointer.addressOf(EBO));
+		Glad.deleteVertexArrays(1, RawPointer.addressOf(VAO));
+		Glad.deleteBuffers(1, RawPointer.addressOf(VBO));
+		Glad.genBuffers(1, RawPointer.addressOf(EBO));
 	}
 
 	// function by MidnightBloxxer, using code by swordcube for reference.

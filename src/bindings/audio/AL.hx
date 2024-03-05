@@ -102,16 +102,16 @@ extern class AL {
 	static function getString(parameter:Int):cpp.ConstCharStar;
 
 	@:native('alGetBooleanv')
-	static function getBooleanv(parameter:Int, value:cpp.Pointer<Bool>):Void;
+	static function getBooleanv(parameter:Int, value:cpp.RawPointer<Bool>):Void;
 
 	@:native('alGetIntegerv')
-	static function getIntegerv(parameter:Int, value:cpp.Pointer<Int>):Void;
+	static function getIntegerv(parameter:Int, value:cpp.RawPointer<Int>):Void;
 
 	@:native('alGetFloatv')
-	static function getFloatv(parameter:Int, value:cpp.Pointer<Single>):Void;
+	static function getFloatv(parameter:Int, value:cpp.RawPointer<Single>):Void;
 
 	@:native('alGetDoublev')
-	static function getDoublev(parameter:Int, value:cpp.Pointer<Double>):Void;
+	static function getDoublev(parameter:Int, value:cpp.RawPointer<Double>):Void;
 
 	@:native('alGetBoolean')
 	static function getBoolean(parameter:Int):Bool;
@@ -141,7 +141,7 @@ extern class AL {
 	static function listener3f(parameter:Int, value1:Single, value2:Single, value3:Single):Void;
 
 	@:native('alListenerfv')
-	static function listenerfv(parameter:Int, value:cpp.Pointer<Single>):Void;
+	static function listenerfv(parameter:Int, value:cpp.RawPointer<Single>):Void;
 
 	@:native('alListeneri')
 	static function listeneri(parameter:Int, value:Int):Void;
@@ -150,31 +150,31 @@ extern class AL {
 	static function listener3i(parameter:Int, value1:Int, value2:Int, value3:Int):Void;
 
 	@:native('alListeneriv')
-	static function listeneriv(parameter:Int, value:cpp.Pointer<Any>):Void;
+	static function listeneriv(parameter:Int, value:cpp.RawPointer<Any>):Void;
 
 	@:native('alGetListenerf')
-	static function getListenerf(parameter:Int, value:cpp.Pointer<Single>):Void;
+	static function getListenerf(parameter:Int, value:cpp.RawPointer<Single>):Void;
 
 	@:native('alGetListener3f')
-	static function getListener3f(parameter:Int, value1:cpp.Pointer<Single>, value2:cpp.Pointer<Single>, value3:cpp.Pointer<Single>):Void;
+	static function getListener3f(parameter:Int, value1:cpp.RawPointer<Single>, value2:cpp.RawPointer<Single>, value3:cpp.RawPointer<Single>):Void;
 
 	@:native('alGetListenerfv')
-	static function getListenerfv(parameter:Int, values:cpp.Pointer<Single>):Void;
+	static function getListenerfv(parameter:Int, values:cpp.RawPointer<Single>):Void;
 
 	@:native('alGetListeneri')
-	static function getListeneri(parameter:Int, value:cpp.Pointer<Int>):Void;
+	static function getListeneri(parameter:Int, value:cpp.RawPointer<Int>):Void;
 
 	@:native('alGetListener3i')
-	static function getListener3i(parameter:Int, value1:cpp.Pointer<Int>, value2:cpp.Pointer<Int>, value3:cpp.Pointer<Int>):Void;
+	static function getListener3i(parameter:Int, value1:cpp.RawPointer<Int>, value2:cpp.RawPointer<Int>, value3:cpp.RawPointer<Int>):Void;
 
 	@:native('alGetListeneriv')
-	static function getListeneriv(parameter:Int, values:cpp.Pointer<Array<Int>>):Void;
+	static function getListeneriv(parameter:Int, values:cpp.RawPointer<Array<Int>>):Void;
 
 	@:native('alGenSources')
-	static function genSources(n:Int, source:cpp.Pointer<cpp.UInt32>):Void;
+	static function genSources(n:Int, source:cpp.RawPointer<cpp.UInt32>):Void;
 
 	@:native('alDeleteSources')
-	static function deleteSources(n:Int, source:cpp.Pointer<cpp.UInt32>):Void;
+	static function deleteSources(n:Int, source:cpp.RawPointer<cpp.UInt32>):Void;
 
 	@:native('alIsSource')
 	static function isSource(source:cpp.UInt32):Bool;
@@ -186,7 +186,7 @@ extern class AL {
 	static function source3f(source:cpp.UInt32, parameter:Int, value1:Single, value2:Single, value3:Single):Void;
 
 	@:native('alSourcefv')
-	static function sourcefv(source:cpp.UInt32, parameter:Int, values:cpp.Pointer<Array<Single>>):Void;
+	static function sourcefv(source:cpp.UInt32, parameter:Int, values:cpp.RawPointer<Array<Single>>):Void;
 
 	@:native('alSourcei')
 	static function sourcei(source:cpp.UInt32, parameter:Int, value:Int):Void;
@@ -195,25 +195,25 @@ extern class AL {
 	static function source3i(source:cpp.UInt32, parameter:Int, value1:Int, value2:Int, value3:Int):Void;
 
 	@:native('alSourceiv')
-	static function sourceiv(source:cpp.UInt32, parameter:Int, values:cpp.Pointer<Array<Int>>):Void;
+	static function sourceiv(source:cpp.UInt32, parameter:Int, values:cpp.RawPointer<Array<Int>>):Void;
 
 	@:native('alGetSourcef')
-	static function getSourcef(source:cpp.UInt32, parameter:Int, value:cpp.Pointer<Single>):Void;
+	static function getSourcef(source:cpp.UInt32, parameter:Int, value:cpp.RawPointer<Single>):Void;
 
 	@:native('alGetSource3f')
-	static function getSource3f(source:cpp.UInt32, parameter:Int, value1:cpp.Pointer<Single>, value2:cpp.Pointer<Single>, value3:cpp.Pointer<Single>):Void;
+	static function getSource3f(source:cpp.UInt32, parameter:Int, value1:cpp.RawPointer<Single>, value2:cpp.RawPointer<Single>, value3:cpp.RawPointer<Single>):Void;
 
 	@:native('alGetSourcefv')
-	static function getSourcefv(source:cpp.UInt32, parameter:Int, values:cpp.Pointer<Array<Single>>):Void;
+	static function getSourcefv(source:cpp.UInt32, parameter:Int, values:cpp.RawPointer<Array<Single>>):Void;
 
 	@:native('alGetSourcei')
-	static function getSourcei(source:cpp.UInt32, parameter:Int, value:cpp.Pointer<Int>):Void;
+	static function getSourcei(source:cpp.UInt32, parameter:Int, value:cpp.RawPointer<Int>):Void;
 
 	@:native('alGetSource3i')
-	static function getSource3i(source:cpp.UInt32, parameter:Int, value1:cpp.Pointer<Int>, value2:cpp.Pointer<Int>, value3:cpp.Pointer<Int>):Void;
+	static function getSource3i(source:cpp.UInt32, parameter:Int, value1:cpp.RawPointer<Int>, value2:cpp.RawPointer<Int>, value3:cpp.RawPointer<Int>):Void;
 
 	@:native('alGetSourceiv')
-	static function getSourceiv(source:cpp.UInt32, parameter:Int, values:cpp.Pointer<Array<Int>>):Void;
+	static function getSourceiv(source:cpp.UInt32, parameter:Int, values:cpp.RawPointer<Array<Int>>):Void;
 
 	@:native('alSourcePlay')
 	static function sourcePlay(source:cpp.UInt32):Void;
@@ -228,28 +228,28 @@ extern class AL {
 	static function sourcePause(source:cpp.UInt32):Void;
 
 	@:native('alSourcePlayv')
-	static function sourcePlayv(n:Int, sources:cpp.Pointer<cpp.UInt32>):Void;
+	static function sourcePlayv(n:Int, sources:cpp.RawPointer<cpp.UInt32>):Void;
 
 	@:native('alSourceStopv')
-	static function sourceStopv(n:Int, sources:cpp.Pointer<cpp.UInt32>):Void;
+	static function sourceStopv(n:Int, sources:cpp.RawPointer<cpp.UInt32>):Void;
 
 	@:native('alSourceRewindv')
-	static function sourceRewindv(n:Int, sources:cpp.Pointer<cpp.UInt32>):Void;
+	static function sourceRewindv(n:Int, sources:cpp.RawPointer<cpp.UInt32>):Void;
 
 	@:native('alSourcePausev')
-	static function sourcePausev(n:Int, sources:cpp.Pointer<cpp.UInt32>):Void;
+	static function sourcePausev(n:Int, sources:cpp.RawPointer<cpp.UInt32>):Void;
 
 	@:native('alSourceQueueBuffers')
-	static function sourceQueueBuffers(source:cpp.UInt32, nb:Int, buffers:cpp.Pointer<cpp.UInt32>):Void;
+	static function sourceQueueBuffers(source:cpp.UInt32, nb:Int, buffers:cpp.RawPointer<cpp.UInt32>):Void;
 
 	@:native('alSourceUnqueueBuffers')
-	static function sourceUnqueueBuffers(source:cpp.UInt32, nb:Int, buffers:cpp.Pointer<cpp.UInt32>):Void;
+	static function sourceUnqueueBuffers(source:cpp.UInt32, nb:Int, buffers:cpp.RawPointer<cpp.UInt32>):Void;
 
 	@:native('alGenBuffers')
-	static function genBuffers(n:Int, buffer:cpp.Pointer<cpp.UInt32>):Void;
+	static function genBuffers(n:Int, buffer:cpp.RawPointer<cpp.UInt32>):Void;
 
 	@:native('alDeleteBuffers')
-	static function deleteBuffers(n:Int, buffer:cpp.Pointer<cpp.UInt32>):Void;
+	static function deleteBuffers(n:Int, buffer:cpp.RawPointer<cpp.UInt32>):Void;
 
 	@:native('alIsBuffer')
 	static function isBuffer(buffer:cpp.UInt32):Bool;
@@ -265,7 +265,7 @@ extern class AL {
 	static function buffer3f(buffer:cpp.UInt32, parameter:Int, value1:Single, value2:Single, value3:Single):Void;
 
 	@:native('alBufferfv')
-	static function bufferfv(buffer:cpp.UInt32, parameter:Int, values:cpp.Pointer<Array<Single>>):Void;
+	static function bufferfv(buffer:cpp.UInt32, parameter:Int, values:cpp.RawPointer<Array<Single>>):Void;
 
 	@:native('alBufferi')
 	static function bufferi(buffer:cpp.UInt32, parameter:Int, value:Int):Void;
@@ -274,25 +274,25 @@ extern class AL {
 	static function buffer3i(buffer:cpp.UInt32, parameter:Int, value1:Int, value2:Int, value3:Int):Void;
 
 	@:native('alBufferiv')
-	static function bufferiv(buffer:cpp.UInt32, parameter:Int, values:cpp.Pointer<Array<Int>>):Void;
+	static function bufferiv(buffer:cpp.UInt32, parameter:Int, values:cpp.RawPointer<Array<Int>>):Void;
 
 	@:native('alGetBufferf')
-	static function getBufferf(buffer:cpp.UInt32, parameter:Int, value:cpp.Pointer<Single>):Void;
+	static function getBufferf(buffer:cpp.UInt32, parameter:Int, value:cpp.RawPointer<Single>):Void;
 
 	@:native('alGetBuffer3f')
-	static function getBuffer3f(buffer:cpp.UInt32, parameter:Int, value1:cpp.Pointer<Single>, value2:cpp.Pointer<Single>, value3:cpp.Pointer<Single>):Void;
+	static function getBuffer3f(buffer:cpp.UInt32, parameter:Int, value1:cpp.RawPointer<Single>, value2:cpp.RawPointer<Single>, value3:cpp.RawPointer<Single>):Void;
 
 	@:native('alGetBufferfv')
-	static function getBufferfv(buffer:cpp.UInt32, parameter:Int, values:cpp.Pointer<Array<Single>>):Void;
+	static function getBufferfv(buffer:cpp.UInt32, parameter:Int, values:cpp.RawPointer<Array<Single>>):Void;
 
 	@:native('alGetBufferi')
-	static function getBufferi(buffer:cpp.UInt32, parameter:Int, value:cpp.Pointer<Int>):Void;
+	static function getBufferi(buffer:cpp.UInt32, parameter:Int, value:cpp.RawPointer<Int>):Void;
 
 	@:native('alGetBuffer3i')
-	static function getBuffer3i(buffer:cpp.UInt32, parameter:Int, value1:cpp.Pointer<Int>, value2:cpp.Pointer<Int>, value3:cpp.Pointer<Int>):Void;
+	static function getBuffer3i(buffer:cpp.UInt32, parameter:Int, value1:cpp.RawPointer<Int>, value2:cpp.RawPointer<Int>, value3:cpp.RawPointer<Int>):Void;
 
 	@:native('alGetBufferiv')
-	static function getBufferiv(buffer:cpp.UInt32, parameter:Int, values:cpp.Pointer<Array<Int>>):Void;
+	static function getBufferiv(buffer:cpp.UInt32, parameter:Int, values:cpp.RawPointer<Array<Int>>):Void;
 }
 
 typedef Double = Float; // cpp.Float64;

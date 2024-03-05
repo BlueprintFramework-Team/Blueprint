@@ -97,7 +97,7 @@ class Text extends blueprint.objects.Sprite {
 				position.y + positionOffset.y + height * (0.5 - anchor.y),
 				0
 			]);
-			final transStar = shader.transform.toStar();
+			final transStar = shader.transform.toCArray();
 			Glad.uniformMatrix4fv(transLoc, 1, Glad.FALSE, transStar);
 			CppHelpers.free(transStar);
 

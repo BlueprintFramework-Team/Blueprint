@@ -1,7 +1,7 @@
 package blueprint.graphics;
 
 import haxe.io.Path;
-import cpp.Pointer;
+import cpp.RawPointer;
 import sys.FileSystem;
 
 import bindings.Glad;
@@ -24,7 +24,7 @@ class Texture {
 	public var loaded:Bool = false;
 
 	public function new(?filePath:String) {
-		Glad.genTextures(1, Pointer.addressOf(ID));
+		Glad.genTextures(1, RawPointer.addressOf(ID));
 		Glad.bindTexture(Glad.TEXTURE_2D, ID);
 
 		if (filePath != null)
@@ -43,13 +43,13 @@ class Texture {
 
 		switch (Path.extension(path)) {
 			case "png":
-				loaded = PngHelper.loadPng(daPath, Pointer.addressOf(width), Pointer.addressOf(height)) == 1;
+				loaded = PngHelper.loadPng(daPath, RawPointer.addressOf(width), RawPointer.addressOf(height)) == 1;
 			default:
-				var data:cpp.Star<cpp.UInt8> = StbImage.load(daPath, Pointer.addressOf(width), Pointer.addressOf(height), Pointer.addressOf(numChannels), 0);
+				var data:RawPointer<cpp.UInt8> = StbImage.load(daPath, RawPointer.addressOf(width), RawPointer.addressOf(height), RawPointer.addressOf(numChannels), 0);
 	
 				var imageFormat = (numChannels == 4) ? Glad.RGBA : Glad.RGB;
 		
-				if (data != 0) {
+				if (data[0] != 0) {
 					Glad.texImage2D(Glad.TEXTURE_2D, 0, imageFormat, width, height, 0, imageFormat, Glad.UNSIGNED_BYTE, data);
 				} else {
 					Sys.println('Failed to load "$path": ${StbImage.failureReason()}');
@@ -66,7 +66,7 @@ class Texture {
 	public function loadFromImage(filePath:String) {return loadFromFile(filePath);}
 
 	public function destroy() {
-		Glad.deleteTextures(1, Pointer.addressOf(ID));
+		Glad.deleteTextures(1, RawPointer.addressOf(ID));
 
 		if (_cacheKey != null)
 			imageCache.remove(_cacheKey);

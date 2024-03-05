@@ -6,7 +6,7 @@ import bindings.audio.DrFLAC;
 import bindings.audio.DrMP3;
 import bindings.audio.AL;
 import bindings.CppHelpers;
-import cpp.Pointer;
+import cpp.RawPointer;
 
 class SoundData {
 	static var soundCache:Map<String, SoundData> = [];
@@ -19,7 +19,7 @@ class SoundData {
 	public var length:Float = 0;
 
     public function new(?filePath:String) {
-        AL.genBuffers(1, cpp.Pointer.addressOf(buffer));
+        AL.genBuffers(1, RawPointer.addressOf(buffer));
 
 		if (filePath != null)
 			loadFromFile(filePath);
@@ -34,7 +34,7 @@ class SoundData {
         }
 
         var format:Int = 0;
-        var sampleData:cpp.Star<cpp.Int16> = null;
+        var sampleData:RawPointer<cpp.Int16> = null;
     
         var extension:String = filePath.substring(filePath.lastIndexOf('.') + 1).toLowerCase();
 
@@ -43,7 +43,7 @@ class SoundData {
 				var channels:cpp.UInt32 = 0;
 				var sampleRate:cpp.UInt32 = 0;
 				var totalFrameCount:cpp.UInt64 = 0;
-				sampleData = DrWav.openFileAndReadPCMFramesShort16(filePath, cpp.Pointer.addressOf(channels), cpp.Pointer.addressOf(sampleRate), cpp.Pointer.addressOf(totalFrameCount), null);
+				sampleData = DrWav.openFileAndReadPCMFramesShort16(filePath, CppHelpers.makePointer(channels), CppHelpers.makePointer(sampleRate), CppHelpers.makePointer(totalFrameCount), null);
 
 				if (sampleData == null) {
 					Sys.println('Failed to load "$path": Sample Data was null.');
@@ -66,7 +66,7 @@ class SoundData {
 			case 'ogg':
 				var channels:Int = 0;
 				var sampleRate:Int = 0;
-				var totalFrameCount:Int = StbVorbis.decodeFileName(filePath, Pointer.addressOf(channels), Pointer.addressOf(sampleRate), cpp.RawPointer.addressOf(sampleData));
+				var totalFrameCount:Int = StbVorbis.decodeFileName(filePath, CppHelpers.makePointer(channels), CppHelpers.makePointer(sampleRate), CppHelpers.makePointer(sampleData));
 
 				format = channels > 1 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16;
 
@@ -75,20 +75,20 @@ class SoundData {
 				CppHelpers.free(sampleData);
 				loaded = true;
 			case 'mp3':
-				var config:cpp.Pointer<DrMP3Config> = null;
+				var config:RawPointer<DrMP3Config> = null;
 				untyped __cpp__('
 					drmp3_config config_but_good;
 					{0} = &config_but_good;
 				', config);
 
 				var totalFrameCount:DrMP3UInt64 = 0;
-				sampleData = DrMP3.openFileAndReadPCMFramesShort16(filePath, config, cpp.Pointer.addressOf(totalFrameCount), null);
+				sampleData = DrMP3.openFileAndReadPCMFramesShort16(filePath, config, CppHelpers.makePointer(totalFrameCount), null);
 
 				if (sampleData == null) {
 					Sys.println('Failed to load "$path": Sample Data was null.');
 				} else {
-					format = config.ref.channels > 1 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16;
-					AL.bufferData(buffer, format, sampleData, untyped __cpp__('{0} * (unsigned long)(4)', totalFrameCount), cast config.ref.sampleRate);
+					format = config[0].channels > 1 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16;
+					AL.bufferData(buffer, format, sampleData, untyped __cpp__('{0} * (unsigned long)(4)', totalFrameCount), cast config[0].sampleRate);
 					loaded = true;
 				}
 
@@ -97,7 +97,7 @@ class SoundData {
 				var channels:cpp.UInt32 = 0;
 				var sampleRate:cpp.UInt32 = 0;
 				var totalFrameCount:DrFLACUInt64 = 0;
-				sampleData = DrFLAC.openFileAndReadPCMFramesShort16(filePath, cpp.Pointer.addressOf(channels), cpp.Pointer.addressOf(sampleRate), cpp.Pointer.addressOf(totalFrameCount), null);
+				sampleData = DrFLAC.openFileAndReadPCMFramesShort16(filePath, CppHelpers.makePointer(channels), CppHelpers.makePointer(sampleRate), CppHelpers.makePointer(totalFrameCount), null);
 
 				if (sampleData == null) {
 					Sys.println('Failed to load "$path": Sample Data was null.');
@@ -117,7 +117,7 @@ class SoundData {
     }
 
 	public function destroy() {
-		AL.deleteBuffers(1, cpp.Pointer.addressOf(buffer));
+		AL.deleteBuffers(1, RawPointer.addressOf(buffer));
 
 		if (_cacheKey != null)
 			soundCache.remove(_cacheKey);

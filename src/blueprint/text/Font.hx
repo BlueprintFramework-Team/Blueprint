@@ -5,7 +5,7 @@ package blueprint.text;
  * 	- Fix Freetype.errorString returning `null`.
  */
 
-import cpp.Pointer;
+import cpp.RawPointer;
 import sys.FileSystem;
 
 import bindings.Glad;
@@ -36,7 +36,7 @@ class Font {
 	public function new(path:String) {
 		this.path = path;
 		final daPath = FileSystem.absolutePath(path);
-		final errCode = Freetype.newFace(library, daPath, 0, Pointer.addressOf(face));
+		final errCode = Freetype.newFace(library, daPath, 0, RawPointer.addressOf(face));
 		loaded = errCode == 0;
 		if (!loaded)
 			Sys.println('Failed to load "$path": Error Code $errCode');
@@ -65,7 +65,7 @@ class Font {
 			}
 
 			var newTex = new Texture();
-			var buffer:cpp.Star<cpp.UInt8> = face[0].glyph.bitmap.buffer;
+			var buffer:RawPointer<cpp.UInt8> = face[0].glyph.bitmap.buffer;
 			Glad.texImage2D(
 				Glad.TEXTURE_2D,
 				0,
@@ -115,7 +115,7 @@ class Font {
 			}
 
 			var newTex = new Texture();
-			var buffer:cpp.Star<cpp.UInt8> = face[0].glyph.bitmap.buffer;
+			var buffer:RawPointer<cpp.UInt8> = face[0].glyph.bitmap.buffer;
 			Glad.texImage2D(
 				Glad.TEXTURE_2D,
 				0,

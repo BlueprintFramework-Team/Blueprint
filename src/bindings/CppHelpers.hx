@@ -1,5 +1,6 @@
 package bindings;
 
+import cpp.RawPointer;
 import cpp.ConstCharStar;
 
 /**
@@ -15,7 +16,13 @@ extern class CppHelpers {
 		return cast untyped __cpp__("malloc({0} * sizeof({1}))", count, starClass);
 	}
 
-	inline static function tempPointer<T>(value:Any):T {
+	/**
+	 * Create a c pointer in a haxe file.
+	 * RECOMMENDED FOR VARIABLES INSIDE FUNCTIONS!
+	 * @param value The value to point to.
+	 * @return RawPointer<T>
+	 */
+	inline static function makePointer<T>(value:T):RawPointer<T> {
 		return untyped __cpp__("&{0}", value);
 	}
 

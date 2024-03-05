@@ -1,5 +1,7 @@
 package math;
 
+import cpp.RawPointer;
+
 /**
  * Utilized from Droplet developed by Swordcube. (https://github.com/swordcube/Droplet-Framework/tree/master)
  */
@@ -175,9 +177,9 @@ abstract Vector3(Array<Float>) from Array<Float> to Array<Float> {
      * 
      * NOTE: For proper memory management, please call `CppHelpers.free` when you are fully finished with the c array.
      * 
-     * @return cpp.Star<cpp.Float32>
+     * @return RawPointer<cpp.Float32>
      */
-    public function toStar():cpp.Star<cpp.Float32> {
+     public function toCArray():RawPointer<cpp.Float32> {
         untyped __cpp__("
             float* _cArray = (float*)malloc(sizeof(float) * 3);
             for (int i = 0; i < 3; i++) {

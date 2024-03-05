@@ -30,7 +30,7 @@ class Mixer {
 	}
 
 	private function set_orientation(value:Array<Single>):Array<Single> {
-		AL.listenerfv(AL.ORIENTATION, cpp.Pointer.arrayElem(value, 0));
+		AL.listenerfv(AL.ORIENTATION, cpp.Pointer.arrayElem(value, 0).raw);
 		return value;
 	}
 

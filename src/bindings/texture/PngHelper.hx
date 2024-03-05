@@ -9,11 +9,11 @@
  */
 package bindings.texture;
 
-import cpp.Pointer;
+import cpp.RawPointer;
 import cpp.ConstCharStar;
 
 @:include("texture/png_helper.h")
 extern class PngHelper {
     @:native("loadPng")
-    static function loadPng(path:ConstCharStar, width:Pointer<Int>, height:Pointer<Int>):Int;
+    static function loadPng(path:ConstCharStar, width:RawPointer<Int>, height:RawPointer<Int>):Int;
 }

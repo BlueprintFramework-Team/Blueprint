@@ -1,15 +1,17 @@
 package bindings.audio;
 
+import cpp.RawPointer;
+
 // this is basically just DrWav.hx lmao but flac
 // - what-is-a-git
 
 @:include('audio/DrFLAC.h')
 extern class DrFLAC {
 	@:native('drflac_open_file_and_read_pcm_frames_s16')
-	static function openFileAndReadPCMFramesShort16(fileName:cpp.ConstCharStar, channels:cpp.Pointer<cpp.UInt32>, sampleRate:cpp.Pointer<cpp.UInt32>,
-		totalFrameCount:cpp.Pointer<DrFLACUInt64>, allocationCallbacks:cpp.ConstPointer<DrFLACAllocationCallbacks>):cpp.Star<cpp.Int16>;
+	static function openFileAndReadPCMFramesShort16(fileName:cpp.ConstCharStar, channels:cpp.RawPointer<cpp.UInt32>, sampleRate:cpp.RawPointer<cpp.UInt32>,
+		totalFrameCount:cpp.RawPointer<DrFLACUInt64>, allocationCallbacks:RawPointer<DrFLACAllocationCallbacks>):cpp.RawPointer<cpp.Int16>;
 
-	inline static function free(data:Any, allocationCallbacks:cpp.ConstPointer<DrFLACAllocationCallbacks>):Void {
+	inline static function free(data:Any, allocationCallbacks:cpp.RawPointer<DrFLACAllocationCallbacks>):Void {
 		untyped __cpp__('drflac_free({0}, {1})', data, allocationCallbacks);
 	}
 }

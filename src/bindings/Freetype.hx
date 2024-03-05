@@ -65,7 +65,7 @@ extern class FreetypeBitmap {
     @:native("pitch")
     var pitch:Int;
     @:native("buffer")
-    var buffer:cpp.Star<cpp.UInt8>;
+    var buffer:RawPointer<cpp.UInt8>;
     @:native("num_grays")
     var numGrays:cpp.UInt16;
     @:native("pixel_mode")
@@ -73,7 +73,7 @@ extern class FreetypeBitmap {
     @:native("palette_mode")
     var paletteMode:cpp.UInt8;
     @:native("palette")
-    var palette:cpp.Star<cpp.Void>;
+    var palette:RawPointer<cpp.Void>;
 }
 
 @:include("freetype/freetype.h")
@@ -151,19 +151,19 @@ extern class FreetypeFaceRec {
     var numGlyphs:cpp.Int64;
 
     @:native("family_name")
-    var familyName:Star<cpp.Char>;
+    var familyName:RawPointer<cpp.Char>;
     @:native("style_name")
-    var styleName:Star<cpp.Char>;
+    var styleName:RawPointer<cpp.Char>;
 
     @:native("num_fixed_sizes")
     var numFixedSizes:Int;
     @:native("available_sizes")
-    var availableAizes:cpp.Star<FreetypeBitmapSize>;
+    var availableAizes:RawPointer<FreetypeBitmapSize>;
 
     @:native("num_charmaps")
     var numCharmaps:Int;
     @:native("charmaps")
-    var charmaps:cpp.Star<FreetypeCharMap>;
+    var charmaps:RawPointer<FreetypeCharMap>;
 
     @:native("generic")
     var generic:FreetypeGeneric;
@@ -249,11 +249,11 @@ extern class FreetypeOutline {
     var numPoints:cpp.Int16;
 
     @:native("points")
-    var points:cpp.Star<FreetypeVector>;
+    var points:RawPointer<FreetypeVector>;
     @:native("tags")
     var tags:cpp.CastCharStar;
     @:native("contours")
-    var contours:cpp.Star<cpp.Int16>;
+    var contours:RawPointer<cpp.Int16>;
 
     @:native("flags")
     var flags:Int;
@@ -309,7 +309,7 @@ extern class FreetypeGlyphSlot {
     var subglyphs:FreetypeSubGlyph;
 
     @:native("control_data")
-    var controlData:cpp.Star<cpp.Void>;
+    var controlData:RawPointer<cpp.Void>;
     @:native("control_len")
     var controlLength:cpp.Int64;
 
@@ -319,7 +319,7 @@ extern class FreetypeGlyphSlot {
     var rsbDelta:cpp.Int64;
 
     @:native("other")
-    var other:cpp.Star<cpp.Void>;
+    var other:RawPointer<cpp.Void>;
 
     @:native("internal")
     var internal:FreetypeSlotInternal;
@@ -443,16 +443,16 @@ extern class Freetype {
     static function LOAD_TARGET(x:cpp.UInt32):cpp.UInt32;
 
     @:native("FT_Init_FreeType")
-    static function init(lib:Pointer<FreetypeLib>):FTErr;
+    static function init(lib:RawPointer<FreetypeLib>):FTErr;
 
     @:native("FT_Done_FreeType")
     static function done(lib:FreetypeLib):FTErr;
 
     @:native("FT_New_Face")
-    static function newFace(lib:FreetypeLib, filePath:ConstCharStar, index:cpp.Int32, facePtr:Pointer<FreetypeFace>):FTErr;
+    static function newFace(lib:FreetypeLib, filePath:ConstCharStar, index:cpp.Int32, facePtr:RawPointer<FreetypeFace>):FTErr;
 
     @:native("FT_New_Memory_Face")
-    static function newMemoryFace(lib:FreetypeLib, bytes:ConstStar<cpp.Int8>, size:cpp.Int32, index:cpp.Int32, facePtr:Pointer<FreetypeFace>):FTErr;
+    static function newMemoryFace(lib:FreetypeLib, bytes:ConstStar<cpp.Int8>, size:cpp.Int32, index:cpp.Int32, facePtr:RawPointer<FreetypeFace>):FTErr;
 
     // TODO: FT_Open_Face, FT_Attach_Stream & FT_Open_Args
 
@@ -484,19 +484,19 @@ extern class Freetype {
     static function loadChar(face:FreetypeFace, charCode:cpp.UInt64, loadFlags:cpp.UInt32):FTErr;
 
     @:native("FT_Set_Transform")
-    static function setTransform(face:FreetypeFace, matrix:Pointer<FreetypeMatrix>, delta:Pointer<FreetypeVector>):Void;
+    static function setTransform(face:FreetypeFace, matrix:RawPointer<FreetypeMatrix>, delta:RawPointer<FreetypeVector>):Void;
 
     @:native("FT_Get_Transform")
-    static function getTransform(face:FreetypeFace, matrix:Pointer<FreetypeMatrix>, delta:Pointer<FreetypeVector>):Void;
+    static function getTransform(face:FreetypeFace, matrix:RawPointer<FreetypeMatrix>, delta:RawPointer<FreetypeVector>):Void;
 
     @:native("FT_Render_Glyph")
     static function renderGlpyh(slot:FreetypeGlyphSlot, renderMode:FreetypeRenderMode):FTErr;
 
     @:native("FT_Get_Kerning")
-    static function getKerning(face:FreetypeFace, leftGlyph:cpp.UInt32, rightGlyph:cpp.UInt32, kernMode:cpp.UInt32, kerning:Pointer<FreetypeVector>):FTErr;
+    static function getKerning(face:FreetypeFace, leftGlyph:cpp.UInt32, rightGlyph:cpp.UInt32, kernMode:cpp.UInt32, kerning:RawPointer<FreetypeVector>):FTErr;
 
     @:native("FT_Get_Track_Kerning")
-    static function getTrackKerning(face:FreetypeFace, pointSize:cpp.Int64, degree:Int, kerning:Pointer<cpp.Int64>):FTErr;
+    static function getTrackKerning(face:FreetypeFace, pointSize:cpp.Int64, degree:Int, kerning:RawPointer<cpp.Int64>):FTErr;
 
     // TODO: FT_Select_Charmap  & FT_Encoding
 
@@ -510,13 +510,13 @@ extern class Freetype {
     static function getCharIndex(face:FreetypeFace, charCode:cpp.UInt64):cpp.UInt32;
 
     @:native("FT_Get_First_Char")
-    static function getFirstChar(face:FreetypeFace, agIndex:Pointer<cpp.UInt32>):cpp.UInt64;
+    static function getFirstChar(face:FreetypeFace, agIndex:RawPointer<cpp.UInt32>):cpp.UInt64;
 
     @:native("FT_Get_Next_Char")
-    static function getNextChar(face:FreetypeFace, charCode:cpp.UInt64, agIndex:Pointer<cpp.UInt32>):cpp.UInt64;
+    static function getNextChar(face:FreetypeFace, charCode:cpp.UInt64, agIndex:RawPointer<cpp.UInt32>):cpp.UInt64;
 
     @:native("FT_Face_Properties")
-    static function faceProperties(face:FreetypeFace, numProperties:cpp.UInt32, properties:cpp.Star<FreetypeParameter>):FTErr;
+    static function faceProperties(face:FreetypeFace, numProperties:cpp.UInt32, properties:RawPointer<FreetypeParameter>):FTErr;
 
     @:native("FT_Get_Name_Index")
     static function getNameIndex(face:FreetypeFace, glyphName:cpp.ConstCharStar):cpp.Int32;
@@ -529,7 +529,7 @@ extern class Freetype {
     static function getPostscriptName(face:FreetypeFace):cpp.ConstCharStar;
 
     @:native("FT_Get_SubGlyph_Info")
-    static function getSubglyphInfo(glyph:FreetypeGlyphSlot, subIndex:cpp.UInt32, pIndex:Pointer<Int>, pFlags:Pointer<cpp.UInt32>, pArg1:Pointer<Int>, pArg2:Pointer<Int>, pTransform:Pointer<FreetypeMatrix>):FTErr;
+    static function getSubglyphInfo(glyph:FreetypeGlyphSlot, subIndex:cpp.UInt32, pIndex:RawPointer<Int>, pFlags:RawPointer<cpp.UInt32>, pArg1:RawPointer<Int>, pArg2:RawPointer<Int>, pTransform:RawPointer<FreetypeMatrix>):FTErr;
 
     @:native("FT_Get_FSType_Flags")
     static function getFSTypeFlags(face:FreetypeFace):cpp.UInt16;
@@ -541,16 +541,16 @@ extern class Freetype {
     static function faceGetCharVariantIsDefault(face:FreetypeFace, charCode:cpp.UInt64, variantSelector:cpp.UInt64):Int;
 
     @:native("FT_Face_GetVariantSelectors")
-    static function faceGetVariantSelectors(face:FreetypeFace):Star<cpp.Int32>;
+    static function faceGetVariantSelectors(face:FreetypeFace):RawPointer<cpp.Int32>;
 
     @:native("FT_Face_GetVariantsOfChar")
-    static function faceGetVariantsOfChar(face:FreetypeFace, charCode:cpp.UInt64):Star<cpp.UInt32>;
+    static function faceGetVariantsOfChar(face:FreetypeFace, charCode:cpp.UInt64):RawPointer<cpp.UInt32>;
 
     @:native("FT_Face_GetCharsOfVariant")
-    static function faceGetCharsOfVariant(face:FreetypeFace, variantSelector:cpp.UInt64):Star<cpp.UInt32>;
+    static function faceGetCharsOfVariant(face:FreetypeFace, variantSelector:cpp.UInt64):RawPointer<cpp.UInt32>;
 
     @:native("FT_Library_Version")
-    static function libraryVersion(lib:FreetypeLib, major:Pointer<Int>, minor:Pointer<Int>, patch:Pointer<Int>):Void;
+    static function libraryVersion(lib:FreetypeLib, major:RawPointer<Int>, minor:RawPointer<Int>, patch:RawPointer<Int>):Void;
 
     @:native("FT_Face_CheckTrueTypePatents")
     static function faceCheckTrueTypePatents(face:FreetypeFace):cpp.UInt8;

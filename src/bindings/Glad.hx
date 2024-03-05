@@ -17,10 +17,7 @@ package bindings;
 
 import cpp.ConstCharStar;
 import cpp.Callable;
-import cpp.Pointer;
-import cpp.Star;
-import cpp.ConstStar;
-import cpp.ConstPointer;
+import cpp.RawPointer;
 
 typedef GlEnum = UInt;
 typedef GlBool = UInt;
@@ -46,9 +43,9 @@ typedef GlChar = cpp.Char;
 // typedef khronos_uint16_t GLhalf;
 // typedef khronos_uint16_t GLhalfARB;
 typedef GlFixed = cpp.Int32;
-typedef GlIntPointer = Star<Int>;
+typedef GlIntPointer = RawPointer<Int>;
 // typedef khronos_intptr_t GLintptrARB;
-typedef GlSizeIPointer = Star<cpp.Int64>;
+typedef GlSizeIPointer = RawPointer<cpp.Int64>;
 // typedef khronos_ssize_t GLsizeiptrARB;
 typedef GlInt64 = cpp.Int64;
 // typedef khronos_int64_t GLint64EXT;
@@ -59,7 +56,7 @@ typedef GlUInt64 = cpp.UInt64;
 @:native("GLsync")
 @:structAccess
 extern class GlSyncStruct {}
-typedef GlSync = cpp.RawPointer<GlSyncStruct>;
+typedef GlSync = RawPointer<GlSyncStruct>;
 // struct _cl_context;
 // struct _cl_event;
 
@@ -3319,13 +3316,13 @@ extern class Glad {
 	static function texParameterf(target:GlEnum, pname:GlEnum, param:GlFloat):Void;
 
 	@:native("glTexParameterfv")
-	static function texParameterfv(target:GlEnum, pname:GlEnum, params:ConstStar<GlFloat>):Void;
+	static function texParameterfv(target:GlEnum, pname:GlEnum, params:RawPointer<GlFloat>):Void;
 
 	@:native("glTexParameteri")
 	static function texParameteri(target:GlEnum, pname:GlEnum, param:GlInt):Void;
 
 	@:native("glTexParameteriv")
-	static function texParameteriv(target:GlEnum, pname:GlEnum, params:ConstStar<GlInt>):Void;
+	static function texParameteriv(target:GlEnum, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	inline static function texImage1D(target:GlEnum, level:GlInt, internalFormat:GlInt, width:GlSizeI, border:GlInt, format:GlEnum, type:GlEnum, pixels:Any):Void {
 		untyped __cpp__("glTexImage1D({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7})", target, level, internalFormat, width, border, format, type, pixels);
@@ -3400,38 +3397,38 @@ extern class Glad {
 	}
 
 	@:native("glGetBooleanv")
-	static function getBooleanv(pname:GlEnum, data:Pointer<GlBool>):Void;
+	static function getBooleanv(pname:GlEnum, data:RawPointer<GlBool>):Void;
 
 	@:native("glGetDoublev")
-	static function getDoublev(pname:GlEnum, data:Pointer<GlDouble>):Void;
+	static function getDoublev(pname:GlEnum, data:RawPointer<GlDouble>):Void;
 
 	@:native("glGetError")
 	static function getError():GlEnum;
 
 	@:native("glGetFloatv")
-	static function getFloatv(pname:GlEnum, data:Pointer<GlFloat>):Void;
+	static function getFloatv(pname:GlEnum, data:RawPointer<GlFloat>):Void;
 
 	@:native("glGetIntegerv")
-	static function getIntegerv(pname:GlEnum, data:Pointer<GlInt>):Void;
+	static function getIntegerv(pname:GlEnum, data:RawPointer<GlInt>):Void;
 
 	@:native("glGetString")
-	static function getString(name:GlEnum):ConstStar<GlUByte>;
+	static function getString(name:GlEnum):RawPointer<GlUByte>;
 
 	inline static function getTexImage(target:GlEnum, level:GlInt, format:GlEnum, type:GlEnum, pixels:Any):Void {
 		untyped __cpp__("getTexImage({0}, {1}, {2}, {3}, {4})", target, level, format, type, pixels);
 	}
 
 	@:native("glGetTexParameterfv")
-	static function getTexParameterfv(target:GlEnum, pname:GlEnum, params:Pointer<GlFloat>):Void;
+	static function getTexParameterfv(target:GlEnum, pname:GlEnum, params:RawPointer<GlFloat>):Void;
 
 	@:native("glGetTexParameteriv")
-	static function getTexParameteriv(target:GlEnum, pname:GlEnum, params:Pointer<GlInt>):Void;
+	static function getTexParameteriv(target:GlEnum, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glGetTexLevelParameterfv")
-	static function getTexLevelParameterfv(target:GlEnum, level:GlInt, pname:GlEnum, params:Pointer<GlFloat>):Void;
+	static function getTexLevelParameterfv(target:GlEnum, level:GlInt, pname:GlEnum, params:RawPointer<GlFloat>):Void;
 
 	@:native("glGetTexLevelParameteriv")
-	static function getTexLevelParameteriv(target:GlEnum, level:GlInt, pname:GlEnum, params:Pointer<GlInt>):Void;
+	static function getTexLevelParameteriv(target:GlEnum, level:GlInt, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glIsEnabled")
 	static function isEnabled(cap:GlEnum):GlBool;
@@ -3476,10 +3473,10 @@ extern class Glad {
 	static function bindTexture(target:GlEnum, texture:GlUInt):Void;
 
 	@:native("glDeleteTextures")
-	static function deleteTextures(n:GlSizeI, textures:Pointer<GlUInt>):Void;
+	static function deleteTextures(n:GlSizeI, textures:RawPointer<GlUInt>):Void;
 
 	@:native("glGenTextures")
-	static function genTextures(n:GlSizeI, textures:Pointer<GlUInt>):Void;
+	static function genTextures(n:GlSizeI, textures:RawPointer<GlUInt>):Void;
 
 	@:native("glIsTexture")
 	static function isTexture(texture:GlUInt):GlBool;
@@ -3538,22 +3535,22 @@ extern class Glad {
 	static function blendFuncSeparate(sfactorRGB:GlEnum, dfactorRGB:GlEnum, sfactorAlpha:GlEnum, dfactorAlpha:GlEnum):Void;
 
 	@:native("glMultiDrawArrays")
-	static function multiDrawArrays(mode:GlEnum, first:ConstStar<GlInt>, count:ConstStar<GlSizeI>, drawcount:GlSizeI):Void;
+	static function multiDrawArrays(mode:GlEnum, first:RawPointer<GlInt>, count:RawPointer<GlSizeI>, drawcount:GlSizeI):Void;
 
 	// @:native("glMultiDrawElements") TODO: kill whoever the fuck decided to make a "const void* const*" as a var type.
-	// static function multiDrawElements(mode:GlEnum, count:ConstStar<GlSizeI>, type:GlEnum, const*indices:Any, drawcount:GlSizeI):Void;
+	// static function multiDrawElements(mode:GlEnum, count:RawPointer<GlSizeI>, type:GlEnum, const*indices:Any, drawcount:GlSizeI):Void;
 
 	@:native("glPointParameterf")
 	static function pointParameterf(pname:GlEnum, param:GlFloat):Void;
 
 	@:native("glPointParameterfv")
-	static function pointParameterfv(pname:GlEnum, params:ConstStar<GlFloat>):Void;
+	static function pointParameterfv(pname:GlEnum, params:RawPointer<GlFloat>):Void;
 
 	@:native("glPointParameteri")
 	static function pointParameteri(pname:GlEnum, param:GlInt):Void;
 
 	@:native("glPointParameteriv")
-	static function pointParameteriv(pname:GlEnum, params:ConstStar<GlInt>):Void;
+	static function pointParameteriv(pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glBlendColor")
 	static function blendColor(red:GlFloat, green:GlFloat, blue:GlFloat, alpha:GlFloat):Void;
@@ -3562,10 +3559,10 @@ extern class Glad {
 	static function blendEquation(mode:GlEnum):Void;
 
 	@:native("glGenQueries")
-	static function genQueries(n:GlSizeI, ids:Pointer<GlUInt>):Void;
+	static function genQueries(n:GlSizeI, ids:RawPointer<GlUInt>):Void;
 
 	@:native("glDeleteQueries")
-	static function deleteQueries(n:GlSizeI, ids:ConstPointer<GlUInt>):Void;
+	static function deleteQueries(n:GlSizeI, ids:RawPointer<GlUInt>):Void;
 
 	@:native("glIsQuery")
 	static function isQuery(id:GlUInt):GlBool;
@@ -3577,22 +3574,22 @@ extern class Glad {
 	static function endQuery(target:GlEnum):Void;
 
 	@:native("glGetQueryiv")
-	static function getQueryiv(target:GlEnum, pname:GlEnum, params:Pointer<GlInt>):Void;
+	static function getQueryiv(target:GlEnum, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glGetQueryObjectiv")
-	static function getQueryObjectiv(id:GlUInt, pname:GlEnum, params:Pointer<GlInt>):Void;
+	static function getQueryObjectiv(id:GlUInt, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glGetQueryObjectuiv")
-	static function getQueryObjectuiv(id:GlUInt, pname:GlEnum, params:Pointer<GlUInt>):Void;
+	static function getQueryObjectuiv(id:GlUInt, pname:GlEnum, params:RawPointer<GlUInt>):Void;
 
 	@:native("glBindBuffer")
 	static function bindBuffer(target:GlEnum, buffer:GlUInt):Void;
 
 	@:native("glDeleteBuffers")
-	static function deleteBuffers(n:GlSizeI, buffers:ConstPointer<GlUInt>):Void;
+	static function deleteBuffers(n:GlSizeI, buffers:RawPointer<GlUInt>):Void;
 
 	@:native("glGenBuffers")
-	static function genBuffers(n:GlSizeI, buffers:Pointer<GlUInt>):Void;
+	static function genBuffers(n:GlSizeI, buffers:RawPointer<GlUInt>):Void;
 
 	@:native("glIsBuffer")
 	static function isBuffer(buffer:GlUInt):GlBool;
@@ -3618,16 +3615,16 @@ extern class Glad {
 	static function unmapBuffer(target:GlEnum):GlBool;
 
 	@:native("glGetBufferParameteriv")
-	static function getBufferParameteriv(target:GlEnum, pname:GlEnum, params:Pointer<GlInt>):Void;
+	static function getBufferParameteriv(target:GlEnum, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glGetBufferPointerv")
-	static function getBufferPointerv(target:GlEnum, pname:GlEnum, params:Pointer<Any>):Void;
+	static function getBufferPointerv(target:GlEnum, pname:GlEnum, params:RawPointer<Any>):Void;
 
 	@:native("glBlendEquationSeparate")
 	static function blendEquationSeparate(modeRGB:GlEnum, modeAlpha:GlEnum):Void;
 
 	@:native("glDrawBuffers")
-	static function drawBuffers(n:GlSizeI, bufs:ConstStar<GlEnum>):Void;
+	static function drawBuffers(n:GlSizeI, bufs:RawPointer<GlEnum>):Void;
 
 	@:native("glStencilOpSeparate")
 	static function stencilOpSeparate(face:GlEnum, sfail:GlEnum, dpfail:GlEnum, dppass:GlEnum):Void;
@@ -3669,52 +3666,52 @@ extern class Glad {
 	static function enableVertexAttribArray(index:GlUInt):Void;
 
 	@:native("glGetActiveAttrib")
-	static function getActiveAttrib(program:GlUInt, index:GlUInt, bufSize:GlSizeI, length:Pointer<GlSizeI>, size:Pointer<GlInt>, type:Pointer<GlEnum>, name:Pointer<GlChar>):Void;
+	static function getActiveAttrib(program:GlUInt, index:GlUInt, bufSize:GlSizeI, length:RawPointer<GlSizeI>, size:RawPointer<GlInt>, type:RawPointer<GlEnum>, name:RawPointer<GlChar>):Void;
 
 	@:native("glGetActiveUniform")
-	static function getActiveUniform(program:GlUInt, index:GlUInt, bufSize:GlSizeI, length:Pointer<GlSizeI>, size:Pointer<GlInt>, type:Pointer<GlEnum>, name:Pointer<GlChar>):Void;
+	static function getActiveUniform(program:GlUInt, index:GlUInt, bufSize:GlSizeI, length:RawPointer<GlSizeI>, size:RawPointer<GlInt>, type:RawPointer<GlEnum>, name:RawPointer<GlChar>):Void;
 
 	@:native("glGetAttachedShaders")
-	static function getAttachedShaders(program:GlUInt, maxCount:GlSizeI, count:Pointer<GlSizeI>, shaders:Pointer<GlUInt>):Void;
+	static function getAttachedShaders(program:GlUInt, maxCount:GlSizeI, count:RawPointer<GlSizeI>, shaders:RawPointer<GlUInt>):Void;
 
 	@:native("glGetAttribLocation")
 	static function getAttribLocation(program:GlUInt, name:ConstCharStar):GlInt;
 
 	@:native("glGetProgramiv")
-	static function getProgramiv(program:GlUInt, pname:GlEnum, params:Pointer<GlInt>):Void;
+	static function getProgramiv(program:GlUInt, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glGetProgramInfoLog")
-	static function getProgramInfoLog(program:GlUInt, bufSize:GlSizeI, length:Star<GlSizeI>, infoLog:Star<GlChar>):Void;
+	static function getProgramInfoLog(program:GlUInt, bufSize:GlSizeI, length:RawPointer<GlSizeI>, infoLog:RawPointer<GlChar>):Void;
 
 	@:native("glGetShaderiv")
-	static function getShaderiv(shader:GlUInt, pname:GlEnum, params:Pointer<GlInt>):Void;
+	static function getShaderiv(shader:GlUInt, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glGetShaderInfoLog")
-	static function getShaderInfoLog(shader:GlUInt, bufSize:GlSizeI, length:Star<GlSizeI>, infoLog:Star<GlChar>):Void;
+	static function getShaderInfoLog(shader:GlUInt, bufSize:GlSizeI, length:RawPointer<GlSizeI>, infoLog:RawPointer<GlChar>):Void;
 
 	@:native("glGetShaderSource")
-	static function getShaderSource(shader:GlUInt, bufSize:GlSizeI, length:Star<GlSizeI>, source:Star<GlChar>):Void;
+	static function getShaderSource(shader:GlUInt, bufSize:GlSizeI, length:RawPointer<GlSizeI>, source:RawPointer<GlChar>):Void;
 
 	@:native("glGetUniformLocation")
 	static function getUniformLocation(program:GlUInt, name:ConstCharStar):GlInt;
 
 	@:native("glGetUniformfv")
-	static function getUniformfv(program:GlUInt, location:GlInt, params:Pointer<GlFloat>):Void;
+	static function getUniformfv(program:GlUInt, location:GlInt, params:RawPointer<GlFloat>):Void;
 
 	@:native("glGetUniformiv")
-	static function getUniformiv(program:GlUInt, location:GlInt, params:Pointer<GlInt>):Void;
+	static function getUniformiv(program:GlUInt, location:GlInt, params:RawPointer<GlInt>):Void;
 
 	@:native("glGetVertexAttribdv")
-	static function getVertexAttribdv(index:GlUInt, pname:GlEnum, params:Pointer<GlDouble>):Void;
+	static function getVertexAttribdv(index:GlUInt, pname:GlEnum, params:RawPointer<GlDouble>):Void;
 
 	@:native("glGetVertexAttribfv")
-	static function getVertexAttribfv(index:GlUInt, pname:GlEnum, params:Pointer<GlFloat>):Void;
+	static function getVertexAttribfv(index:GlUInt, pname:GlEnum, params:RawPointer<GlFloat>):Void;
 
 	@:native("glGetVertexAttribiv")
-	static function getVertexAttribiv(index:GlUInt, pname:GlEnum, params:Pointer<GlInt>):Void;
+	static function getVertexAttribiv(index:GlUInt, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glGetVertexAttribPointerv")
-	static function getVertexAttribPointerv(index:GlUInt, pname:GlEnum, pointer:Pointer<Any>):Void;
+	static function getVertexAttribPointerv(index:GlUInt, pname:GlEnum, pointer:RawPointer<Any>):Void;
 
 	@:native("glIsProgram")
 	static function isProgram(program:GlUInt):GlBool;
@@ -3726,7 +3723,7 @@ extern class Glad {
 	static function linkProgram(program:GlUInt):Void;
 
 	@:native("glShaderSource")
-	static function shaderSource(shader:GlUInt, count:GlSizeI, string:Star<ConstCharStar>, length:ConstPointer<GlInt>):Void;
+	static function shaderSource(shader:GlUInt, count:GlSizeI, string:RawPointer<ConstCharStar>, length:RawPointer<GlInt>):Void;
 
 	@:native("glUseProgram")
 	static function useProgram(program:GlUInt):Void;
@@ -3756,37 +3753,37 @@ extern class Glad {
 	static function uniform4i(location:GlInt, v0:GlInt, v1:GlInt, v2:GlInt, v3:GlInt):Void;
 
 	@:native("glUniform1fv")
-	static function uniform1fv(location:GlInt, count:GlSizeI, value:ConstStar<GlFloat>):Void;
+	static function uniform1fv(location:GlInt, count:GlSizeI, value:RawPointer<GlFloat>):Void;
 
 	@:native("glUniform2fv")
-	static function uniform2fv(location:GlInt, count:GlSizeI, value:ConstStar<GlFloat>):Void;
+	static function uniform2fv(location:GlInt, count:GlSizeI, value:RawPointer<GlFloat>):Void;
 
 	@:native("glUniform3fv")
-	static function uniform3fv(location:GlInt, count:GlSizeI, value:ConstStar<GlFloat>):Void;
+	static function uniform3fv(location:GlInt, count:GlSizeI, value:RawPointer<GlFloat>):Void;
 
 	@:native("glUniform4fv")
-	static function uniform4fv(location:GlInt, count:GlSizeI, value:ConstStar<GlFloat>):Void;
+	static function uniform4fv(location:GlInt, count:GlSizeI, value:RawPointer<GlFloat>):Void;
 
 	@:native("glUniform1iv")
-	static function uniform1iv(location:GlInt, count:GlSizeI, value:ConstStar<GlInt>):Void;
+	static function uniform1iv(location:GlInt, count:GlSizeI, value:RawPointer<GlInt>):Void;
 
 	@:native("glUniform2iv")
-	static function uniform2iv(location:GlInt, count:GlSizeI, value:ConstStar<GlInt>):Void;
+	static function uniform2iv(location:GlInt, count:GlSizeI, value:RawPointer<GlInt>):Void;
 
 	@:native("glUniform3iv")
-	static function uniform3iv(location:GlInt, count:GlSizeI, value:ConstStar<GlInt>):Void;
+	static function uniform3iv(location:GlInt, count:GlSizeI, value:RawPointer<GlInt>):Void;
 
 	@:native("glUniform4iv")
-	static function uniform4iv(location:GlInt, count:GlSizeI, value:ConstStar<GlInt>):Void;
+	static function uniform4iv(location:GlInt, count:GlSizeI, value:RawPointer<GlInt>):Void;
 
 	@:native("glUniformMatrix2fv")
-	static function uniformMatrix2fv(location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlFloat>):Void;
+	static function uniformMatrix2fv(location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlFloat>):Void;
 
 	@:native("glUniformMatrix3fv")
-	static function uniformMatrix3fv(location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlFloat>):Void;
+	static function uniformMatrix3fv(location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlFloat>):Void;
 
 	@:native("glUniformMatrix4fv")
-	static function uniformMatrix4fv(location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlFloat>):Void;
+	static function uniformMatrix4fv(location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlFloat>):Void;
 
 	@:native("glValidateProgram")
 	static function validateProgram(program:GlUInt):Void;
@@ -3795,139 +3792,139 @@ extern class Glad {
 	static function vertexAttrib1d(index:GlUInt, x:GlDouble):Void;
 
 	@:native("glVertexAttrib1dv")
-	static function vertexAttrib1dv(index:GlUInt, v:ConstStar<GlDouble>):Void;
+	static function vertexAttrib1dv(index:GlUInt, v:RawPointer<GlDouble>):Void;
 
 	@:native("glVertexAttrib1f")
 	static function vertexAttrib1f(index:GlUInt, x:GlFloat):Void;
 
 	@:native("glVertexAttrib1fv")
-	static function vertexAttrib1fv(index:GlUInt, v:ConstStar<GlFloat>):Void;
+	static function vertexAttrib1fv(index:GlUInt, v:RawPointer<GlFloat>):Void;
 
 	@:native("glVertexAttrib1s")
 	static function vertexAttrib1s(index:GlUInt, x:GlShort):Void;
 
 	@:native("glVertexAttrib1sv")
-	static function vertexAttrib1sv(index:GlUInt, v:ConstStar<GlShort>):Void;
+	static function vertexAttrib1sv(index:GlUInt, v:RawPointer<GlShort>):Void;
 
 	@:native("glVertexAttrib2d")
 	static function vertexAttrib2d(index:GlUInt, x:GlDouble, y:GlDouble):Void;
 
 	@:native("glVertexAttrib2dv")
-	static function vertexAttrib2dv(index:GlUInt, v:ConstStar<GlDouble>):Void;
+	static function vertexAttrib2dv(index:GlUInt, v:RawPointer<GlDouble>):Void;
 
 	@:native("glVertexAttrib2f")
 	static function vertexAttrib2f(index:GlUInt, x:GlFloat, y:GlFloat):Void;
 
 	@:native("glVertexAttrib2fv")
-	static function vertexAttrib2fv(index:GlUInt, v:ConstStar<GlFloat>):Void;
+	static function vertexAttrib2fv(index:GlUInt, v:RawPointer<GlFloat>):Void;
 
 	@:native("glVertexAttrib2s")
 	static function vertexAttrib2s(index:GlUInt, x:GlShort, y:GlShort):Void;
 
 	@:native("glVertexAttrib2sv")
-	static function vertexAttrib2sv(index:GlUInt, v:ConstStar<GlShort>):Void;
+	static function vertexAttrib2sv(index:GlUInt, v:RawPointer<GlShort>):Void;
 
 	@:native("glVertexAttrib3d")
 	static function vertexAttrib3d(index:GlUInt, x:GlDouble, y:GlDouble, z:GlDouble):Void;
 
 	@:native("glVertexAttrib3dv")
-	static function vertexAttrib3dv(index:GlUInt, v:ConstStar<GlDouble>):Void;
+	static function vertexAttrib3dv(index:GlUInt, v:RawPointer<GlDouble>):Void;
 
 	@:native("glVertexAttrib3f")
 	static function vertexAttrib3f(index:GlUInt, x:GlFloat, y:GlFloat, z:GlFloat):Void;
 
 	@:native("glVertexAttrib3fv")
-	static function vertexAttrib3fv(index:GlUInt, v:ConstStar<GlFloat>):Void;
+	static function vertexAttrib3fv(index:GlUInt, v:RawPointer<GlFloat>):Void;
 
 	@:native("glVertexAttrib3s")
 	static function vertexAttrib3s(index:GlUInt, x:GlShort, y:GlShort, z:GlShort):Void;
 
 	@:native("glVertexAttrib3sv")
-	static function vertexAttrib3sv(index:GlUInt, v:ConstStar<GlShort>):Void;
+	static function vertexAttrib3sv(index:GlUInt, v:RawPointer<GlShort>):Void;
 
 	@:native("glVertexAttrib4Nbv")
-	static function vertexAttrib4Nbv(index:GlUInt, v:ConstStar<GlByte>):Void;
+	static function vertexAttrib4Nbv(index:GlUInt, v:RawPointer<GlByte>):Void;
 
 	@:native("glVertexAttrib4Niv")
-	static function vertexAttrib4Niv(index:GlUInt, v:ConstStar<GlInt>):Void;
+	static function vertexAttrib4Niv(index:GlUInt, v:RawPointer<GlInt>):Void;
 
 	@:native("glVertexAttrib4Nsv")
-	static function vertexAttrib4Nsv(index:GlUInt, v:ConstStar<GlShort>):Void;
+	static function vertexAttrib4Nsv(index:GlUInt, v:RawPointer<GlShort>):Void;
 
 	@:native("glVertexAttrib4Nub")
 	static function vertexAttrib4Nub(index:GlUInt, x:GlUByte, y:GlUByte, z:GlUByte, w:GlUByte):Void;
 
 	@:native("glVertexAttrib4Nubv")
-	static function vertexAttrib4Nubv(index:GlUInt, v:ConstStar<GlUByte>):Void;
+	static function vertexAttrib4Nubv(index:GlUInt, v:RawPointer<GlUByte>):Void;
 
 	@:native("glVertexAttrib4Nuiv")
-	static function vertexAttrib4Nuiv(index:GlUInt, v:ConstStar<GlUInt>):Void;
+	static function vertexAttrib4Nuiv(index:GlUInt, v:RawPointer<GlUInt>):Void;
 
 	@:native("glVertexAttrib4Nusv")
-	static function vertexAttrib4Nusv(index:GlUInt, v:ConstStar<GlUShort>):Void;
+	static function vertexAttrib4Nusv(index:GlUInt, v:RawPointer<GlUShort>):Void;
 
 	@:native("glVertexAttrib4bv")
-	static function vertexAttrib4bv(index:GlUInt, v:ConstStar<GlByte>):Void;
+	static function vertexAttrib4bv(index:GlUInt, v:RawPointer<GlByte>):Void;
 
 	@:native("glVertexAttrib4d")
 	static function vertexAttrib4d(index:GlUInt, x:GlDouble, y:GlDouble, z:GlDouble, w:GlDouble):Void;
 
 	@:native("glVertexAttrib4dv")
-	static function vertexAttrib4dv(index:GlUInt, v:ConstStar<GlDouble>):Void;
+	static function vertexAttrib4dv(index:GlUInt, v:RawPointer<GlDouble>):Void;
 
 	@:native("glVertexAttrib4f")
 	static function vertexAttrib4f(index:GlUInt, x:GlFloat, y:GlFloat, z:GlFloat, w:GlFloat):Void;
 
 	@:native("glVertexAttrib4fv")
-	static function vertexAttrib4fv(index:GlUInt, v:ConstStar<GlFloat>):Void;
+	static function vertexAttrib4fv(index:GlUInt, v:RawPointer<GlFloat>):Void;
 
 	@:native("glVertexAttrib4iv")
-	static function vertexAttrib4iv(index:GlUInt, v:ConstStar<GlInt>):Void;
+	static function vertexAttrib4iv(index:GlUInt, v:RawPointer<GlInt>):Void;
 
 	@:native("glVertexAttrib4s")
 	static function vertexAttrib4s(index:GlUInt, x:GlShort, y:GlShort, z:GlShort, w:GlShort):Void;
 
 	@:native("glVertexAttrib4sv")
-	static function vertexAttrib4sv(index:GlUInt, v:ConstStar<GlShort>):Void;
+	static function vertexAttrib4sv(index:GlUInt, v:RawPointer<GlShort>):Void;
 
 	@:native("glVertexAttrib4ubv")
-	static function vertexAttrib4ubv(index:GlUInt, v:ConstStar<GlUByte>):Void;
+	static function vertexAttrib4ubv(index:GlUInt, v:RawPointer<GlUByte>):Void;
 
 	@:native("glVertexAttrib4uiv")
-	static function vertexAttrib4uiv(index:GlUInt, v:ConstStar<GlUInt>):Void;
+	static function vertexAttrib4uiv(index:GlUInt, v:RawPointer<GlUInt>):Void;
 
 	@:native("glVertexAttrib4usv")
-	static function vertexAttrib4usv(index:GlUInt, v:ConstStar<GlUShort>):Void;
+	static function vertexAttrib4usv(index:GlUInt, v:RawPointer<GlUShort>):Void;
 
 	@:native("glVertexAttribPointer")
 	static function vertexAttribPointer(index:GlUInt, size:GlInt, type:GlEnum, normalized:GlBool, stride:GlSizeI, pointer:cpp.RawConstPointer<cpp.Void>):Void;
 
 	@:native("glUniformMatrix2x3fv")
-	static function uniformMatrix2x3fv(location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlFloat>):Void;
+	static function uniformMatrix2x3fv(location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlFloat>):Void;
 
 	@:native("glUniformMatrix3x2fv")
-	static function uniformMatrix3x2fv(location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlFloat>):Void;
+	static function uniformMatrix3x2fv(location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlFloat>):Void;
 
 	@:native("glUniformMatrix2x4fv")
-	static function uniformMatrix2x4fv(location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlFloat>):Void;
+	static function uniformMatrix2x4fv(location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlFloat>):Void;
 
 	@:native("glUniformMatrix4x2fv")
-	static function uniformMatrix4x2fv(location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlFloat>):Void;
+	static function uniformMatrix4x2fv(location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlFloat>):Void;
 
 	@:native("glUniformMatrix3x4fv")
-	static function uniformMatrix3x4fv(location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlFloat>):Void;
+	static function uniformMatrix3x4fv(location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlFloat>):Void;
 
 	@:native("glUniformMatrix4x3fv")
-	static function uniformMatrix4x3fv(location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlFloat>):Void;
+	static function uniformMatrix4x3fv(location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlFloat>):Void;
 
 	@:native("glColorMaski")
 	static function colorMaski(index:GlUInt, r:GlBool, g:GlBool, b:GlBool, a:GlBool):Void;
 
 	@:native("glGetBooleani_v")
-	static function getBooleani_v(target:GlEnum, index:GlUInt, data:Pointer<GlBool>):Void;
+	static function getBooleani_v(target:GlEnum, index:GlUInt, data:RawPointer<GlBool>):Void;
 
 	@:native("glGetIntegeri_v")
-	static function getIntegeri_v(target:GlEnum, index:GlUInt, data:Pointer<GlInt>):Void;
+	static function getIntegeri_v(target:GlEnum, index:GlUInt, data:RawPointer<GlInt>):Void;
 
 	@:native("glEnablei")
 	static function enablei(target:GlEnum, index:GlUInt):Void;
@@ -3951,10 +3948,10 @@ extern class Glad {
 	static function bindBufferBase(target:GlEnum, index:GlUInt, buffer:GlUInt):Void;
 
 	@:native("glTransformFeedbackVaryings")
-	static function transformFeedbackVaryings(program:GlUInt, count:GlSizeI, varyings:Star<ConstCharStar>, bufferMode:GlEnum):Void;
+	static function transformFeedbackVaryings(program:GlUInt, count:GlSizeI, varyings:RawPointer<ConstCharStar>, bufferMode:GlEnum):Void;
 
 	@:native("glGetTransformFeedbackVarying")
-	static function getTransformFeedbackVarying(program:GlUInt, index:GlUInt, bufSize:GlSizeI, length:Pointer<GlSizeI>, size:Pointer<GlSizeI>, type:Pointer<GlEnum>, name:Pointer<GlChar>):Void;
+	static function getTransformFeedbackVarying(program:GlUInt, index:GlUInt, bufSize:GlSizeI, length:RawPointer<GlSizeI>, size:RawPointer<GlSizeI>, type:RawPointer<GlEnum>, name:RawPointer<GlChar>):Void;
 
 	@:native("glClampColor")
 	static function clampColor(target:GlEnum, clamp:GlEnum):Void;
@@ -3969,10 +3966,10 @@ extern class Glad {
 	static function vertexAttribIPointer(index:GlUInt, size:GlInt, type:GlEnum, stride:GlSizeI, pointer:cpp.RawConstPointer<cpp.Void>):Void;
 
 	@:native("glGetVertexAttribIiv")
-	static function getVertexAttribIiv(index:GlUInt, pname:GlEnum, params:Pointer<GlInt>):Void;
+	static function getVertexAttribIiv(index:GlUInt, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glGetVertexAttribIuiv")
-	static function getVertexAttribIuiv(index:GlUInt, pname:GlEnum, params:Pointer<GlUInt>):Void;
+	static function getVertexAttribIuiv(index:GlUInt, pname:GlEnum, params:RawPointer<GlUInt>):Void;
 
 	@:native("glVertexAttribI1i")
 	static function vertexAttribI1i(index:GlUInt, x:GlInt):Void;
@@ -3999,43 +3996,43 @@ extern class Glad {
 	static function vertexAttribI4ui(index:GlUInt, x:GlUInt, y:GlUInt, z:GlUInt, w:GlUInt):Void;
 
 	@:native("glVertexAttribI1iv")
-	static function vertexAttribI1iv(index:GlUInt, v:ConstStar<GlInt>):Void;
+	static function vertexAttribI1iv(index:GlUInt, v:RawPointer<GlInt>):Void;
 
 	@:native("glVertexAttribI2iv")
-	static function vertexAttribI2iv(index:GlUInt, v:ConstStar<GlInt>):Void;
+	static function vertexAttribI2iv(index:GlUInt, v:RawPointer<GlInt>):Void;
 
 	@:native("glVertexAttribI3iv")
-	static function vertexAttribI3iv(index:GlUInt, v:ConstStar<GlInt>):Void;
+	static function vertexAttribI3iv(index:GlUInt, v:RawPointer<GlInt>):Void;
 
 	@:native("glVertexAttribI4iv")
-	static function vertexAttribI4iv(index:GlUInt, v:ConstStar<GlInt>):Void;
+	static function vertexAttribI4iv(index:GlUInt, v:RawPointer<GlInt>):Void;
 
 	@:native("glVertexAttribI1uiv")
-	static function vertexAttribI1uiv(index:GlUInt, v:ConstStar<GlUInt>):Void;
+	static function vertexAttribI1uiv(index:GlUInt, v:RawPointer<GlUInt>):Void;
 
 	@:native("glVertexAttribI2uiv")
-	static function vertexAttribI2uiv(index:GlUInt, v:ConstStar<GlUInt>):Void;
+	static function vertexAttribI2uiv(index:GlUInt, v:RawPointer<GlUInt>):Void;
 
 	@:native("glVertexAttribI3uiv")
-	static function vertexAttribI3uiv(index:GlUInt, v:ConstStar<GlUInt>):Void;
+	static function vertexAttribI3uiv(index:GlUInt, v:RawPointer<GlUInt>):Void;
 
 	@:native("glVertexAttribI4uiv")
-	static function vertexAttribI4uiv(index:GlUInt, v:ConstStar<GlUInt>):Void;
+	static function vertexAttribI4uiv(index:GlUInt, v:RawPointer<GlUInt>):Void;
 
 	@:native("glVertexAttribI4bv")
-	static function vertexAttribI4bv(index:GlUInt, v:ConstStar<GlByte>):Void;
+	static function vertexAttribI4bv(index:GlUInt, v:RawPointer<GlByte>):Void;
 
 	@:native("glVertexAttribI4sv")
-	static function vertexAttribI4sv(index:GlUInt, v:ConstStar<GlShort>):Void;
+	static function vertexAttribI4sv(index:GlUInt, v:RawPointer<GlShort>):Void;
 
 	@:native("glVertexAttribI4ubv")
-	static function vertexAttribI4ubv(index:GlUInt, v:ConstStar<GlUByte>):Void;
+	static function vertexAttribI4ubv(index:GlUInt, v:RawPointer<GlUByte>):Void;
 
 	@:native("glVertexAttribI4usv")
-	static function vertexAttribI4usv(index:GlUInt, v:ConstStar<GlUShort>):Void;
+	static function vertexAttribI4usv(index:GlUInt, v:RawPointer<GlUShort>):Void;
 
 	@:native("glGetUniformuiv")
-	static function getUniformuiv(program:GlUInt, location:GlInt, params:Pointer<GlUInt>):Void;
+	static function getUniformuiv(program:GlUInt, location:GlInt, params:RawPointer<GlUInt>):Void;
 
 	@:native("glBindFragDataLocation")
 	static function bindFragDataLocation(program:GlUInt, color:GlUInt, name:ConstCharStar):Void;
@@ -4056,43 +4053,43 @@ extern class Glad {
 	static function uniform4ui(location:GlInt, v0:GlUInt, v1:GlUInt, v2:GlUInt, v3:GlUInt):Void;
 
 	@:native("glUniform1uiv")
-	static function uniform1uiv(location:GlInt, count:GlSizeI, value:ConstStar<GlUInt>):Void;
+	static function uniform1uiv(location:GlInt, count:GlSizeI, value:RawPointer<GlUInt>):Void;
 
 	@:native("glUniform2uiv")
-	static function uniform2uiv(location:GlInt, count:GlSizeI, value:ConstStar<GlUInt>):Void;
+	static function uniform2uiv(location:GlInt, count:GlSizeI, value:RawPointer<GlUInt>):Void;
 
 	@:native("glUniform3uiv")
-	static function uniform3uiv(location:GlInt, count:GlSizeI, value:ConstStar<GlUInt>):Void;
+	static function uniform3uiv(location:GlInt, count:GlSizeI, value:RawPointer<GlUInt>):Void;
 
 	@:native("glUniform4uiv")
-	static function uniform4uiv(location:GlInt, count:GlSizeI, value:ConstStar<GlUInt>):Void;
+	static function uniform4uiv(location:GlInt, count:GlSizeI, value:RawPointer<GlUInt>):Void;
 
 	@:native("glTexParameterIiv")
-	static function texParameterIiv(target:GlEnum, pname:GlEnum, params:ConstStar<GlInt>):Void;
+	static function texParameterIiv(target:GlEnum, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glTexParameterIuiv")
-	static function texParameterIuiv(target:GlEnum, pname:GlEnum, params:ConstStar<GlUInt>):Void;
+	static function texParameterIuiv(target:GlEnum, pname:GlEnum, params:RawPointer<GlUInt>):Void;
 
 	@:native("glGetTexParameterIiv")
-	static function getTexParameterIiv(target:GlEnum, pname:GlEnum, params:Pointer<GlInt>):Void;
+	static function getTexParameterIiv(target:GlEnum, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glGetTexParameterIuiv")
-	static function getTexParameterIuiv(target:GlEnum, pname:GlEnum, params:Pointer<GlUInt>):Void;
+	static function getTexParameterIuiv(target:GlEnum, pname:GlEnum, params:RawPointer<GlUInt>):Void;
 
 	@:native("glClearBufferiv")
-	static function clearBufferiv(buffer:GlEnum, drawbuffer:GlInt, value:ConstStar<GlInt>):Void;
+	static function clearBufferiv(buffer:GlEnum, drawbuffer:GlInt, value:RawPointer<GlInt>):Void;
 
 	@:native("glClearBufferuiv")
-	static function clearBufferuiv(buffer:GlEnum, drawbuffer:GlInt, value:ConstStar<GlUInt>):Void;
+	static function clearBufferuiv(buffer:GlEnum, drawbuffer:GlInt, value:RawPointer<GlUInt>):Void;
 
 	@:native("glClearBufferfv")
-	static function clearBufferfv(buffer:GlEnum, drawbuffer:GlInt, value:ConstStar<GlFloat>):Void;
+	static function clearBufferfv(buffer:GlEnum, drawbuffer:GlInt, value:RawPointer<GlFloat>):Void;
 
 	@:native("glClearBufferfi")
 	static function clearBufferfi(buffer:GlEnum, drawbuffer:GlInt, depth:GlFloat, stencil:GlInt):Void;
 
 	@:native("glGetStringi")
-	static function getStringi(name:GlEnum, index:GlUInt):ConstStar<GlUByte>;
+	static function getStringi(name:GlEnum, index:GlUInt):RawPointer<GlUByte>;
 
 	@:native("glIsRenderbuffer")
 	static function isRenderbuffer(renderbuffer:GlUInt):GlBool;
@@ -4101,16 +4098,16 @@ extern class Glad {
 	static function bindRenderbuffer(target:GlEnum, renderbuffer:GlUInt):Void;
 
 	@:native("glDeleteRenderbuffers")
-	static function deleteRenderbuffers(n:GlSizeI, renderbuffers:ConstPointer<GlUInt>):Void;
+	static function deleteRenderbuffers(n:GlSizeI, renderbuffers:RawPointer<GlUInt>):Void;
 
 	@:native("glGenRenderbuffers")
-	static function genRenderbuffers(n:GlSizeI, renderbuffers:Pointer<GlUInt>):Void;
+	static function genRenderbuffers(n:GlSizeI, renderbuffers:RawPointer<GlUInt>):Void;
 
 	@:native("glRenderbufferStorage")
 	static function renderbufferStorage(target:GlEnum, internalformat:GlEnum, width:GlSizeI, height:GlSizeI):Void;
 
 	@:native("glGetRenderbufferParameteriv")
-	static function getRenderbufferParameteriv(target:GlEnum, pname:GlEnum, params:Pointer<GlInt>):Void;
+	static function getRenderbufferParameteriv(target:GlEnum, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glIsFramebuffer")
 	static function isFramebuffer(framebuffer:GlUInt):GlBool;
@@ -4119,10 +4116,10 @@ extern class Glad {
 	static function bindFramebuffer(target:GlEnum, framebuffer:GlUInt):Void;
 
 	@:native("glDeleteFramebuffers")
-	static function deleteFramebuffers(n:GlSizeI, framebuffers:ConstPointer<GlUInt>):Void;
+	static function deleteFramebuffers(n:GlSizeI, framebuffers:RawPointer<GlUInt>):Void;
 
 	@:native("glGenFramebuffers")
-	static function genFramebuffers(n:GlSizeI, framebuffers:Pointer<GlUInt>):Void;
+	static function genFramebuffers(n:GlSizeI, framebuffers:RawPointer<GlUInt>):Void;
 
 	@:native("glCheckFramebufferStatus")
 	static function checkFramebufferStatus(target:GlEnum):GlEnum;
@@ -4140,7 +4137,7 @@ extern class Glad {
 	static function framebufferRenderbuffer(target:GlEnum, attachment:GlEnum, renderbuffertarget:GlEnum, renderbuffer:GlUInt):Void;
 
 	@:native("glGetFramebufferAttachmentParameteriv")
-	static function getFramebufferAttachmentParameteriv(target:GlEnum, attachment:GlEnum, pname:GlEnum, params:Pointer<GlInt>):Void;
+	static function getFramebufferAttachmentParameteriv(target:GlEnum, attachment:GlEnum, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glGenerateMipmap")
 	static function generateMipmap(target:GlEnum):Void;
@@ -4165,10 +4162,10 @@ extern class Glad {
 	static function bindVertexArray(array:GlUInt):Void;
 
 	@:native("glDeleteVertexArrays")
-	static function deleteVertexArrays(n:GlSizeI, arrays:ConstPointer<GlUInt>):Void;
+	static function deleteVertexArrays(n:GlSizeI, arrays:RawPointer<GlUInt>):Void;
 
 	@:native("glGenVertexArrays")
-	static function genVertexArrays(n:GlSizeI, arrays:Pointer<GlUInt>):Void;
+	static function genVertexArrays(n:GlSizeI, arrays:RawPointer<GlUInt>):Void;
 
 	@:native("glIsVertexArray")
 	static function isVertexArray(array:GlUInt):GlBool;
@@ -4190,22 +4187,22 @@ extern class Glad {
 	static function copyBufferSubData(readTarget:GlEnum, writeTarget:GlEnum, readOffset:GlIntPointer, writeOffset:GlIntPointer, size:GlSizeIPointer):Void;
 
 	@:native("glGetUniformIndices")
-	static function getUniformIndices(program:GlUInt, uniformCount:GlSizeI, uniformNames:Pointer<ConstCharStar>, uniformIndices:Pointer<GlUInt>):Void;
+	static function getUniformIndices(program:GlUInt, uniformCount:GlSizeI, uniformNames:RawPointer<ConstCharStar>, uniformIndices:RawPointer<GlUInt>):Void;
 
 	@:native("glGetActiveUniformsiv")
-	static function getActiveUniformsiv(program:GlUInt, uniformCount:GlSizeI, uniformIndices:ConstPointer<GlUInt>, pname:GlEnum, params:Pointer<GlInt>):Void;
+	static function getActiveUniformsiv(program:GlUInt, uniformCount:GlSizeI, uniformIndices:RawPointer<GlUInt>, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glGetActiveUniformName")
-	static function getActiveUniformName(program:GlUInt, uniformIndex:GlUInt, bufSize:GlSizeI, length:Pointer<GlSizeI>, uniformName:Pointer<GlChar>):Void;
+	static function getActiveUniformName(program:GlUInt, uniformIndex:GlUInt, bufSize:GlSizeI, length:RawPointer<GlSizeI>, uniformName:RawPointer<GlChar>):Void;
 
 	@:native("glGetUniformBlockIndex")
 	static function getUniformBlockIndex(program:GlUInt, uniformBlockName:ConstCharStar):GlUInt;
 
 	@:native("glGetActiveUniformBlockiv")
-	static function getActiveUniformBlockiv(program:GlUInt, uniformBlockIndex:GlUInt, pname:GlEnum, params:Star<GlInt>):Void;
+	static function getActiveUniformBlockiv(program:GlUInt, uniformBlockIndex:GlUInt, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glGetActiveUniformBlockName")
-	static function getActiveUniformBlockName(program:GlUInt, uniformBlockIndex:GlUInt, bufSize:GlSizeI, length:Star<GlSizeI>, uniformBlockName:Star<GlChar>):Void;
+	static function getActiveUniformBlockName(program:GlUInt, uniformBlockIndex:GlUInt, bufSize:GlSizeI, length:RawPointer<GlSizeI>, uniformBlockName:RawPointer<GlChar>):Void;
 
 	@:native("glUniformBlockBinding")
 	static function uniformBlockBinding(program:GlUInt, uniformBlockIndex:GlUInt, uniformBlockBinding:GlUInt):Void;
@@ -4223,7 +4220,7 @@ extern class Glad {
 	}
 
 	// @:native("glMultiDrawElementsBaseVertex") same reason as line 1855.
-	// static function multiDrawElementsBaseVertex(mode:GlEnum, count:ConstStar<GlSizeI>, type:GlEnum, const*indices:Any, drawcount:GlSizeI, basevertex:ConstStar<GlInt>):Void;
+	// static function multiDrawElementsBaseVertex(mode:GlEnum, count:RawPointer<GlSizeI>, type:GlEnum, const*indices:Any, drawcount:GlSizeI, basevertex:RawPointer<GlInt>):Void;
 
 	@:native("glProvokingVertex")
 	static function provokingVertex(mode:GlEnum):Void;
@@ -4244,16 +4241,16 @@ extern class Glad {
 	static function waitSync(sync:GlSync, flags:GlBitField, timeout:GlUInt64):Void;
 
 	@:native("glGetInteger64v")
-	static function getInteger64v(pname:GlEnum, data:Pointer<cpp.Int64>):Void;
+	static function getInteger64v(pname:GlEnum, data:RawPointer<cpp.Int64>):Void;
 
 	@:native("glGetSynciv")
-	static function getSynciv(sync:GlSync, pname:GlEnum, count:GlSizeI, length:Pointer<GlSizeI>, values:Pointer<GlInt>):Void;
+	static function getSynciv(sync:GlSync, pname:GlEnum, count:GlSizeI, length:RawPointer<GlSizeI>, values:RawPointer<GlInt>):Void;
 
 	@:native("glGetInteger64i_v")
-	static function getInteger64i_v(target:GlEnum, index:GlUInt, data:Pointer<cpp.Int64>):Void;
+	static function getInteger64i_v(target:GlEnum, index:GlUInt, data:RawPointer<cpp.Int64>):Void;
 
 	@:native("glGetBufferParameteri64v")
-	static function getBufferParameteri64v(target:GlEnum, pname:GlEnum, params:Pointer<cpp.Int64>):Void;
+	static function getBufferParameteri64v(target:GlEnum, pname:GlEnum, params:RawPointer<cpp.Int64>):Void;
 
 	@:native("glFramebufferTexture")
 	static function framebufferTexture(target:GlEnum, attachment:GlEnum, texture:GlUInt, level:GlInt):Void;
@@ -4265,7 +4262,7 @@ extern class Glad {
 	static function texImage3DMultisample(target:GlEnum, samples:GlSizeI, internalformat:GlEnum, width:GlSizeI, height:GlSizeI, depth:GlSizeI, fixedsamplelocations:GlBool):Void;
 
 	@:native("glGetMultisamplefv")
-	static function getMultisamplefv(pname:GlEnum, index:GlUInt, val:Pointer<GlFloat>):Void;
+	static function getMultisamplefv(pname:GlEnum, index:GlUInt, val:RawPointer<GlFloat>):Void;
 
 	@:native("glSampleMaski")
 	static function sampleMaski(maskNumber:GlUInt, mask:GlBitField):Void;
@@ -4277,10 +4274,10 @@ extern class Glad {
 	static function getFragDataIndex(program:GlUInt, name:ConstCharStar):GlInt;
 
 	@:native("glGenSamplers")
-	static function genSamplers(count:GlSizeI, samplers:Pointer<GlUInt>):Void;
+	static function genSamplers(count:GlSizeI, samplers:RawPointer<GlUInt>):Void;
 
 	@:native("glDeleteSamplers")
-	static function deleteSamplers(count:GlSizeI, samplers:ConstPointer<GlUInt>):Void;
+	static function deleteSamplers(count:GlSizeI, samplers:RawPointer<GlUInt>):Void;
 
 	@:native("glIsSampler")
 	static function isSampler(sampler:GlUInt):GlBool;
@@ -4292,40 +4289,40 @@ extern class Glad {
 	static function samplerParameteri(sampler:GlUInt, pname:GlEnum, param:GlInt):Void;
 
 	@:native("glSamplerParameteriv")
-	static function samplerParameteriv(sampler:GlUInt, pname:GlEnum, param:ConstStar<GlInt>):Void;
+	static function samplerParameteriv(sampler:GlUInt, pname:GlEnum, param:RawPointer<GlInt>):Void;
 
 	@:native("glSamplerParameterf")
 	static function samplerParameterf(sampler:GlUInt, pname:GlEnum, param:GlFloat):Void;
 
 	@:native("glSamplerParameterfv")
-	static function samplerParameterfv(sampler:GlUInt, pname:GlEnum, param:ConstStar<GlFloat>):Void;
+	static function samplerParameterfv(sampler:GlUInt, pname:GlEnum, param:RawPointer<GlFloat>):Void;
 
 	@:native("glSamplerParameterIiv")
-	static function samplerParameterIiv(sampler:GlUInt, pname:GlEnum, param:ConstStar<GlInt>):Void;
+	static function samplerParameterIiv(sampler:GlUInt, pname:GlEnum, param:RawPointer<GlInt>):Void;
 
 	@:native("glSamplerParameterIuiv")
-	static function samplerParameterIuiv(sampler:GlUInt, pname:GlEnum, param:ConstStar<GlUInt>):Void;
+	static function samplerParameterIuiv(sampler:GlUInt, pname:GlEnum, param:RawPointer<GlUInt>):Void;
 
 	@:native("glGetSamplerParameteriv")
-	static function getSamplerParameteriv(sampler:GlUInt, pname:GlEnum, params:Pointer<GlInt>):Void;
+	static function getSamplerParameteriv(sampler:GlUInt, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glGetSamplerParameterIiv")
-	static function getSamplerParameterIiv(sampler:GlUInt, pname:GlEnum, params:Pointer<GlInt>):Void;
+	static function getSamplerParameterIiv(sampler:GlUInt, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glGetSamplerParameterfv")
-	static function getSamplerParameterfv(sampler:GlUInt, pname:GlEnum, params:Pointer<GlFloat>):Void;
+	static function getSamplerParameterfv(sampler:GlUInt, pname:GlEnum, params:RawPointer<GlFloat>):Void;
 
 	@:native("glGetSamplerParameterIuiv")
-	static function getSamplerParameterIuiv(sampler:GlUInt, pname:GlEnum, params:Pointer<GlUInt>):Void;
+	static function getSamplerParameterIuiv(sampler:GlUInt, pname:GlEnum, params:RawPointer<GlUInt>):Void;
 
 	@:native("glQueryCounter")
 	static function queryCounter(id:GlUInt, target:GlEnum):Void;
 
 	@:native("glGetQueryObjecti64v")
-	static function getQueryObjecti64v(id:GlUInt, pname:GlEnum, params:Pointer<cpp.Int64>):Void;
+	static function getQueryObjecti64v(id:GlUInt, pname:GlEnum, params:RawPointer<cpp.Int64>):Void;
 
 	@:native("glGetQueryObjectui64v")
-	static function getQueryObjectui64v(id:GlUInt, pname:GlEnum, params:Pointer<cpp.UInt64>):Void;
+	static function getQueryObjectui64v(id:GlUInt, pname:GlEnum, params:RawPointer<cpp.UInt64>):Void;
 
 	@:native("glVertexAttribDivisor")
 	static function vertexAttribDivisor(index:GlUInt, divisor:GlUInt):Void;
@@ -4334,115 +4331,115 @@ extern class Glad {
 	static function vertexAttribP1ui(index:GlUInt, type:GlEnum, normalized:GlBool, value:GlUInt):Void;
 
 	@:native("glVertexAttribP1uiv")
-	static function vertexAttribP1uiv(index:GlUInt, type:GlEnum, normalized:GlBool, value:ConstStar<GlUInt>):Void;
+	static function vertexAttribP1uiv(index:GlUInt, type:GlEnum, normalized:GlBool, value:RawPointer<GlUInt>):Void;
 
 	@:native("glVertexAttribP2ui")
 	static function vertexAttribP2ui(index:GlUInt, type:GlEnum, normalized:GlBool, value:GlUInt):Void;
 
 	@:native("glVertexAttribP2uiv")
-	static function vertexAttribP2uiv(index:GlUInt, type:GlEnum, normalized:GlBool, value:ConstStar<GlUInt>):Void;
+	static function vertexAttribP2uiv(index:GlUInt, type:GlEnum, normalized:GlBool, value:RawPointer<GlUInt>):Void;
 
 	@:native("glVertexAttribP3ui")
 	static function vertexAttribP3ui(index:GlUInt, type:GlEnum, normalized:GlBool, value:GlUInt):Void;
 
 	@:native("glVertexAttribP3uiv")
-	static function vertexAttribP3uiv(index:GlUInt, type:GlEnum, normalized:GlBool, value:ConstStar<GlUInt>):Void;
+	static function vertexAttribP3uiv(index:GlUInt, type:GlEnum, normalized:GlBool, value:RawPointer<GlUInt>):Void;
 
 	@:native("glVertexAttribP4ui")
 	static function vertexAttribP4ui(index:GlUInt, type:GlEnum, normalized:GlBool, value:GlUInt):Void;
 
 	@:native("glVertexAttribP4uiv")
-	static function vertexAttribP4uiv(index:GlUInt, type:GlEnum, normalized:GlBool, value:ConstStar<GlUInt>):Void;
+	static function vertexAttribP4uiv(index:GlUInt, type:GlEnum, normalized:GlBool, value:RawPointer<GlUInt>):Void;
 
 	@:native("glVertexP2ui")
 	static function vertexP2ui(type:GlEnum, value:GlUInt):Void;
 
 	@:native("glVertexP2uiv")
-	static function vertexP2uiv(type:GlEnum, value:ConstStar<GlUInt>):Void;
+	static function vertexP2uiv(type:GlEnum, value:RawPointer<GlUInt>):Void;
 
 	@:native("glVertexP3ui")
 	static function vertexP3ui(type:GlEnum, value:GlUInt):Void;
 
 	@:native("glVertexP3uiv")
-	static function vertexP3uiv(type:GlEnum, value:ConstStar<GlUInt>):Void;
+	static function vertexP3uiv(type:GlEnum, value:RawPointer<GlUInt>):Void;
 
 	@:native("glVertexP4ui")
 	static function vertexP4ui(type:GlEnum, value:GlUInt):Void;
 
 	@:native("glVertexP4uiv")
-	static function vertexP4uiv(type:GlEnum, value:ConstStar<GlUInt>):Void;
+	static function vertexP4uiv(type:GlEnum, value:RawPointer<GlUInt>):Void;
 
 	@:native("glTexCoordP1ui")
 	static function texCoordP1ui(type:GlEnum, coords:GlUInt):Void;
 
 	@:native("glTexCoordP1uiv")
-	static function texCoordP1uiv(type:GlEnum, coords:ConstStar<GlUInt>):Void;
+	static function texCoordP1uiv(type:GlEnum, coords:RawPointer<GlUInt>):Void;
 
 	@:native("glTexCoordP2ui")
 	static function texCoordP2ui(type:GlEnum, coords:GlUInt):Void;
 
 	@:native("glTexCoordP2uiv")
-	static function texCoordP2uiv(type:GlEnum, coords:ConstStar<GlUInt>):Void;
+	static function texCoordP2uiv(type:GlEnum, coords:RawPointer<GlUInt>):Void;
 
 	@:native("glTexCoordP3ui")
 	static function texCoordP3ui(type:GlEnum, coords:GlUInt):Void;
 
 	@:native("glTexCoordP3uiv")
-	static function texCoordP3uiv(type:GlEnum, coords:ConstStar<GlUInt>):Void;
+	static function texCoordP3uiv(type:GlEnum, coords:RawPointer<GlUInt>):Void;
 
 	@:native("glTexCoordP4ui")
 	static function texCoordP4ui(type:GlEnum, coords:GlUInt):Void;
 
 	@:native("glTexCoordP4uiv")
-	static function texCoordP4uiv(type:GlEnum, coords:ConstStar<GlUInt>):Void;
+	static function texCoordP4uiv(type:GlEnum, coords:RawPointer<GlUInt>):Void;
 
 	@:native("glMultiTexCoordP1ui")
 	static function multiTexCoordP1ui(texture:GlEnum, type:GlEnum, coords:GlUInt):Void;
 
 	@:native("glMultiTexCoordP1uiv")
-	static function multiTexCoordP1uiv(texture:GlEnum, type:GlEnum, coords:ConstStar<GlUInt>):Void;
+	static function multiTexCoordP1uiv(texture:GlEnum, type:GlEnum, coords:RawPointer<GlUInt>):Void;
 
 	@:native("glMultiTexCoordP2ui")
 	static function multiTexCoordP2ui(texture:GlEnum, type:GlEnum, coords:GlUInt):Void;
 
 	@:native("glMultiTexCoordP2uiv")
-	static function multiTexCoordP2uiv(texture:GlEnum, type:GlEnum, coords:ConstStar<GlUInt>):Void;
+	static function multiTexCoordP2uiv(texture:GlEnum, type:GlEnum, coords:RawPointer<GlUInt>):Void;
 
 	@:native("glMultiTexCoordP3ui")
 	static function multiTexCoordP3ui(texture:GlEnum, type:GlEnum, coords:GlUInt):Void;
 
 	@:native("glMultiTexCoordP3uiv")
-	static function multiTexCoordP3uiv(texture:GlEnum, type:GlEnum, coords:ConstStar<GlUInt>):Void;
+	static function multiTexCoordP3uiv(texture:GlEnum, type:GlEnum, coords:RawPointer<GlUInt>):Void;
 
 	@:native("glMultiTexCoordP4ui")
 	static function multiTexCoordP4ui(texture:GlEnum, type:GlEnum, coords:GlUInt):Void;
 
 	@:native("glMultiTexCoordP4uiv")
-	static function multiTexCoordP4uiv(texture:GlEnum, type:GlEnum, coords:ConstStar<GlUInt>):Void;
+	static function multiTexCoordP4uiv(texture:GlEnum, type:GlEnum, coords:RawPointer<GlUInt>):Void;
 
 	@:native("glNormalP3ui")
 	static function normalP3ui(type:GlEnum, coords:GlUInt):Void;
 
 	@:native("glNormalP3uiv")
-	static function normalP3uiv(type:GlEnum, coords:ConstStar<GlUInt>):Void;
+	static function normalP3uiv(type:GlEnum, coords:RawPointer<GlUInt>):Void;
 
 	@:native("glColorP3ui")
 	static function colorP3ui(type:GlEnum, color:GlUInt):Void;
 
 	@:native("glColorP3uiv")
-	static function colorP3uiv(type:GlEnum, color:ConstStar<GlUInt>):Void;
+	static function colorP3uiv(type:GlEnum, color:RawPointer<GlUInt>):Void;
 
 	@:native("glColorP4ui")
 	static function colorP4ui(type:GlEnum, color:GlUInt):Void;
 
 	@:native("glColorP4uiv")
-	static function colorP4uiv(type:GlEnum, color:ConstStar<GlUInt>):Void;
+	static function colorP4uiv(type:GlEnum, color:RawPointer<GlUInt>):Void;
 
 	@:native("glSecondaryColorP3ui")
 	static function secondaryColorP3ui(type:GlEnum, color:GlUInt):Void;
 
 	@:native("glSecondaryColorP3uiv")
-	static function secondaryColorP3uiv(type:GlEnum, color:ConstStar<GlUInt>):Void;
+	static function secondaryColorP3uiv(type:GlEnum, color:RawPointer<GlUInt>):Void;
 
 	@:native("glMinSampleShading")
 	static function minSampleShading(value:GlFloat):Void;
@@ -4478,46 +4475,46 @@ extern class Glad {
 	static function uniform4d(location:GlInt, x:GlDouble, y:GlDouble, z:GlDouble, w:GlDouble):Void;
 
 	@:native("glUniform1dv")
-	static function uniform1dv(location:GlInt, count:GlSizeI, value:ConstStar<GlDouble>):Void;
+	static function uniform1dv(location:GlInt, count:GlSizeI, value:RawPointer<GlDouble>):Void;
 
 	@:native("glUniform2dv")
-	static function uniform2dv(location:GlInt, count:GlSizeI, value:ConstStar<GlDouble>):Void;
+	static function uniform2dv(location:GlInt, count:GlSizeI, value:RawPointer<GlDouble>):Void;
 
 	@:native("glUniform3dv")
-	static function uniform3dv(location:GlInt, count:GlSizeI, value:ConstStar<GlDouble>):Void;
+	static function uniform3dv(location:GlInt, count:GlSizeI, value:RawPointer<GlDouble>):Void;
 
 	@:native("glUniform4dv")
-	static function uniform4dv(location:GlInt, count:GlSizeI, value:ConstStar<GlDouble>):Void;
+	static function uniform4dv(location:GlInt, count:GlSizeI, value:RawPointer<GlDouble>):Void;
 
 	@:native("glUniformMatrix2dv")
-	static function uniformMatrix2dv(location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlDouble>):Void;
+	static function uniformMatrix2dv(location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlDouble>):Void;
 
 	@:native("glUniformMatrix3dv")
-	static function uniformMatrix3dv(location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlDouble>):Void;
+	static function uniformMatrix3dv(location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlDouble>):Void;
 
 	@:native("glUniformMatrix4dv")
-	static function uniformMatrix4dv(location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlDouble>):Void;
+	static function uniformMatrix4dv(location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlDouble>):Void;
 
 	@:native("glUniformMatrix2x3dv")
-	static function uniformMatrix2x3dv(location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlDouble>):Void;
+	static function uniformMatrix2x3dv(location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlDouble>):Void;
 
 	@:native("glUniformMatrix2x4dv")
-	static function uniformMatrix2x4dv(location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlDouble>):Void;
+	static function uniformMatrix2x4dv(location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlDouble>):Void;
 
 	@:native("glUniformMatrix3x2dv")
-	static function uniformMatrix3x2dv(location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlDouble>):Void;
+	static function uniformMatrix3x2dv(location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlDouble>):Void;
 
 	@:native("glUniformMatrix3x4dv")
-	static function uniformMatrix3x4dv(location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlDouble>):Void;
+	static function uniformMatrix3x4dv(location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlDouble>):Void;
 
 	@:native("glUniformMatrix4x2dv")
-	static function uniformMatrix4x2dv(location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlDouble>):Void;
+	static function uniformMatrix4x2dv(location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlDouble>):Void;
 
 	@:native("glUniformMatrix4x3dv")
-	static function uniformMatrix4x3dv(location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlDouble>):Void;
+	static function uniformMatrix4x3dv(location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlDouble>):Void;
 
 	@:native("glGetUniformdv")
-	static function getUniformdv(program:GlUInt, location:GlInt, params:Pointer<GlDouble>):Void;
+	static function getUniformdv(program:GlUInt, location:GlInt, params:RawPointer<GlDouble>):Void;
 
 	@:native("glGetSubroutineUniformLocation")
 	static function getSubroutineUniformLocation(program:GlUInt, shadertype:GlEnum, name:ConstCharStar):GlInt;
@@ -4526,37 +4523,37 @@ extern class Glad {
 	static function getSubroutineIndex(program:GlUInt, shadertype:GlEnum, name:ConstCharStar):GlUInt;
 
 	@:native("glGetActiveSubroutineUniformiv")
-	static function getActiveSubroutineUniformiv(program:GlUInt, shadertype:GlEnum, index:GlUInt, pname:GlEnum, values:Pointer<GlInt>):Void;
+	static function getActiveSubroutineUniformiv(program:GlUInt, shadertype:GlEnum, index:GlUInt, pname:GlEnum, values:RawPointer<GlInt>):Void;
 
 	@:native("glGetActiveSubroutineUniformName")
-	static function getActiveSubroutineUniformName(program:GlUInt, shadertype:GlEnum, index:GlUInt, bufSize:GlSizeI, length:Pointer<GlSizeI>, name:Pointer<GlChar>):Void;
+	static function getActiveSubroutineUniformName(program:GlUInt, shadertype:GlEnum, index:GlUInt, bufSize:GlSizeI, length:RawPointer<GlSizeI>, name:RawPointer<GlChar>):Void;
 
 	@:native("glGetActiveSubroutineName")
-	static function getActiveSubroutineName(program:GlUInt, shadertype:GlEnum, index:GlUInt, bufSize:GlSizeI, length:Pointer<GlSizeI>, name:Pointer<GlChar>):Void;
+	static function getActiveSubroutineName(program:GlUInt, shadertype:GlEnum, index:GlUInt, bufSize:GlSizeI, length:RawPointer<GlSizeI>, name:RawPointer<GlChar>):Void;
 
 	@:native("glUniformSubroutinesuiv")
-	static function uniformSubroutinesuiv(shadertype:GlEnum, count:GlSizeI, indices:ConstStar<GlUInt>):Void;
+	static function uniformSubroutinesuiv(shadertype:GlEnum, count:GlSizeI, indices:RawPointer<GlUInt>):Void;
 
 	@:native("glGetUniformSubroutineuiv")
-	static function getUniformSubroutineuiv(shadertype:GlEnum, location:GlInt, params:Pointer<GlUInt>):Void;
+	static function getUniformSubroutineuiv(shadertype:GlEnum, location:GlInt, params:RawPointer<GlUInt>):Void;
 
 	@:native("glGetProgramStageiv")
-	static function getProgramStageiv(program:GlUInt, shadertype:GlEnum, pname:GlEnum, values:Pointer<GlInt>):Void;
+	static function getProgramStageiv(program:GlUInt, shadertype:GlEnum, pname:GlEnum, values:RawPointer<GlInt>):Void;
 
 	@:native("glPatchParameteri")
 	static function patchParameteri(pname:GlEnum, value:GlInt):Void;
 
 	@:native("glPatchParameterfv")
-	static function patchParameterfv(pname:GlEnum, values:ConstStar<GlFloat>):Void;
+	static function patchParameterfv(pname:GlEnum, values:RawPointer<GlFloat>):Void;
 
 	@:native("glBindTransformFeedback")
 	static function bindTransformFeedback(target:GlEnum, id:GlUInt):Void;
 
 	@:native("glDeleteTransformFeedbacks")
-	static function deleteTransformFeedbacks(n:GlSizeI, ids:ConstPointer<GlUInt>):Void;
+	static function deleteTransformFeedbacks(n:GlSizeI, ids:RawPointer<GlUInt>):Void;
 
 	@:native("glGenTransformFeedbacks")
-	static function genTransformFeedbacks(n:GlSizeI, ids:Pointer<GlUInt>):Void;
+	static function genTransformFeedbacks(n:GlSizeI, ids:RawPointer<GlUInt>):Void;
 
 	@:native("glIsTransformFeedback")
 	static function isTransformFeedback(id:GlUInt):GlBool;
@@ -4580,16 +4577,16 @@ extern class Glad {
 	static function endQueryIndexed(target:GlEnum, index:GlUInt):Void;
 
 	@:native("glGetQueryIndexediv")
-	static function getQueryIndexediv(target:GlEnum, index:GlUInt, pname:GlEnum, params:Pointer<GlInt>):Void;
+	static function getQueryIndexediv(target:GlEnum, index:GlUInt, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glReleaseShaderCompiler")
 	static function releaseShaderCompiler():Void;
 
 	@:native("glShaderBinary")
-	static function shaderBinary(count:GlSizeI, shaders:ConstStar<GlUInt>, binaryFormat:GlEnum, binary:Any, length:GlSizeI):Void;
+	static function shaderBinary(count:GlSizeI, shaders:RawPointer<GlUInt>, binaryFormat:GlEnum, binary:Any, length:GlSizeI):Void;
 
 	@:native("glGetShaderPrecisionFormat")
-	static function getShaderPrecisionFormat(shadertype:GlEnum, precisiontype:GlEnum, range:Pointer<GlInt>, precision:Pointer<GlInt>):Void;
+	static function getShaderPrecisionFormat(shadertype:GlEnum, precisiontype:GlEnum, range:RawPointer<GlInt>, precision:RawPointer<GlInt>):Void;
 
 	@:native("glDepthRangef")
 	static function depthRangef(n:GlFloat, f:GlFloat):Void;
@@ -4598,7 +4595,7 @@ extern class Glad {
 	static function clearDepthf(d:GlFloat):Void;
 
 	@:native("glGetProgramBinary")
-	static function getProgramBinary(program:GlUInt, bufSize:GlSizeI, length:Pointer<GlSizeI>, binaryFormat:Pointer<GlEnum>, binary:Any):Void;
+	static function getProgramBinary(program:GlUInt, bufSize:GlSizeI, length:RawPointer<GlSizeI>, binaryFormat:RawPointer<GlEnum>, binary:Any):Void;
 
 	@:native("glProgramBinary")
 	static function programBinary(program:GlUInt, binaryFormat:GlEnum, binary:Any, length:GlSizeI):Void;
@@ -4613,178 +4610,178 @@ extern class Glad {
 	static function activeShaderProgram(pipeline:GlUInt, program:GlUInt):Void;
 
 	@:native("glCreateShaderProgramv")
-	static function createShaderProgramv(type:GlEnum, count:GlSizeI, strings:Star<ConstCharStar>):GlUInt;
+	static function createShaderProgramv(type:GlEnum, count:GlSizeI, strings:RawPointer<ConstCharStar>):GlUInt;
 
 	@:native("glBindProgramPipeline")
 	static function bindProgramPipeline(pipeline:GlUInt):Void;
 
 	@:native("glDeleteProgramPipelines")
-	static function deleteProgramPipelines(n:GlSizeI, pipelines:ConstPointer<GlUInt>):Void;
+	static function deleteProgramPipelines(n:GlSizeI, pipelines:RawPointer<GlUInt>):Void;
 
 	@:native("glGenProgramPipelines")
-	static function genProgramPipelines(n:GlSizeI, pipelines:Pointer<GlUInt>):Void;
+	static function genProgramPipelines(n:GlSizeI, pipelines:RawPointer<GlUInt>):Void;
 
 	@:native("glIsProgramPipeline")
 	static function isProgramPipeline(pipeline:GlUInt):GlBool;
 
 	@:native("glGetProgramPipelineiv")
-	static function getProgramPipelineiv(pipeline:GlUInt, pname:GlEnum, params:Pointer<GlInt>):Void;
+	static function getProgramPipelineiv(pipeline:GlUInt, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glProgramUniform1i")
 	static function programUniform1i(program:GlUInt, location:GlInt, v0:GlInt):Void;
 
 	@:native("glProgramUniform1iv")
-	static function programUniform1iv(program:GlUInt, location:GlInt, count:GlSizeI, value:ConstStar<GlInt>):Void;
+	static function programUniform1iv(program:GlUInt, location:GlInt, count:GlSizeI, value:RawPointer<GlInt>):Void;
 
 	@:native("glProgramUniform1f")
 	static function programUniform1f(program:GlUInt, location:GlInt, v0:GlFloat):Void;
 
 	@:native("glProgramUniform1fv")
-	static function programUniform1fv(program:GlUInt, location:GlInt, count:GlSizeI, value:ConstStar<GlFloat>):Void;
+	static function programUniform1fv(program:GlUInt, location:GlInt, count:GlSizeI, value:RawPointer<GlFloat>):Void;
 
 	@:native("glProgramUniform1d")
 	static function programUniform1d(program:GlUInt, location:GlInt, v0:GlDouble):Void;
 
 	@:native("glProgramUniform1dv")
-	static function programUniform1dv(program:GlUInt, location:GlInt, count:GlSizeI, value:ConstStar<GlDouble>):Void;
+	static function programUniform1dv(program:GlUInt, location:GlInt, count:GlSizeI, value:RawPointer<GlDouble>):Void;
 
 	@:native("glProgramUniform1ui")
 	static function programUniform1ui(program:GlUInt, location:GlInt, v0:GlUInt):Void;
 
 	@:native("glProgramUniform1uiv")
-	static function programUniform1uiv(program:GlUInt, location:GlInt, count:GlSizeI, value:ConstStar<GlUInt>):Void;
+	static function programUniform1uiv(program:GlUInt, location:GlInt, count:GlSizeI, value:RawPointer<GlUInt>):Void;
 
 	@:native("glProgramUniform2i")
 	static function programUniform2i(program:GlUInt, location:GlInt, v0:GlInt, v1:GlInt):Void;
 
 	@:native("glProgramUniform2iv")
-	static function programUniform2iv(program:GlUInt, location:GlInt, count:GlSizeI, value:ConstStar<GlInt>):Void;
+	static function programUniform2iv(program:GlUInt, location:GlInt, count:GlSizeI, value:RawPointer<GlInt>):Void;
 
 	@:native("glProgramUniform2f")
 	static function programUniform2f(program:GlUInt, location:GlInt, v0:GlFloat, v1:GlFloat):Void;
 
 	@:native("glProgramUniform2fv")
-	static function programUniform2fv(program:GlUInt, location:GlInt, count:GlSizeI, value:ConstStar<GlFloat>):Void;
+	static function programUniform2fv(program:GlUInt, location:GlInt, count:GlSizeI, value:RawPointer<GlFloat>):Void;
 
 	@:native("glProgramUniform2d")
 	static function programUniform2d(program:GlUInt, location:GlInt, v0:GlDouble, v1:GlDouble):Void;
 
 	@:native("glProgramUniform2dv")
-	static function programUniform2dv(program:GlUInt, location:GlInt, count:GlSizeI, value:ConstStar<GlDouble>):Void;
+	static function programUniform2dv(program:GlUInt, location:GlInt, count:GlSizeI, value:RawPointer<GlDouble>):Void;
 
 	@:native("glProgramUniform2ui")
 	static function programUniform2ui(program:GlUInt, location:GlInt, v0:GlUInt, v1:GlUInt):Void;
 
 	@:native("glProgramUniform2uiv")
-	static function programUniform2uiv(program:GlUInt, location:GlInt, count:GlSizeI, value:ConstStar<GlUInt>):Void;
+	static function programUniform2uiv(program:GlUInt, location:GlInt, count:GlSizeI, value:RawPointer<GlUInt>):Void;
 
 	@:native("glProgramUniform3i")
 	static function programUniform3i(program:GlUInt, location:GlInt, v0:GlInt, v1:GlInt, v2:GlInt):Void;
 
 	@:native("glProgramUniform3iv")
-	static function programUniform3iv(program:GlUInt, location:GlInt, count:GlSizeI, value:ConstStar<GlInt>):Void;
+	static function programUniform3iv(program:GlUInt, location:GlInt, count:GlSizeI, value:RawPointer<GlInt>):Void;
 
 	@:native("glProgramUniform3f")
 	static function programUniform3f(program:GlUInt, location:GlInt, v0:GlFloat, v1:GlFloat, v2:GlFloat):Void;
 
 	@:native("glProgramUniform3fv")
-	static function programUniform3fv(program:GlUInt, location:GlInt, count:GlSizeI, value:ConstStar<GlFloat>):Void;
+	static function programUniform3fv(program:GlUInt, location:GlInt, count:GlSizeI, value:RawPointer<GlFloat>):Void;
 
 	@:native("glProgramUniform3d")
 	static function programUniform3d(program:GlUInt, location:GlInt, v0:GlDouble, v1:GlDouble, v2:GlDouble):Void;
 
 	@:native("glProgramUniform3dv")
-	static function programUniform3dv(program:GlUInt, location:GlInt, count:GlSizeI, value:ConstStar<GlDouble>):Void;
+	static function programUniform3dv(program:GlUInt, location:GlInt, count:GlSizeI, value:RawPointer<GlDouble>):Void;
 
 	@:native("glProgramUniform3ui")
 	static function programUniform3ui(program:GlUInt, location:GlInt, v0:GlUInt, v1:GlUInt, v2:GlUInt):Void;
 
 	@:native("glProgramUniform3uiv")
-	static function programUniform3uiv(program:GlUInt, location:GlInt, count:GlSizeI, value:ConstStar<GlUInt>):Void;
+	static function programUniform3uiv(program:GlUInt, location:GlInt, count:GlSizeI, value:RawPointer<GlUInt>):Void;
 
 	@:native("glProgramUniform4i")
 	static function programUniform4i(program:GlUInt, location:GlInt, v0:GlInt, v1:GlInt, v2:GlInt, v3:GlInt):Void;
 
 	@:native("glProgramUniform4iv")
-	static function programUniform4iv(program:GlUInt, location:GlInt, count:GlSizeI, value:ConstStar<GlInt>):Void;
+	static function programUniform4iv(program:GlUInt, location:GlInt, count:GlSizeI, value:RawPointer<GlInt>):Void;
 
 	@:native("glProgramUniform4f")
 	static function programUniform4f(program:GlUInt, location:GlInt, v0:GlFloat, v1:GlFloat, v2:GlFloat, v3:GlFloat):Void;
 
 	@:native("glProgramUniform4fv")
-	static function programUniform4fv(program:GlUInt, location:GlInt, count:GlSizeI, value:ConstStar<GlFloat>):Void;
+	static function programUniform4fv(program:GlUInt, location:GlInt, count:GlSizeI, value:RawPointer<GlFloat>):Void;
 
 	@:native("glProgramUniform4d")
 	static function programUniform4d(program:GlUInt, location:GlInt, v0:GlDouble, v1:GlDouble, v2:GlDouble, v3:GlDouble):Void;
 
 	@:native("glProgramUniform4dv")
-	static function programUniform4dv(program:GlUInt, location:GlInt, count:GlSizeI, value:ConstStar<GlDouble>):Void;
+	static function programUniform4dv(program:GlUInt, location:GlInt, count:GlSizeI, value:RawPointer<GlDouble>):Void;
 
 	@:native("glProgramUniform4ui")
 	static function programUniform4ui(program:GlUInt, location:GlInt, v0:GlUInt, v1:GlUInt, v2:GlUInt, v3:GlUInt):Void;
 
 	@:native("glProgramUniform4uiv")
-	static function programUniform4uiv(program:GlUInt, location:GlInt, count:GlSizeI, value:ConstStar<GlUInt>):Void;
+	static function programUniform4uiv(program:GlUInt, location:GlInt, count:GlSizeI, value:RawPointer<GlUInt>):Void;
 
 	@:native("glProgramUniformMatrix2fv")
-	static function programUniformMatrix2fv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlFloat>):Void;
+	static function programUniformMatrix2fv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlFloat>):Void;
 
 	@:native("glProgramUniformMatrix3fv")
-	static function programUniformMatrix3fv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlFloat>):Void;
+	static function programUniformMatrix3fv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlFloat>):Void;
 
 	@:native("glProgramUniformMatrix4fv")
-	static function programUniformMatrix4fv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlFloat>):Void;
+	static function programUniformMatrix4fv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlFloat>):Void;
 
 	@:native("glProgramUniformMatrix2dv")
-	static function programUniformMatrix2dv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlDouble>):Void;
+	static function programUniformMatrix2dv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlDouble>):Void;
 
 	@:native("glProgramUniformMatrix3dv")
-	static function programUniformMatrix3dv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlDouble>):Void;
+	static function programUniformMatrix3dv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlDouble>):Void;
 
 	@:native("glProgramUniformMatrix4dv")
-	static function programUniformMatrix4dv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlDouble>):Void;
+	static function programUniformMatrix4dv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlDouble>):Void;
 
 	@:native("glProgramUniformMatrix2x3fv")
-	static function programUniformMatrix2x3fv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlFloat>):Void;
+	static function programUniformMatrix2x3fv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlFloat>):Void;
 
 	@:native("glProgramUniformMatrix3x2fv")
-	static function programUniformMatrix3x2fv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlFloat>):Void;
+	static function programUniformMatrix3x2fv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlFloat>):Void;
 
 	@:native("glProgramUniformMatrix2x4fv")
-	static function programUniformMatrix2x4fv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlFloat>):Void;
+	static function programUniformMatrix2x4fv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlFloat>):Void;
 
 	@:native("glProgramUniformMatrix4x2fv")
-	static function programUniformMatrix4x2fv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlFloat>):Void;
+	static function programUniformMatrix4x2fv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlFloat>):Void;
 
 	@:native("glProgramUniformMatrix3x4fv")
-	static function programUniformMatrix3x4fv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlFloat>):Void;
+	static function programUniformMatrix3x4fv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlFloat>):Void;
 
 	@:native("glProgramUniformMatrix4x3fv")
-	static function programUniformMatrix4x3fv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlFloat>):Void;
+	static function programUniformMatrix4x3fv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlFloat>):Void;
 
 	@:native("glProgramUniformMatrix2x3dv")
-	static function programUniformMatrix2x3dv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlDouble>):Void;
+	static function programUniformMatrix2x3dv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlDouble>):Void;
 
 	@:native("glProgramUniformMatrix3x2dv")
-	static function programUniformMatrix3x2dv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlDouble>):Void;
+	static function programUniformMatrix3x2dv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlDouble>):Void;
 
 	@:native("glProgramUniformMatrix2x4dv")
-	static function programUniformMatrix2x4dv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlDouble>):Void;
+	static function programUniformMatrix2x4dv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlDouble>):Void;
 
 	@:native("glProgramUniformMatrix4x2dv")
-	static function programUniformMatrix4x2dv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlDouble>):Void;
+	static function programUniformMatrix4x2dv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlDouble>):Void;
 
 	@:native("glProgramUniformMatrix3x4dv")
-	static function programUniformMatrix3x4dv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlDouble>):Void;
+	static function programUniformMatrix3x4dv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlDouble>):Void;
 
 	@:native("glProgramUniformMatrix4x3dv")
-	static function programUniformMatrix4x3dv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:ConstStar<GlDouble>):Void;
+	static function programUniformMatrix4x3dv(program:GlUInt, location:GlInt, count:GlSizeI, transpose:GlBool, value:RawPointer<GlDouble>):Void;
 
 	@:native("glValidateProgramPipeline")
 	static function validateProgramPipeline(pipeline:GlUInt):Void;
 
 	@:native("glGetProgramPipelineInfoLog")
-	static function getProgramPipelineInfoLog(pipeline:GlUInt, bufSize:GlSizeI, length:Pointer<GlSizeI>, infoLog:Star<GlChar>):Void;
+	static function getProgramPipelineInfoLog(pipeline:GlUInt, bufSize:GlSizeI, length:RawPointer<GlSizeI>, infoLog:RawPointer<GlChar>):Void;
 
 	@:native("glVertexAttribL1d")
 	static function vertexAttribL1d(index:GlUInt, x:GlDouble):Void;
@@ -4799,52 +4796,52 @@ extern class Glad {
 	static function vertexAttribL4d(index:GlUInt, x:GlDouble, y:GlDouble, z:GlDouble, w:GlDouble):Void;
 
 	@:native("glVertexAttribL1dv")
-	static function vertexAttribL1dv(index:GlUInt, v:ConstStar<GlDouble>):Void;
+	static function vertexAttribL1dv(index:GlUInt, v:RawPointer<GlDouble>):Void;
 
 	@:native("glVertexAttribL2dv")
-	static function vertexAttribL2dv(index:GlUInt, v:ConstStar<GlDouble>):Void;
+	static function vertexAttribL2dv(index:GlUInt, v:RawPointer<GlDouble>):Void;
 
 	@:native("glVertexAttribL3dv")
-	static function vertexAttribL3dv(index:GlUInt, v:ConstStar<GlDouble>):Void;
+	static function vertexAttribL3dv(index:GlUInt, v:RawPointer<GlDouble>):Void;
 
 	@:native("glVertexAttribL4dv")
-	static function vertexAttribL4dv(index:GlUInt, v:ConstStar<GlDouble>):Void;
+	static function vertexAttribL4dv(index:GlUInt, v:RawPointer<GlDouble>):Void;
 
 	@:native("glVertexAttribLPointer")
 	static function vertexAttribLPointer(index:GlUInt, size:GlInt, type:GlEnum, stride:GlSizeI, pointer:Any):Void;
 
 	@:native("glGetVertexAttribLdv")
-	static function getVertexAttribLdv(index:GlUInt, pname:GlEnum, params:Pointer<GlDouble>):Void;
+	static function getVertexAttribLdv(index:GlUInt, pname:GlEnum, params:RawPointer<GlDouble>):Void;
 
 	@:native("glViewportArrayv")
-	static function viewportArrayv(first:GlUInt, count:GlSizeI, v:ConstStar<GlFloat>):Void;
+	static function viewportArrayv(first:GlUInt, count:GlSizeI, v:RawPointer<GlFloat>):Void;
 
 	@:native("glViewportIndexedf")
 	static function viewportIndexedf(index:GlUInt, x:GlFloat, y:GlFloat, w:GlFloat, h:GlFloat):Void;
 
 	@:native("glViewportIndexedfv")
-	static function viewportIndexedfv(index:GlUInt, v:ConstStar<GlFloat>):Void;
+	static function viewportIndexedfv(index:GlUInt, v:RawPointer<GlFloat>):Void;
 
 	@:native("glScissorArrayv")
-	static function scissorArrayv(first:GlUInt, count:GlSizeI, v:ConstStar<GlInt>):Void;
+	static function scissorArrayv(first:GlUInt, count:GlSizeI, v:RawPointer<GlInt>):Void;
 
 	@:native("glScissorIndexed")
 	static function scissorIndexed(index:GlUInt, left:GlInt, bottom:GlInt, width:GlSizeI, height:GlSizeI):Void;
 
 	@:native("glScissorIndexedv")
-	static function scissorIndexedv(index:GlUInt, v:ConstStar<GlInt>):Void;
+	static function scissorIndexedv(index:GlUInt, v:RawPointer<GlInt>):Void;
 
 	@:native("glDepthRangeArrayv")
-	static function depthRangeArrayv(first:GlUInt, count:GlSizeI, v:ConstStar<GlDouble>):Void;
+	static function depthRangeArrayv(first:GlUInt, count:GlSizeI, v:RawPointer<GlDouble>):Void;
 
 	@:native("glDepthRangeIndexed")
 	static function depthRangeIndexed(index:GlUInt, n:GlDouble, f:GlDouble):Void;
 
 	@:native("glGetFloati_v")
-	static function getFloati_v(target:GlEnum, index:GlUInt, data:Pointer<GlFloat>):Void;
+	static function getFloati_v(target:GlEnum, index:GlUInt, data:RawPointer<GlFloat>):Void;
 
 	@:native("glGetDoublei_v")
-	static function getDoublei_v(target:GlEnum, index:GlUInt, data:Pointer<GlDouble>):Void;
+	static function getDoublei_v(target:GlEnum, index:GlUInt, data:RawPointer<GlDouble>):Void;
 
 	@:native("glDrawArraysInstancedBaseInstance")
 	static function drawArraysInstancedBaseInstance(mode:GlEnum, first:GlInt, count:GlSizeI, instancecount:GlSizeI, baseinstance:GlUInt):Void;
@@ -4856,10 +4853,10 @@ extern class Glad {
 	static function drawElementsInstancedBaseVertexBaseInstance(mode:GlEnum, count:GlSizeI, type:GlEnum, indices:Any, instancecount:GlSizeI, basevertex:GlInt, baseinstance:GlUInt):Void;
 
 	@:native("glGetInternalformativ")
-	static function getInternalformativ(target:GlEnum, internalformat:GlEnum, pname:GlEnum, count:GlSizeI, params:Pointer<GlInt>):Void;
+	static function getInternalformativ(target:GlEnum, internalformat:GlEnum, pname:GlEnum, count:GlSizeI, params:RawPointer<GlInt>):Void;
 
 	@:native("glGetActiveAtomicCounterBufferiv")
-	static function getActiveAtomicCounterBufferiv(program:GlUInt, bufferIndex:GlUInt, pname:GlEnum, params:Pointer<GlInt>):Void;
+	static function getActiveAtomicCounterBufferiv(program:GlUInt, bufferIndex:GlUInt, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glBindImageTexture")
 	static function bindImageTexture(unit:GlUInt, texture:GlUInt, level:GlInt, layered:GlBool, layer:GlInt, access:GlEnum, format:GlEnum):Void;
@@ -4901,10 +4898,10 @@ extern class Glad {
 	static function framebufferParameteri(target:GlEnum, pname:GlEnum, param:GlInt):Void;
 
 	@:native("glGetFramebufferParameteriv")
-	static function getFramebufferParameteriv(target:GlEnum, pname:GlEnum, params:Pointer<GlInt>):Void;
+	static function getFramebufferParameteriv(target:GlEnum, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glGetInternalformati64v")
-	static function getInternalformati64v(target:GlEnum, internalformat:GlEnum, pname:GlEnum, count:GlSizeI, params:Pointer<cpp.Int64>):Void;
+	static function getInternalformati64v(target:GlEnum, internalformat:GlEnum, pname:GlEnum, count:GlSizeI, params:RawPointer<cpp.Int64>):Void;
 
 	@:native("glInvalidateTexSubImage")
 	static function invalidateTexSubImage(texture:GlUInt, level:GlInt, xoffset:GlInt, yoffset:GlInt, zoffset:GlInt, width:GlSizeI, height:GlSizeI, depth:GlSizeI):Void;
@@ -4919,10 +4916,10 @@ extern class Glad {
 	static function invalidateBufferData(buffer:GlUInt):Void;
 
 	@:native("glInvalidateFramebuffer")
-	static function invalidateFramebuffer(target:GlEnum, numAttachments:GlSizeI, attachments:ConstStar<GlEnum>):Void;
+	static function invalidateFramebuffer(target:GlEnum, numAttachments:GlSizeI, attachments:RawPointer<GlEnum>):Void;
 
 	@:native("glInvalidateSubFramebuffer")
-	static function invalidateSubFramebuffer(target:GlEnum, numAttachments:GlSizeI, attachments:ConstStar<GlEnum>, x:GlInt, y:GlInt, width:GlSizeI, height:GlSizeI):Void;
+	static function invalidateSubFramebuffer(target:GlEnum, numAttachments:GlSizeI, attachments:RawPointer<GlEnum>, x:GlInt, y:GlInt, width:GlSizeI, height:GlSizeI):Void;
 
 	@:native("glMultiDrawArraysIndirect")
 	static function multiDrawArraysIndirect(mode:GlEnum, indirect:Any, drawcount:GlSizeI, stride:GlSizeI):Void;
@@ -4931,16 +4928,16 @@ extern class Glad {
 	static function multiDrawElementsIndirect(mode:GlEnum, type:GlEnum, indirect:Any, drawcount:GlSizeI, stride:GlSizeI):Void;
 
 	@:native("glGetProgramInterfaceiv")
-	static function getProgramInterfaceiv(program:GlUInt, programInterface:GlEnum, pname:GlEnum, params:Pointer<GlInt>):Void;
+	static function getProgramInterfaceiv(program:GlUInt, programInterface:GlEnum, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glGetProgramResourceIndex")
 	static function getProgramResourceIndex(program:GlUInt, programInterface:GlEnum, name:ConstCharStar):GlUInt;
 
 	@:native("glGetProgramResourceName")
-	static function getProgramResourceName(program:GlUInt, programInterface:GlEnum, index:GlUInt, bufSize:GlSizeI, length:Pointer<GlSizeI>, name:Pointer<GlChar>):Void;
+	static function getProgramResourceName(program:GlUInt, programInterface:GlEnum, index:GlUInt, bufSize:GlSizeI, length:RawPointer<GlSizeI>, name:RawPointer<GlChar>):Void;
 
 	@:native("glGetProgramResourceiv")
-	static function getProgramResourceiv(program:GlUInt, programInterface:GlEnum, index:GlUInt, propCount:GlSizeI, props:ConstPointer<GlEnum>, count:GlSizeI, length:Pointer<GlSizeI>, params:Pointer<GlInt>):Void;
+	static function getProgramResourceiv(program:GlUInt, programInterface:GlEnum, index:GlUInt, propCount:GlSizeI, props:RawPointer<GlEnum>, count:GlSizeI, length:RawPointer<GlSizeI>, params:RawPointer<GlInt>):Void;
 
 	@:native("glGetProgramResourceLocation")
 	static function getProgramResourceLocation(program:GlUInt, programInterface:GlEnum, name:ConstCharStar):GlInt;
@@ -4982,7 +4979,7 @@ extern class Glad {
 	static function vertexBindingDivisor(bindingindex:GlUInt, divisor:GlUInt):Void;
 
 	@:native("glDebugMessageControl")
-	static function debugMessageControl(source:GlEnum, type:GlEnum, severity:GlEnum, count:GlSizeI, ids:ConstStar<GlUInt>, enabled:GlBool):Void;
+	static function debugMessageControl(source:GlEnum, type:GlEnum, severity:GlEnum, count:GlSizeI, ids:RawPointer<GlUInt>, enabled:GlBool):Void;
 
 	@:native("glDebugMessageInsert")
 	static function debugMessageInsert(source:GlEnum, type:GlEnum, id:GlUInt, severity:GlEnum, length:GlSizeI, buf:ConstCharStar):Void;
@@ -4991,7 +4988,7 @@ extern class Glad {
 	static function debugMessageCallback(callback:GlDebugProc, userParam:Any):Void;
 
 	@:native("glGetDebugMessageLog")
-	static function getDebugMessageLog(count:GlUInt, bufSize:GlSizeI, sources:Pointer<GlEnum>, types:Pointer<GlEnum>, ids:Pointer<GlUInt>, severities:Pointer<GlEnum>, lengths:Pointer<GlSizeI>, messageLog:Pointer<GlChar>):GlUInt;
+	static function getDebugMessageLog(count:GlUInt, bufSize:GlSizeI, sources:RawPointer<GlEnum>, types:RawPointer<GlEnum>, ids:RawPointer<GlUInt>, severities:RawPointer<GlEnum>, lengths:RawPointer<GlSizeI>, messageLog:RawPointer<GlChar>):GlUInt;
 
 	@:native("glPushDebugGroup")
 	static function pushDebugGroup(source:GlEnum, id:GlUInt, length:GlSizeI, message:ConstCharStar):Void;
@@ -5003,16 +5000,16 @@ extern class Glad {
 	static function objectLabel(identifier:GlEnum, name:GlUInt, length:GlSizeI, label:ConstCharStar):Void;
 
 	@:native("glGetObjectLabel")
-	static function getObjectLabel(identifier:GlEnum, name:GlUInt, bufSize:GlSizeI, length:Pointer<GlSizeI>, label:Pointer<GlChar>):Void;
+	static function getObjectLabel(identifier:GlEnum, name:GlUInt, bufSize:GlSizeI, length:RawPointer<GlSizeI>, label:RawPointer<GlChar>):Void;
 
 	@:native("glObjectPtrLabel")
 	static function objectPtrLabel(ptr:Any, length:GlSizeI, label:ConstCharStar):Void;
 
 	@:native("glGetObjectPtrLabel")
-	static function getObjectPtrLabel(ptr:Any, bufSize:GlSizeI, length:Pointer<GlSizeI>, label:Pointer<GlChar>):Void;
+	static function getObjectPtrLabel(ptr:Any, bufSize:GlSizeI, length:RawPointer<GlSizeI>, label:RawPointer<GlChar>):Void;
 
 	@:native("glGetPointerv")
-	static function getPointerv(pname:GlEnum, params:Pointer<Any>):Void;
+	static function getPointerv(pname:GlEnum, params:RawPointer<Any>):Void;
 
 	@:native("glBufferStorage")
 	static function bufferStorage(target:GlEnum, size:GlSizeIPointer, data:Any, flags:GlBitField):Void;
@@ -5024,28 +5021,28 @@ extern class Glad {
 	static function clearTexSubImage(texture:GlUInt, level:GlInt, xoffset:GlInt, yoffset:GlInt, zoffset:GlInt, width:GlSizeI, height:GlSizeI, depth:GlSizeI, format:GlEnum, type:GlEnum, data:Any):Void;
 
 	@:native("glBindBuffersBase")
-	static function bindBuffersBase(target:GlEnum, first:GlUInt, count:GlSizeI, buffers:ConstStar<GlUInt>):Void;
+	static function bindBuffersBase(target:GlEnum, first:GlUInt, count:GlSizeI, buffers:RawPointer<GlUInt>):Void;
 
 	@:native("glBindBuffersRange")
-	static function bindBuffersRange(target:GlEnum, first:GlUInt, count:GlSizeI, buffers:ConstStar<GlUInt>, offsets:ConstStar<GlIntPointer>, sizes:ConstStar<GlSizeIPointer>):Void;
+	static function bindBuffersRange(target:GlEnum, first:GlUInt, count:GlSizeI, buffers:RawPointer<GlUInt>, offsets:RawPointer<GlIntPointer>, sizes:RawPointer<GlSizeIPointer>):Void;
 
 	@:native("glBindTextures")
-	static function bindTextures(first:GlUInt, count:GlSizeI, textures:ConstStar<GlUInt>):Void;
+	static function bindTextures(first:GlUInt, count:GlSizeI, textures:RawPointer<GlUInt>):Void;
 
 	@:native("glBindSamplers")
-	static function bindSamplers(first:GlUInt, count:GlSizeI, samplers:ConstStar<GlUInt>):Void;
+	static function bindSamplers(first:GlUInt, count:GlSizeI, samplers:RawPointer<GlUInt>):Void;
 
 	@:native("glBindImageTextures")
-	static function bindImageTextures(first:GlUInt, count:GlSizeI, textures:ConstStar<GlUInt>):Void;
+	static function bindImageTextures(first:GlUInt, count:GlSizeI, textures:RawPointer<GlUInt>):Void;
 
 	@:native("glBindVertexBuffers")
-	static function bindVertexBuffers(first:GlUInt, count:GlSizeI, buffers:ConstStar<GlUInt>, offsets:ConstStar<GlIntPointer>, strides:ConstStar<GlSizeI>):Void;
+	static function bindVertexBuffers(first:GlUInt, count:GlSizeI, buffers:RawPointer<GlUInt>, offsets:RawPointer<GlIntPointer>, strides:RawPointer<GlSizeI>):Void;
 
 	@:native("glClipControl")
 	static function clipControl(origin:GlEnum, depth:GlEnum):Void;
 
 	@:native("glCreateTransformFeedbacks")
-	static function createTransformFeedbacks(n:GlSizeI, ids:Star<GlUInt>):Void;
+	static function createTransformFeedbacks(n:GlSizeI, ids:RawPointer<GlUInt>):Void;
 
 	@:native("glTransformFeedbackBufferBase")
 	static function transformFeedbackBufferBase(xfb:GlUInt, index:GlUInt, buffer:GlUInt):Void;
@@ -5054,16 +5051,16 @@ extern class Glad {
 	static function transformFeedbackBufferRange(xfb:GlUInt, index:GlUInt, buffer:GlUInt, offset:GlIntPointer, size:GlSizeIPointer):Void;
 
 	@:native("glGetTransformFeedbackiv")
-	static function getTransformFeedbackiv(xfb:GlUInt, pname:GlEnum, param:Pointer<GlInt>):Void;
+	static function getTransformFeedbackiv(xfb:GlUInt, pname:GlEnum, param:RawPointer<GlInt>):Void;
 
 	@:native("glGetTransformFeedbacki_v")
-	static function getTransformFeedbacki_v(xfb:GlUInt, pname:GlEnum, index:GlUInt, param:Pointer<GlInt>):Void;
+	static function getTransformFeedbacki_v(xfb:GlUInt, pname:GlEnum, index:GlUInt, param:RawPointer<GlInt>):Void;
 
 	@:native("glGetTransformFeedbacki64_v")
-	static function getTransformFeedbacki64_v(xfb:GlUInt, pname:GlEnum, index:GlUInt, param:Pointer<cpp.Int64>):Void;
+	static function getTransformFeedbacki64_v(xfb:GlUInt, pname:GlEnum, index:GlUInt, param:RawPointer<cpp.Int64>):Void;
 
 	@:native("glCreateBuffers")
-	static function createBuffers(n:GlSizeI, buffers:Star<GlUInt>):Void;
+	static function createBuffers(n:GlSizeI, buffers:RawPointer<GlUInt>):Void;
 
 	@:native("glNamedBufferStorage")
 	static function namedBufferStorage(buffer:GlUInt, size:GlSizeIPointer, data:Any, flags:GlBitField):Void;
@@ -5096,19 +5093,19 @@ extern class Glad {
 	static function flushMappedNamedBufferRange(buffer:GlUInt, offset:GlIntPointer, length:GlSizeIPointer):Void;
 
 	@:native("glGetNamedBufferParameteriv")
-	static function getNamedBufferParameteriv(buffer:GlUInt, pname:GlEnum, params:Pointer<GlInt>):Void;
+	static function getNamedBufferParameteriv(buffer:GlUInt, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glGetNamedBufferParameteri64v")
-	static function getNamedBufferParameteri64v(buffer:GlUInt, pname:GlEnum, params:Pointer<cpp.Int64>):Void;
+	static function getNamedBufferParameteri64v(buffer:GlUInt, pname:GlEnum, params:RawPointer<cpp.Int64>):Void;
 
 	@:native("glGetNamedBufferPointerv")
-	static function getNamedBufferPointerv(buffer:GlUInt, pname:GlEnum, params:Pointer<Any>):Void;
+	static function getNamedBufferPointerv(buffer:GlUInt, pname:GlEnum, params:RawPointer<Any>):Void;
 
 	@:native("glGetNamedBufferSubData")
 	static function getNamedBufferSubData(buffer:GlUInt, offset:GlIntPointer, size:GlSizeIPointer, data:Any):Void;
 
 	@:native("glCreateFramebuffers")
-	static function createFramebuffers(n:GlSizeI, framebuffers:Star<GlUInt>):Void;
+	static function createFramebuffers(n:GlSizeI, framebuffers:RawPointer<GlUInt>):Void;
 
 	@:native("glNamedFramebufferRenderbuffer")
 	static function namedFramebufferRenderbuffer(framebuffer:GlUInt, attachment:GlEnum, renderbuffertarget:GlEnum, renderbuffer:GlUInt):Void;
@@ -5126,25 +5123,25 @@ extern class Glad {
 	static function namedFramebufferDrawBuffer(framebuffer:GlUInt, buf:GlEnum):Void;
 
 	@:native("glNamedFramebufferDrawBuffers")
-	static function namedFramebufferDrawBuffers(framebuffer:GlUInt, n:GlSizeI, bufs:ConstStar<GlEnum>):Void;
+	static function namedFramebufferDrawBuffers(framebuffer:GlUInt, n:GlSizeI, bufs:RawPointer<GlEnum>):Void;
 
 	@:native("glNamedFramebufferReadBuffer")
 	static function namedFramebufferReadBuffer(framebuffer:GlUInt, src:GlEnum):Void;
 
 	@:native("glInvalidateNamedFramebufferData")
-	static function invalidateNamedFramebufferData(framebuffer:GlUInt, numAttachments:GlSizeI, attachments:ConstStar<GlEnum>):Void;
+	static function invalidateNamedFramebufferData(framebuffer:GlUInt, numAttachments:GlSizeI, attachments:RawPointer<GlEnum>):Void;
 
 	@:native("glInvalidateNamedFramebufferSubData")
-	static function invalidateNamedFramebufferSubData(framebuffer:GlUInt, numAttachments:GlSizeI, attachments:ConstStar<GlEnum>, x:GlInt, y:GlInt, width:GlSizeI, height:GlSizeI):Void;
+	static function invalidateNamedFramebufferSubData(framebuffer:GlUInt, numAttachments:GlSizeI, attachments:RawPointer<GlEnum>, x:GlInt, y:GlInt, width:GlSizeI, height:GlSizeI):Void;
 
 	@:native("glClearNamedFramebufferiv")
-	static function clearNamedFramebufferiv(framebuffer:GlUInt, buffer:GlEnum, drawbuffer:GlInt, value:ConstStar<GlInt>):Void;
+	static function clearNamedFramebufferiv(framebuffer:GlUInt, buffer:GlEnum, drawbuffer:GlInt, value:RawPointer<GlInt>):Void;
 
 	@:native("glClearNamedFramebufferuiv")
-	static function clearNamedFramebufferuiv(framebuffer:GlUInt, buffer:GlEnum, drawbuffer:GlInt, value:ConstStar<GlUInt>):Void;
+	static function clearNamedFramebufferuiv(framebuffer:GlUInt, buffer:GlEnum, drawbuffer:GlInt, value:RawPointer<GlUInt>):Void;
 
 	@:native("glClearNamedFramebufferfv")
-	static function clearNamedFramebufferfv(framebuffer:GlUInt, buffer:GlEnum, drawbuffer:GlInt, value:ConstStar<GlFloat>):Void;
+	static function clearNamedFramebufferfv(framebuffer:GlUInt, buffer:GlEnum, drawbuffer:GlInt, value:RawPointer<GlFloat>):Void;
 
 	@:native("glClearNamedFramebufferfi")
 	static function clearNamedFramebufferfi(framebuffer:GlUInt, buffer:GlEnum, drawbuffer:GlInt, depth:GlFloat, stencil:GlInt):Void;
@@ -5156,13 +5153,13 @@ extern class Glad {
 	static function checkNamedFramebufferStatus(framebuffer:GlUInt, target:GlEnum):GlEnum;
 
 	@:native("glGetNamedFramebufferParameteriv")
-	static function getNamedFramebufferParameteriv(framebuffer:GlUInt, pname:GlEnum, param:Pointer<GlInt>):Void;
+	static function getNamedFramebufferParameteriv(framebuffer:GlUInt, pname:GlEnum, param:RawPointer<GlInt>):Void;
 
 	@:native("glGetNamedFramebufferAttachmentParameteriv")
-	static function getNamedFramebufferAttachmentParameteriv(framebuffer:GlUInt, attachment:GlEnum, pname:GlEnum, params:Pointer<GlInt>):Void;
+	static function getNamedFramebufferAttachmentParameteriv(framebuffer:GlUInt, attachment:GlEnum, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glCreateRenderbuffers")
-	static function createRenderbuffers(n:GlSizeI, renderbuffers:Star<GlUInt>):Void;
+	static function createRenderbuffers(n:GlSizeI, renderbuffers:RawPointer<GlUInt>):Void;
 
 	@:native("glNamedRenderbufferStorage")
 	static function namedRenderbufferStorage(renderbuffer:GlUInt, internalformat:GlEnum, width:GlSizeI, height:GlSizeI):Void;
@@ -5171,10 +5168,10 @@ extern class Glad {
 	static function namedRenderbufferStorageMultisample(renderbuffer:GlUInt, samples:GlSizeI, internalformat:GlEnum, width:GlSizeI, height:GlSizeI):Void;
 
 	@:native("glGetNamedRenderbufferParameteriv")
-	static function getNamedRenderbufferParameteriv(renderbuffer:GlUInt, pname:GlEnum, params:Pointer<GlInt>):Void;
+	static function getNamedRenderbufferParameteriv(renderbuffer:GlUInt, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glCreateTextures")
-	static function createTextures(target:GlEnum, n:GlSizeI, textures:Star<GlUInt>):Void;
+	static function createTextures(target:GlEnum, n:GlSizeI, textures:RawPointer<GlUInt>):Void;
 
 	@:native("glTextureBuffer")
 	static function textureBuffer(texture:GlUInt, internalformat:GlEnum, buffer:GlUInt):Void;
@@ -5228,19 +5225,19 @@ extern class Glad {
 	static function textureParameterf(texture:GlUInt, pname:GlEnum, param:GlFloat):Void;
 
 	@:native("glTextureParameterfv")
-	static function textureParameterfv(texture:GlUInt, pname:GlEnum, param:ConstStar<GlFloat>):Void;
+	static function textureParameterfv(texture:GlUInt, pname:GlEnum, param:RawPointer<GlFloat>):Void;
 
 	@:native("glTextureParameteri")
 	static function textureParameteri(texture:GlUInt, pname:GlEnum, param:GlInt):Void;
 
 	@:native("glTextureParameterIiv")
-	static function textureParameterIiv(texture:GlUInt, pname:GlEnum, params:ConstStar<GlInt>):Void;
+	static function textureParameterIiv(texture:GlUInt, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glTextureParameterIuiv")
-	static function textureParameterIuiv(texture:GlUInt, pname:GlEnum, params:ConstStar<GlUInt>):Void;
+	static function textureParameterIuiv(texture:GlUInt, pname:GlEnum, params:RawPointer<GlUInt>):Void;
 
 	@:native("glTextureParameteriv")
-	static function textureParameteriv(texture:GlUInt, pname:GlEnum, param:ConstStar<GlInt>):Void;
+	static function textureParameteriv(texture:GlUInt, pname:GlEnum, param:RawPointer<GlInt>):Void;
 
 	@:native("glGenerateTextureMipmap")
 	static function generateTextureMipmap(texture:GlUInt):Void;
@@ -5255,25 +5252,25 @@ extern class Glad {
 	static function getCompressedTextureImage(texture:GlUInt, level:GlInt, bufSize:GlSizeI, pixels:Any):Void;
 
 	@:native("glGetTextureLevelParameterfv")
-	static function getTextureLevelParameterfv(texture:GlUInt, level:GlInt, pname:GlEnum, params:Pointer<GlFloat>):Void;
+	static function getTextureLevelParameterfv(texture:GlUInt, level:GlInt, pname:GlEnum, params:RawPointer<GlFloat>):Void;
 
 	@:native("glGetTextureLevelParameteriv")
-	static function getTextureLevelParameteriv(texture:GlUInt, level:GlInt, pname:GlEnum, params:Pointer<GlInt>):Void;
+	static function getTextureLevelParameteriv(texture:GlUInt, level:GlInt, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glGetTextureParameterfv")
-	static function getTextureParameterfv(texture:GlUInt, pname:GlEnum, params:Pointer<GlFloat>):Void;
+	static function getTextureParameterfv(texture:GlUInt, pname:GlEnum, params:RawPointer<GlFloat>):Void;
 
 	@:native("glGetTextureParameterIiv")
-	static function getTextureParameterIiv(texture:GlUInt, pname:GlEnum, params:Pointer<GlInt>):Void;
+	static function getTextureParameterIiv(texture:GlUInt, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glGetTextureParameterIuiv")
-	static function getTextureParameterIuiv(texture:GlUInt, pname:GlEnum, params:Pointer<GlUInt>):Void;
+	static function getTextureParameterIuiv(texture:GlUInt, pname:GlEnum, params:RawPointer<GlUInt>):Void;
 
 	@:native("glGetTextureParameteriv")
-	static function getTextureParameteriv(texture:GlUInt, pname:GlEnum, params:Pointer<GlInt>):Void;
+	static function getTextureParameteriv(texture:GlUInt, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glCreateVertexArrays")
-	static function createVertexArrays(n:GlSizeI, arrays:Star<GlUInt>):Void;
+	static function createVertexArrays(n:GlSizeI, arrays:RawPointer<GlUInt>):Void;
 
 	@:native("glDisableVertexArrayAttrib")
 	static function disableVertexArrayAttrib(vaobj:GlUInt, index:GlUInt):Void;
@@ -5288,7 +5285,7 @@ extern class Glad {
 	static function vertexArrayVertexBuffer(vaobj:GlUInt, bindingindex:GlUInt, buffer:GlUInt, offset:GlIntPointer, stride:GlSizeI):Void;
 
 	@:native("glVertexArrayVertexBuffers")
-	static function vertexArrayVertexBuffers(vaobj:GlUInt, first:GlUInt, count:GlSizeI, buffers:ConstStar<GlUInt>, offsets:ConstStar<GlIntPointer>, strides:ConstStar<GlSizeI>):Void;
+	static function vertexArrayVertexBuffers(vaobj:GlUInt, first:GlUInt, count:GlSizeI, buffers:RawPointer<GlUInt>, offsets:RawPointer<GlIntPointer>, strides:RawPointer<GlSizeI>):Void;
 
 	@:native("glVertexArrayAttribBinding")
 	static function vertexArrayAttribBinding(vaobj:GlUInt, attribindex:GlUInt, bindingindex:GlUInt):Void;
@@ -5306,22 +5303,22 @@ extern class Glad {
 	static function vertexArrayBindingDivisor(vaobj:GlUInt, bindingindex:GlUInt, divisor:GlUInt):Void;
 
 	@:native("glGetVertexArrayiv")
-	static function getVertexArrayiv(vaobj:GlUInt, pname:GlEnum, param:Pointer<GlInt>):Void;
+	static function getVertexArrayiv(vaobj:GlUInt, pname:GlEnum, param:RawPointer<GlInt>):Void;
 
 	@:native("glGetVertexArrayIndexediv")
-	static function getVertexArrayIndexediv(vaobj:GlUInt, index:GlUInt, pname:GlEnum, param:Pointer<GlInt>):Void;
+	static function getVertexArrayIndexediv(vaobj:GlUInt, index:GlUInt, pname:GlEnum, param:RawPointer<GlInt>):Void;
 
 	@:native("glGetVertexArrayIndexed64iv")
-	static function getVertexArrayIndexed64iv(vaobj:GlUInt, index:GlUInt, pname:GlEnum, param:Pointer<cpp.Int64>):Void;
+	static function getVertexArrayIndexed64iv(vaobj:GlUInt, index:GlUInt, pname:GlEnum, param:RawPointer<cpp.Int64>):Void;
 
 	@:native("glCreateSamplers")
-	static function createSamplers(n:GlSizeI, samplers:Star<GlUInt>):Void;
+	static function createSamplers(n:GlSizeI, samplers:RawPointer<GlUInt>):Void;
 
 	@:native("glCreateProgramPipelines")
-	static function createProgramPipelines(n:GlSizeI, pipelines:Star<GlUInt>):Void;
+	static function createProgramPipelines(n:GlSizeI, pipelines:RawPointer<GlUInt>):Void;
 
 	@:native("glCreateQueries")
-	static function createQueries(target:GlEnum, n:GlSizeI, ids:Star<GlUInt>):Void;
+	static function createQueries(target:GlEnum, n:GlSizeI, ids:RawPointer<GlUInt>):Void;
 
 	@:native("glGetQueryBufferObjecti64v")
 	static function getQueryBufferObjecti64v(id:GlUInt, buffer:GlUInt, pname:GlEnum, offset:GlIntPointer):Void;
@@ -5354,40 +5351,40 @@ extern class Glad {
 	static function getnTexImage(target:GlEnum, level:GlInt, format:GlEnum, type:GlEnum, bufSize:GlSizeI, pixels:Any):Void;
 
 	@:native("glGetnUniformdv")
-	static function getnUniformdv(program:GlUInt, location:GlInt, bufSize:GlSizeI, params:Pointer<GlDouble>):Void;
+	static function getnUniformdv(program:GlUInt, location:GlInt, bufSize:GlSizeI, params:RawPointer<GlDouble>):Void;
 
 	@:native("glGetnUniformfv")
-	static function getnUniformfv(program:GlUInt, location:GlInt, bufSize:GlSizeI, params:Pointer<GlFloat>):Void;
+	static function getnUniformfv(program:GlUInt, location:GlInt, bufSize:GlSizeI, params:RawPointer<GlFloat>):Void;
 
 	@:native("glGetnUniformiv")
-	static function getnUniformiv(program:GlUInt, location:GlInt, bufSize:GlSizeI, params:Pointer<GlInt>):Void;
+	static function getnUniformiv(program:GlUInt, location:GlInt, bufSize:GlSizeI, params:RawPointer<GlInt>):Void;
 
 	@:native("glGetnUniformuiv")
-	static function getnUniformuiv(program:GlUInt, location:GlInt, bufSize:GlSizeI, params:Pointer<GlUInt>):Void;
+	static function getnUniformuiv(program:GlUInt, location:GlInt, bufSize:GlSizeI, params:RawPointer<GlUInt>):Void;
 
 	@:native("glReadnPixels")
 	static function readnPixels(x:GlInt, y:GlInt, width:GlSizeI, height:GlSizeI, format:GlEnum, type:GlEnum, bufSize:GlSizeI, data:Any):Void;
 
 	@:native("glGetnMapdv")
-	static function getnMapdv(target:GlEnum, query:GlEnum, bufSize:GlSizeI, v:Pointer<GlDouble>):Void;
+	static function getnMapdv(target:GlEnum, query:GlEnum, bufSize:GlSizeI, v:RawPointer<GlDouble>):Void;
 
 	@:native("glGetnMapfv")
-	static function getnMapfv(target:GlEnum, query:GlEnum, bufSize:GlSizeI, v:Pointer<GlFloat>):Void;
+	static function getnMapfv(target:GlEnum, query:GlEnum, bufSize:GlSizeI, v:RawPointer<GlFloat>):Void;
 
 	@:native("glGetnMapiv")
-	static function getnMapiv(target:GlEnum, query:GlEnum, bufSize:GlSizeI, v:Pointer<GlInt>):Void;
+	static function getnMapiv(target:GlEnum, query:GlEnum, bufSize:GlSizeI, v:RawPointer<GlInt>):Void;
 
 	@:native("glGetnPixelMapfv")
-	static function getnPixelMapfv(map:GlEnum, bufSize:GlSizeI, values:Pointer<GlFloat>):Void;
+	static function getnPixelMapfv(map:GlEnum, bufSize:GlSizeI, values:RawPointer<GlFloat>):Void;
 
 	@:native("glGetnPixelMapuiv")
-	static function getnPixelMapuiv(map:GlEnum, bufSize:GlSizeI, values:Pointer<GlUInt>):Void;
+	static function getnPixelMapuiv(map:GlEnum, bufSize:GlSizeI, values:RawPointer<GlUInt>):Void;
 
 	@:native("glGetnPixelMapusv")
-	static function getnPixelMapusv(map:GlEnum, bufSize:GlSizeI, values:Pointer<GlUShort>):Void;
+	static function getnPixelMapusv(map:GlEnum, bufSize:GlSizeI, values:RawPointer<GlUShort>):Void;
 
 	@:native("glGetnPolygonStipple")
-	static function getnPolygonStipple(bufSize:GlSizeI, pattern:Pointer<GlUByte>):Void;
+	static function getnPolygonStipple(bufSize:GlSizeI, pattern:RawPointer<GlUByte>):Void;
 
 	@:native("glGetnColorTable")
 	static function getnColorTable(target:GlEnum, format:GlEnum, type:GlEnum, bufSize:GlSizeI, table:Any):Void;
@@ -5408,7 +5405,7 @@ extern class Glad {
 	static function textureBarrier():Void;
 
 	@:native("glSpecializeShader")
-	static function specializeShader(shader:GlUInt, pEntryPoint:ConstCharStar, numSpecializationConstants:GlUInt, pConstantIndex:ConstStar<GlUInt>, pConstantValue:ConstStar<GlUInt>):Void;
+	static function specializeShader(shader:GlUInt, pEntryPoint:ConstCharStar, numSpecializationConstants:GlUInt, pConstantIndex:RawPointer<GlUInt>, pConstantValue:RawPointer<GlUInt>):Void;
 
 	@:native("glMultiDrawArraysIndirectCount")
 	static function multiDrawArraysIndirectCount(mode:GlEnum, indirect:Any, drawcount:GlIntPointer, maxdrawcount:GlSizeI, stride:GlSizeI):Void;
@@ -5423,7 +5420,7 @@ extern class Glad {
 	static function alphaFunc(func:GlEnum, ref:GlFloat):Void;
 
 	@:native("glClipPlanef")
-	static function clipPlanef(p:GlEnum, eqn:ConstStar<GlFloat>):Void;
+	static function clipPlanef(p:GlEnum, eqn:RawPointer<GlFloat>):Void;
 
 	@:native("glColor4f")
 	static function color4f(red:GlFloat, green:GlFloat, blue:GlFloat, alpha:GlFloat):Void;
@@ -5432,46 +5429,46 @@ extern class Glad {
 	static function fogf(pname:GlEnum, param:GlFloat):Void;
 
 	@:native("glFogfv")
-	static function fogfv(pname:GlEnum, params:ConstStar<GlFloat>):Void;
+	static function fogfv(pname:GlEnum, params:RawPointer<GlFloat>):Void;
 
 	@:native("glFrustumf")
 	static function frustumf(l:GlFloat, r:GlFloat, b:GlFloat, t:GlFloat, n:GlFloat, f:GlFloat):Void;
 
 	@:native("glGetClipPlanef")
-	static function getClipPlanef(plane:GlEnum, equation:Pointer<GlFloat>):Void;
+	static function getClipPlanef(plane:GlEnum, equation:RawPointer<GlFloat>):Void;
 
 	@:native("glGetLightfv")
-	static function getLightfv(light:GlEnum, pname:GlEnum, params:Pointer<GlFloat>):Void;
+	static function getLightfv(light:GlEnum, pname:GlEnum, params:RawPointer<GlFloat>):Void;
 
 	@:native("glGetMaterialfv")
-	static function getMaterialfv(face:GlEnum, pname:GlEnum, params:Pointer<GlFloat>):Void;
+	static function getMaterialfv(face:GlEnum, pname:GlEnum, params:RawPointer<GlFloat>):Void;
 
 	@:native("glGetTexEnvfv")
-	static function getTexEnvfv(target:GlEnum, pname:GlEnum, params:Pointer<GlFloat>):Void;
+	static function getTexEnvfv(target:GlEnum, pname:GlEnum, params:RawPointer<GlFloat>):Void;
 
 	@:native("glLightModelf")
 	static function lightModelf(pname:GlEnum, param:GlFloat):Void;
 
 	@:native("glLightModelfv")
-	static function lightModelfv(pname:GlEnum, params:ConstStar<GlFloat>):Void;
+	static function lightModelfv(pname:GlEnum, params:RawPointer<GlFloat>):Void;
 
 	@:native("glLightf")
 	static function lightf(light:GlEnum, pname:GlEnum, param:GlFloat):Void;
 
 	@:native("glLightfv")
-	static function lightfv(light:GlEnum, pname:GlEnum, params:ConstStar<GlFloat>):Void;
+	static function lightfv(light:GlEnum, pname:GlEnum, params:RawPointer<GlFloat>):Void;
 
 	@:native("glLoadMatrixf")
-	static function loadMatrixf(m:ConstStar<GlFloat>):Void;
+	static function loadMatrixf(m:RawPointer<GlFloat>):Void;
 
 	@:native("glMaterialf")
 	static function materialf(face:GlEnum, pname:GlEnum, param:GlFloat):Void;
 
 	@:native("glMaterialfv")
-	static function materialfv(face:GlEnum, pname:GlEnum, params:ConstStar<GlFloat>):Void;
+	static function materialfv(face:GlEnum, pname:GlEnum, params:RawPointer<GlFloat>):Void;
 
 	@:native("glMultMatrixf")
-	static function multMatrixf(m:ConstStar<GlFloat>):Void;
+	static function multMatrixf(m:RawPointer<GlFloat>):Void;
 
 	@:native("glMultiTexCoord4f")
 	static function multiTexCoord4f(target:GlEnum, s:GlFloat, t:GlFloat, r:GlFloat, q:GlFloat):Void;
@@ -5492,7 +5489,7 @@ extern class Glad {
 	static function texEnvf(target:GlEnum, pname:GlEnum, param:GlFloat):Void;
 
 	@:native("glTexEnvfv")
-	static function texEnvfv(target:GlEnum, pname:GlEnum, params:ConstStar<GlFloat>):Void;
+	static function texEnvfv(target:GlEnum, pname:GlEnum, params:RawPointer<GlFloat>):Void;
 
 	@:native("glTranslatef")
 	static function translatef(x:GlFloat, y:GlFloat, z:GlFloat):Void;
@@ -5510,7 +5507,7 @@ extern class Glad {
 	static function clientActiveTexture(texture:GlEnum):Void;
 
 	@:native("glClipPlanex")
-	static function clipPlanex(plane:GlEnum, equation:ConstStar<GlFixed>):Void;
+	static function clipPlanex(plane:GlEnum, equation:RawPointer<GlFixed>):Void;
 
 	@:native("glColor4ub")
 	static function color4ub(red:GlUByte, green:GlUByte, blue:GlUByte, alpha:GlUByte):Void;
@@ -5534,43 +5531,43 @@ extern class Glad {
 	static function fogx(pname:GlEnum, param:GlFixed):Void;
 
 	@:native("glFogxv")
-	static function fogxv(pname:GlEnum, param:ConstStar<GlFixed>):Void;
+	static function fogxv(pname:GlEnum, param:RawPointer<GlFixed>):Void;
 
 	@:native("glFrustumx")
 	static function frustumx(l:GlFixed, r:GlFixed, b:GlFixed, t:GlFixed, n:GlFixed, f:GlFixed):Void;
 
 	@:native("glGetClipPlanex")
-	static function getClipPlanex(plane:GlEnum, equation:Pointer<GlFixed>):Void;
+	static function getClipPlanex(plane:GlEnum, equation:RawPointer<GlFixed>):Void;
 
 	@:native("glGetFixedv")
-	static function getFixedv(pname:GlEnum, params:Pointer<GlFixed>):Void;
+	static function getFixedv(pname:GlEnum, params:RawPointer<GlFixed>):Void;
 
 	@:native("glGetLightxv")
-	static function getLightxv(light:GlEnum, pname:GlEnum, params:Pointer<GlFixed>):Void;
+	static function getLightxv(light:GlEnum, pname:GlEnum, params:RawPointer<GlFixed>):Void;
 
 	@:native("glGetMaterialxv")
-	static function getMaterialxv(face:GlEnum, pname:GlEnum, params:Pointer<GlFixed>):Void;
+	static function getMaterialxv(face:GlEnum, pname:GlEnum, params:RawPointer<GlFixed>):Void;
 
 	@:native("glGetTexEnviv")
-	static function getTexEnviv(target:GlEnum, pname:GlEnum, params:Pointer<GlInt>):Void;
+	static function getTexEnviv(target:GlEnum, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glGetTexEnvxv")
-	static function getTexEnvxv(target:GlEnum, pname:GlEnum, params:Pointer<GlFixed>):Void;
+	static function getTexEnvxv(target:GlEnum, pname:GlEnum, params:RawPointer<GlFixed>):Void;
 
 	@:native("glGetTexParameterxv")
-	static function getTexParameterxv(target:GlEnum, pname:GlEnum, params:Pointer<GlFixed>):Void;
+	static function getTexParameterxv(target:GlEnum, pname:GlEnum, params:RawPointer<GlFixed>):Void;
 
 	@:native("glLightModelx")
 	static function lightModelx(pname:GlEnum, param:GlFixed):Void;
 
 	@:native("glLightModelxv")
-	static function lightModelxv(pname:GlEnum, param:ConstStar<GlFixed>):Void;
+	static function lightModelxv(pname:GlEnum, param:RawPointer<GlFixed>):Void;
 
 	@:native("glLightx")
 	static function lightx(light:GlEnum, pname:GlEnum, param:GlFixed):Void;
 
 	@:native("glLightxv")
-	static function lightxv(light:GlEnum, pname:GlEnum, params:ConstStar<GlFixed>):Void;
+	static function lightxv(light:GlEnum, pname:GlEnum, params:RawPointer<GlFixed>):Void;
 
 	@:native("glLineWidthx")
 	static function lineWidthx(width:GlFixed):Void;
@@ -5579,19 +5576,19 @@ extern class Glad {
 	static function loadIdentity():Void;
 
 	@:native("glLoadMatrixx")
-	static function loadMatrixx(m:ConstStar<GlFixed>):Void;
+	static function loadMatrixx(m:RawPointer<GlFixed>):Void;
 
 	@:native("glMaterialx")
 	static function materialx(face:GlEnum, pname:GlEnum, param:GlFixed):Void;
 
 	@:native("glMaterialxv")
-	static function materialxv(face:GlEnum, pname:GlEnum, param:ConstStar<GlFixed>):Void;
+	static function materialxv(face:GlEnum, pname:GlEnum, param:RawPointer<GlFixed>):Void;
 
 	@:native("glMatrixMode")
 	static function matrixMode(mode:GlEnum):Void;
 
 	@:native("glMultMatrixx")
-	static function multMatrixx(m:ConstStar<GlFixed>):Void;
+	static function multMatrixx(m:RawPointer<GlFixed>):Void;
 
 	@:native("glMultiTexCoord4x")
 	static function multiTexCoord4x(texture:GlEnum, s:GlFixed, t:GlFixed, r:GlFixed, q:GlFixed):Void;
@@ -5609,7 +5606,7 @@ extern class Glad {
 	static function pointParameterx(pname:GlEnum, param:GlFixed):Void;
 
 	@:native("glPointParameterxv")
-	static function pointParameterxv(pname:GlEnum, params:ConstStar<GlFixed>):Void;
+	static function pointParameterxv(pname:GlEnum, params:RawPointer<GlFixed>):Void;
 
 	@:native("glPointSizex")
 	static function pointSizex(size:GlFixed):Void;
@@ -5645,16 +5642,16 @@ extern class Glad {
 	static function texEnvx(target:GlEnum, pname:GlEnum, param:GlFixed):Void;
 
 	@:native("glTexEnviv")
-	static function texEnviv(target:GlEnum, pname:GlEnum, params:ConstStar<GlInt>):Void;
+	static function texEnviv(target:GlEnum, pname:GlEnum, params:RawPointer<GlInt>):Void;
 
 	@:native("glTexEnvxv")
-	static function texEnvxv(target:GlEnum, pname:GlEnum, params:ConstStar<GlFixed>):Void;
+	static function texEnvxv(target:GlEnum, pname:GlEnum, params:RawPointer<GlFixed>):Void;
 
 	@:native("glTexParameterx")
 	static function texParameterx(target:GlEnum, pname:GlEnum, param:GlFixed):Void;
 
 	@:native("glTexParameterxv")
-	static function texParameterxv(target:GlEnum, pname:GlEnum, params:ConstStar<GlFixed>):Void;
+	static function texParameterxv(target:GlEnum, pname:GlEnum, params:RawPointer<GlFixed>):Void;
 
 	@:native("glTranslatex")
 	static function translatex(x:GlFixed, y:GlFixed, z:GlFixed):Void;

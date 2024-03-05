@@ -1,9 +1,8 @@
 package bindings.texture;
 
-import cpp.Char;
+import cpp.CastCharStar;
 import cpp.ConstCharStar;
-import cpp.Pointer;
-import cpp.ConstPointer;
+import cpp.RawPointer;
 import cpp.Callable;
 import cpp.Star;
 import cpp.FILE;
@@ -18,17 +17,17 @@ extern class StbiContextStruct {
     var img_out_n:Int;
 
     var io:StbiIoCallbacks;
-    var io_user_data:Star<cpp.Void>;
+    var io_user_data:RawPointer<cpp.Void>;
 
     var read_from_callbacks:Int;
     var buflen:Int;
-    var buffer_start:Star<cpp.UInt32>;
+    var buffer_start:RawPointer<cpp.UInt32>;
     var callback_already_read:Int;
 
-    var img_buffer:Star<cpp.UInt32>;
-    var img_buffer_end:Star<cpp.UInt32>;
-    var img_buffer_original:Star<cpp.UInt32>;
-    var img_buffer_original_end:Star<cpp.UInt32>;
+    var img_buffer:RawPointer<cpp.UInt32>;
+    var img_buffer_end:RawPointer<cpp.UInt32>;
+    var img_buffer_original:RawPointer<cpp.UInt32>;
+    var img_buffer_original_end:RawPointer<cpp.UInt32>;
 }
 typedef StbiContext = cpp.RawPointer<StbiContextStruct>;
 
@@ -36,9 +35,9 @@ typedef StbiContext = cpp.RawPointer<StbiContextStruct>;
 @:native("stbi_io_callbacks")
 @:structAccess
 extern class StbiIoCallbacksStruct {
-    var read:Callable<(user:Star<cpp.Void>, data:Star<cpp.Char>, size:Int) -> Int>;
-    var skip:Callable<(user:Star<cpp.Void>, n:Int) -> Void>;
-    var eof:Callable<(user:Star<cpp.Void>) -> Int>;
+    var read:Callable<(user:RawPointer<cpp.Void>, data:RawPointer<cpp.Char>, size:Int) -> Int>;
+    var skip:Callable<(user:RawPointer<cpp.Void>, n:Int) -> Void>;
+    var eof:Callable<(user:RawPointer<cpp.Void>) -> Int>;
 }
 typedef StbiIoCallbacks = cpp.Struct<StbiIoCallbacksStruct>;
 
@@ -48,19 +47,19 @@ typedef UShort = cpp.UInt16;
 @:include("texture/stb_image.h")
 extern class StbImage {
     @:native("stbi_load_from_memory")
-    static function loadFromMemory(buffer:ConstPointer<UChar>, length:Int, x:Pointer<Int>, y:Pointer<Int>, channelsInFile:Pointer<Int>, desiredChannels:Int):Star<UChar>;
+    static function loadFromMemory(buffer:RawPointer<UChar>, length:Int, x:RawPointer<Int>, y:RawPointer<Int>, channelsInFile:RawPointer<Int>, desiredChannels:Int):RawPointer<UChar>;
 
     @:native("stbi_load_from_callbacks")
-    static function loadFromCallbacks(callbacks:ConstPointer<StbiIoCallbacks>, user:Star<cpp.Void>, x:Pointer<Int>, y:Pointer<Int>, channelsInFile:Pointer<Int>, desiredChannels:Int):Star<UChar>;
+    static function loadFromCallbacks(callbacks:RawPointer<StbiIoCallbacks>, user:RawPointer<cpp.Void>, x:RawPointer<Int>, y:RawPointer<Int>, channelsInFile:RawPointer<Int>, desiredChannels:Int):RawPointer<UChar>;
 
     @:native("stbi_load")
-    static function load(fileName:ConstCharStar, x:Pointer<Int>, y:Pointer<Int>, channelsInFile:Pointer<Int>, desiredChannels:Int):Star<UChar>;
+    static function load(fileName:ConstCharStar, x:RawPointer<Int>, y:RawPointer<Int>, channelsInFile:RawPointer<Int>, desiredChannels:Int):RawPointer<UChar>;
 
     @:native("stbi_load_from_file")
-    static function loadFromFile(file:FILE, x:Pointer<Int>, y:Pointer<Int>, channelsInFile:Pointer<Int>, desiredChannels:Int):Star<UChar>;
+    static function loadFromFile(file:FILE, x:RawPointer<Int>, y:RawPointer<Int>, channelsInFile:RawPointer<Int>, desiredChannels:Int):RawPointer<UChar>;
 
     @:native("stbi_load_gif_from_memory")
-    static function loadGifFromMemory(buffer:ConstPointer<UChar>, length:Int, delays:Pointer<Star<Int>>, x:Pointer<Int>, y:Pointer<Int>, z:Pointer<Int>, comp:Pointer<Int>, reqComp:Int):Star<UChar>;
+    static function loadGifFromMemory(buffer:RawPointer<UChar>, length:Int, delays:RawPointer<Star<Int>>, x:RawPointer<Int>, y:RawPointer<Int>, z:RawPointer<Int>, comp:RawPointer<Int>, reqComp:Int):RawPointer<UChar>;
 
     /* im totally not lazy.
     #ifdef STBI_WINDOWS_UTF8
@@ -69,28 +68,28 @@ extern class StbImage {
     */
 
     @:native("stbi_load_16_from_memory")
-    static function load16FromMemory(buffer:ConstPointer<UChar>, length:Int, x:Pointer<Int>, y:Pointer<Int>, channelsInFile:Pointer<Int>, desiredChannels:Int):Star<UShort>;
+    static function load16FromMemory(buffer:RawPointer<UChar>, length:Int, x:RawPointer<Int>, y:RawPointer<Int>, channelsInFile:RawPointer<Int>, desiredChannels:Int):RawPointer<UShort>;
 
     @:native("stbi_load_16_from_callbacks")
-    static function load16FromCallbacks(callbacks:ConstPointer<StbiIoCallbacks>, user:Star<cpp.Void>, x:Pointer<Int>, y:Pointer<Int>, channelsInFile:Pointer<Int>, desiredChannels:Int):Star<UShort>;
+    static function load16FromCallbacks(callbacks:RawPointer<StbiIoCallbacks>, user:RawPointer<cpp.Void>, x:RawPointer<Int>, y:RawPointer<Int>, channelsInFile:RawPointer<Int>, desiredChannels:Int):RawPointer<UShort>;
 
     @:native("stbi_load_16")
-    static function load16(fileName:ConstCharStar, x:Pointer<Int>, y:Pointer<Int>, channelsInFile:Pointer<Int>, desiredChannels:Int):Star<UShort>;
+    static function load16(fileName:ConstCharStar, x:RawPointer<Int>, y:RawPointer<Int>, channelsInFile:RawPointer<Int>, desiredChannels:Int):RawPointer<UShort>;
 
     @:native("stbi_load_from_file_16")
-    static function load16FromFile(file:FILE, x:Pointer<Int>, y:Pointer<Int>, channelsInFile:Pointer<Int>, desiredChannels:Int):Star<UShort>;
+    static function load16FromFile(file:FILE, x:RawPointer<Int>, y:RawPointer<Int>, channelsInFile:RawPointer<Int>, desiredChannels:Int):RawPointer<UShort>;
 
     @:native("stbi_loadf_from_memory")
-    static function loadFloatFromMemory(buffer:ConstPointer<UChar>, length:Int, x:Pointer<Int>, y:Pointer<Int>, channelsInFile:Pointer<Int>, desiredChannels:Int):Float;
+    static function loadFloatFromMemory(buffer:RawPointer<UChar>, length:Int, x:RawPointer<Int>, y:RawPointer<Int>, channelsInFile:RawPointer<Int>, desiredChannels:Int):Float;
 
     @:native("stbi_loadf_from_callbacks")
-    static function loadFloatFromCallbacks(callbacks:ConstPointer<StbiIoCallbacks>, user:Star<cpp.Void>, x:Pointer<Int>, y:Pointer<Int>, channelsInFile:Pointer<Int>, desiredChannels:Int):Float;
+    static function loadFloatFromCallbacks(callbacks:RawPointer<StbiIoCallbacks>, user:RawPointer<cpp.Void>, x:RawPointer<Int>, y:RawPointer<Int>, channelsInFile:RawPointer<Int>, desiredChannels:Int):Float;
 
     @:native("stbi_loadf")
-    static function loadFloat(fileName:ConstCharStar, x:Pointer<Int>, y:Pointer<Int>, channelsInFile:Pointer<Int>, desiredChannels:Int):Float;
+    static function loadFloat(fileName:ConstCharStar, x:RawPointer<Int>, y:RawPointer<Int>, channelsInFile:RawPointer<Int>, desiredChannels:Int):Float;
 
     @:native("stbi_loadf_from_file")
-    static function loadFloatFromFile(file:FILE, x:Pointer<Int>, y:Pointer<Int>, channelsInFile:Pointer<Int>, desiredChannels:Int):Float;
+    static function loadFloatFromFile(file:FILE, x:RawPointer<Int>, y:RawPointer<Int>, channelsInFile:RawPointer<Int>, desiredChannels:Int):Float;
 
     @:native("stbi_hdr_to_ldr_gamma")
     static function hdrToLdrGamma(gamma:Float):Void;
@@ -105,13 +104,13 @@ extern class StbImage {
     static function ldrToHdrScale(scale:Float):Void;
 
     @:native("stbi_is_hdr_from_memory")
-    static function _isHdrFromMemory(buffer:ConstPointer<UChar>, length:Int):Int;
-    static inline function isHdrFromMemory(buffer:ConstPointer<UChar>, length:Int):Bool
+    static function _isHdrFromMemory(buffer:RawPointer<UChar>, length:Int):Int;
+    static inline function isHdrFromMemory(buffer:RawPointer<UChar>, length:Int):Bool
         return _isHdrFromMemory(buffer, length) != 0;   
 
     @:native("stbi_is_hdr_from_callbacks")
-    static function _isHdrFromCallbacks(callbacks:ConstPointer<StbiIoCallbacks>, user:Star<cpp.Void>):Int;
-    static inline function isHdrFromCallbacks(callbacks:ConstPointer<StbiIoCallbacks>, user:Star<cpp.Void>):Bool
+    static function _isHdrFromCallbacks(callbacks:RawPointer<StbiIoCallbacks>, user:RawPointer<cpp.Void>):Int;
+    static inline function isHdrFromCallbacks(callbacks:RawPointer<StbiIoCallbacks>, user:RawPointer<cpp.Void>):Bool
         return _isHdrFromCallbacks(callbacks, user) != 0;   
 
     @:native("stbi_is_hdr")
@@ -132,25 +131,25 @@ extern class StbImage {
     }
 
     @:native("stbi_info_from_memory")
-    static function infoFromMemory(buffer:ConstPointer<UChar>, length:Int, x:Pointer<Int>, y:Pointer<Int>, comp:Pointer<Int>):Int;
+    static function infoFromMemory(buffer:RawPointer<UChar>, length:Int, x:RawPointer<Int>, y:RawPointer<Int>, comp:RawPointer<Int>):Int;
 
     @:native("stbi_info_from_callbacks")
-    static function infoFromCallbacks(callbacks:ConstPointer<StbiIoCallbacks>, user:Star<cpp.Void>, x:Pointer<Int>, y:Pointer<Int>, comp:Pointer<Int>):Int;
+    static function infoFromCallbacks(callbacks:RawPointer<StbiIoCallbacks>, user:RawPointer<cpp.Void>, x:RawPointer<Int>, y:RawPointer<Int>, comp:RawPointer<Int>):Int;
 
     @:native("stbi_info")
-    static function info(fileName:ConstCharStar, x:Pointer<Int>, y:Pointer<Int>, comp:Pointer<Int>):Int;
+    static function info(fileName:ConstCharStar, x:RawPointer<Int>, y:RawPointer<Int>, comp:RawPointer<Int>):Int;
 
     @:native("stbi_info_from_file")
-    static function infoFromFile(file:FILE, x:Pointer<Int>, y:Pointer<Int>, comp:Pointer<Int>):Int;
+    static function infoFromFile(file:FILE, x:RawPointer<Int>, y:RawPointer<Int>, comp:RawPointer<Int>):Int;
 
     @:native("stbi_is_16_bit_from_memory")
-    static function _is16BitFromMemory(buffer:ConstPointer<UChar>, length:Int):Int;
-    static inline function is16BitFromMemory(buffer:ConstPointer<UChar>, length:Int):Bool
+    static function _is16BitFromMemory(buffer:RawPointer<UChar>, length:Int):Int;
+    static inline function is16BitFromMemory(buffer:RawPointer<UChar>, length:Int):Bool
         return _is16BitFromMemory(buffer, length) != 0;
 
     @:native("stbi_is_16_bit_from_callbacks")
-    static function _is16BitFromCallbacks(callbacks:ConstPointer<StbiIoCallbacks>, user:Star<cpp.Void>):Int;
-    static inline function is16BitFromCallbacks(callbacks:ConstPointer<StbiIoCallbacks>, user:Star<cpp.Void>):Bool
+    static function _is16BitFromCallbacks(callbacks:RawPointer<StbiIoCallbacks>, user:RawPointer<cpp.Void>):Int;
+    static inline function is16BitFromCallbacks(callbacks:RawPointer<StbiIoCallbacks>, user:RawPointer<cpp.Void>):Bool
         return _is16BitFromCallbacks(callbacks, user) != 0;
 
     @:native("stbi_is_16_bit")
@@ -182,20 +181,20 @@ extern class StbImage {
     static function setFlipVerticallyOnLoadThread(shouldFlip:Int):Void;
 
     @:native("stbi_zlib_decode_malloc_guesssize")
-    static function zlibDecodeMallocGuessSize(buffer:ConstCharStar, length:Int, initialSize:Int, outLength:Pointer<Int>):Star<Char>;
+    static function zlibDecodeMallocGuessSize(buffer:ConstCharStar, length:Int, initialSize:Int, outLength:RawPointer<Int>):CastCharStar;
 
     @:native("stbi_zlib_decode_malloc_guesssize_headerflag")
-    static function zlibDecodeMallocGuessSizeHeaderFlag(buffer:ConstCharStar, length:Int, initialSize:Int, outLength:Pointer<Int>, parseHeader:Int):Star<Char>;
+    static function zlibDecodeMallocGuessSizeHeaderFlag(buffer:ConstCharStar, length:Int, initialSize:Int, outLength:RawPointer<Int>, parseHeader:Int):CastCharStar;
 
     @:native("stbi_zlib_decode_malloc")
-    static function zlibDecodeMalloc(buffer:ConstCharStar, length:Int, outLength:Pointer<Int>):Star<Char>;
+    static function zlibDecodeMalloc(buffer:ConstCharStar, length:Int, outLength:RawPointer<Int>):CastCharStar;
 
     @:native("stbi_zlib_decode_buffer")
-    static function zlibDecodeBuffer(oBuffer:Star<Char>, oLen:Int, iBuffer:ConstCharStar, iLen:Int):Int;
+    static function zlibDecodeBuffer(oBuffer:CastCharStar, oLen:Int, iBuffer:ConstCharStar, iLen:Int):Int;
 
     @:native("stbi_zlib_decode_noheader_malloc")
-    static function zlibDecodeNoHeaderMalloc(buffer:ConstCharStar, length:Int, outLength:Pointer<Int>):Star<Char>;
+    static function zlibDecodeNoHeaderMalloc(buffer:ConstCharStar, length:Int, outLength:RawPointer<Int>):CastCharStar;
 
     @:native("stbi_zlib_decode_noheader_buffer")
-    static function zlibDecodeNoHeaderBuffer(oBuffer:Star<Char>, oLen:Int, iBuffer:ConstCharStar, iLen:Int):Int;
+    static function zlibDecodeNoHeaderBuffer(oBuffer:CastCharStar, oLen:Int, iBuffer:ConstCharStar, iLen:Int):Int;
 }

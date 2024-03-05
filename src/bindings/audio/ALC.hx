@@ -77,7 +77,7 @@ extern class ALC {
 	static function getString(device:Device, parameter:Int):cpp.ConstCharStar;
 
 	@:native('alcGetIntegerv')
-	static function getIntegerv(device:Device, parameter:Int, size:Int, ?values:cpp.Pointer<Int>):Void;
+	static function getIntegerv(device:Device, parameter:Int, size:Int, ?values:cpp.RawPointer<Int>):Void;
 
 	@:native('alcCaptureOpenDevice')
 	static function captureOpenDevice(deviceName:cpp.ConstCharStar, frequency:UInt, format:Int, bufferSize:Int):Device;
@@ -105,5 +105,5 @@ extern class ALCdevice {}
 @:structAccess
 extern class ALCcontext {}
 
-typedef Device = cpp.Pointer<ALCdevice>;
-typedef Context = cpp.Pointer<ALCcontext>;
+typedef Device = cpp.RawPointer<ALCdevice>;
+typedef Context = cpp.RawPointer<ALCcontext>;

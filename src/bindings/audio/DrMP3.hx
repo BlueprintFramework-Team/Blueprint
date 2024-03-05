@@ -6,10 +6,10 @@ package bindings.audio;
 @:include('audio/DrMP3.h')
 extern class DrMP3 {
     @:native('drmp3_open_file_and_read_pcm_frames_s16')
-    static function openFileAndReadPCMFramesShort16(fileName:cpp.ConstCharStar, config:cpp.Pointer<DrMP3Config>,
-        totalFrameCount:cpp.Pointer<DrMP3UInt64>, allocationCallbacks:cpp.ConstPointer<DrMP3AllocationCallbacks>):cpp.Star<cpp.Int16>;
+    static function openFileAndReadPCMFramesShort16(fileName:cpp.ConstCharStar, config:cpp.RawPointer<DrMP3Config>,
+        totalFrameCount:cpp.RawPointer<DrMP3UInt64>, allocationCallbacks:cpp.RawPointer<DrMP3AllocationCallbacks>):cpp.RawPointer<cpp.Int16>;
     
-    inline static function free(data:Any, allocationCallbacks:cpp.ConstPointer<DrMP3AllocationCallbacks>):Void {
+    inline static function free(data:Any, allocationCallbacks:cpp.RawPointer<DrMP3AllocationCallbacks>):Void {
         untyped __cpp__('drmp3_free({0}, {1})', data, allocationCallbacks);
     }
 }

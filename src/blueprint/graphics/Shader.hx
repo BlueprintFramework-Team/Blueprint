@@ -1,7 +1,7 @@
 package blueprint.graphics;
 
 import cpp.ConstCharStar;
-import cpp.Pointer;
+import cpp.RawPointer;
 
 import math.Vector4;
 import math.Vector3;
@@ -24,22 +24,22 @@ class Shader {
 		var success:Int = 0;
 
 		vertID = Glad.createShader(Glad.VERTEX_SHADER);
-		Glad.shaderSource(vertID, 1, CppHelpers.tempPointer(vertContent), null);
+		Glad.shaderSource(vertID, 1, RawPointer.addressOf(vertContent), null);
 		Glad.compileShader(vertID);
-		Glad.getShaderiv(vertID, Glad.COMPILE_STATUS, Pointer.addressOf(success));
+		Glad.getShaderiv(vertID, Glad.COMPILE_STATUS, RawPointer.addressOf(success));
 		if (success == 0) {
-			var infoLog:cpp.Star<cpp.Char> = CppHelpers.malloc(1024, cpp.Char);
+			var infoLog:RawPointer<cpp.Char> = CppHelpers.malloc(1024, cpp.Char);
 			Glad.getShaderInfoLog(vertID, 1024, null, infoLog);
 			CppHelpers.nativeTrace("Failed to load Vertex Shader.\n%s\n", infoLog);
 			CppHelpers.free(infoLog);
 		}
 
 		fragID = Glad.createShader(Glad.FRAGMENT_SHADER);
-		Glad.shaderSource(fragID, 1, CppHelpers.tempPointer(fragContent), null);
+		Glad.shaderSource(fragID, 1, RawPointer.addressOf(fragContent), null);
 		Glad.compileShader(fragID);
-		Glad.getShaderiv(fragID, Glad.COMPILE_STATUS, Pointer.addressOf(success));
+		Glad.getShaderiv(fragID, Glad.COMPILE_STATUS, RawPointer.addressOf(success));
 		if (success == 0) {
-			var infoLog:cpp.Star<cpp.Char> = CppHelpers.malloc(1024, cpp.Char);
+			var infoLog:RawPointer<cpp.Char> = CppHelpers.malloc(1024, cpp.Char);
 			Glad.getShaderInfoLog(fragID, 1024, null, infoLog);
 			CppHelpers.nativeTrace("Failed to load Fragment Shader.\n%s\n", infoLog);
 			CppHelpers.free(infoLog);
@@ -49,9 +49,9 @@ class Shader {
 		Glad.attachShader(ID, vertID);
 		Glad.attachShader(ID, fragID);
 		Glad.linkProgram(ID);
-		Glad.getProgramiv(ID, Glad.LINK_STATUS, Pointer.addressOf(success));
+		Glad.getProgramiv(ID, Glad.LINK_STATUS, RawPointer.addressOf(success));
 		if (success == 0) {
-			var infoLog:cpp.Star<cpp.Char> = CppHelpers.malloc(1024, cpp.Char);
+			var infoLog:RawPointer<cpp.Char> = CppHelpers.malloc(1024, cpp.Char);
 			Glad.getProgramInfoLog(ID, 1024, null, infoLog);
 			CppHelpers.nativeTrace("Failed to link Shader Program.\n%s\n", infoLog);
 			CppHelpers.free(infoLog);
@@ -64,7 +64,7 @@ class Shader {
 		Glad.uniform1i(Glad.getUniformLocation(ID, "shader"), 0);
 
 		final projectLoc = Glad.getUniformLocation(ID, "projection");
-		final projectStar = Game.projection.toStar();
+		final projectStar = Game.projection.toCArray();
 		Glad.uniformMatrix4fv(projectLoc, 1, Glad.FALSE, projectStar);
 		CppHelpers.free(projectStar);
 	}
@@ -93,7 +93,7 @@ class Shader {
 		untyped __cpp__("
 			float* _star = {0};
 			glUniformMatrix4fv(glGetUniformLocation({1}, {2}), 1, GL_FALSE, _star);
-			free(_star)", value.toStar(), this.ID, name);
+			free(_star)", value.toCArray(), this.ID, name);
 	}
 
 	public static final defaultVertexSource:String = "

@@ -23,7 +23,7 @@ class Sound {
 
 	public function new(?filePath:String, autoPlay:Bool = false, looping:Bool = false, gain:Float = 1.0, pitch:Float = 1.0) {
 		curSounds.push(this);
-		AL.genSources(1, cpp.Pointer.addressOf(source));
+		AL.genSources(1, RawPointer.addressOf(source));
 
 		if (filePath != null)
 			loadFromFile(filePath);
@@ -74,7 +74,7 @@ class Sound {
 		stop();
 
 		if (source != 0)
-			AL.deleteSources(1, cpp.Pointer.addressOf(source));
+			AL.deleteSources(1, cpp.RawPointer.addressOf(source));
 
 		data = null;
 		curSounds.remove(this);
@@ -114,7 +114,7 @@ class Sound {
 		var _time:Single = 0;
 
 		if (source != 0) 
-			AL.getSourcef(source, AL.SEC_OFFSET, cpp.Pointer.addressOf(_time));
+			AL.getSourcef(source, AL.SEC_OFFSET, CppHelpers.makePointer(_time));
 
 		return _time;
 	}
@@ -134,7 +134,7 @@ class Sound {
 		var state:Int = 0;
 
 		if (source != 0) 
-			AL.getSourcei(source, AL.SOURCE_STATE, cpp.Pointer.addressOf(state));
+			AL.getSourcei(source, AL.SOURCE_STATE, CppHelpers.makePointer(state));
 
 		return state == AL.PLAYING;
 	}

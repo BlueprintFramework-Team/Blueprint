@@ -2,11 +2,7 @@ package bindings;
 
 #if !macro
 import cpp.RawPointer;
-import cpp.ConstPointer;
-import cpp.Star;
 import cpp.Callable;
-import cpp.Pointer;
-import cpp.Struct;
 import cpp.ConstCharStar;
 
 @:include("includeWorkaround.h")
@@ -38,7 +34,7 @@ extern class GlfwVidMode {
     var blueBits:Int;
     var refreshRate:Int;
 }
-typedef VideoMode = Struct<GlfwVidMode>;
+typedef VideoMode = RawPointer<GlfwVidMode>;
 
 @:include("includeWorkaround.h")
 @:native("GLFWgammaramp")
@@ -49,7 +45,7 @@ extern class GlfwGammaRamp {
     var blue:UInt;
     var size:UInt;
 }
-typedef GammaRamp = Struct<GlfwGammaRamp>;
+typedef GammaRamp = RawPointer<GlfwGammaRamp>;
 
 @:include("includeWorkaround.h")
 @:native("GLFWimage")
@@ -57,9 +53,9 @@ typedef GammaRamp = Struct<GlfwGammaRamp>;
 extern class GflwImageStruct {
     var width:Int;
     var height:Int;
-    var pixels:cpp.Star<Int>;
+    var pixels:RawPointer<Int>;
 }
-typedef GlfwImage = Struct<GflwImageStruct>;
+typedef GlfwImage = RawPointer<GflwImageStruct>;
 
 @:include("includeWorkaround.h")
 @:native("GLFWgamepadstate")
@@ -68,7 +64,7 @@ extern class GlfwGamepadState {
     var buttons:Array<cpp.UInt8>;
     var axes:Array<Float>;
 }
-typedef GamepadState = Struct<GlfwGamepadState>;
+typedef GamepadState = RawPointer<GlfwGamepadState>;
 
 typedef ErrorFunc = Callable<(errorCode:Int, description:ConstCharStar) -> Void>;
 typedef WindowPosFunc = Callable<(window:GlfwWindow, xPos:Int, yPos:Int) -> Void>;
@@ -700,7 +696,7 @@ extern class Glfw {
     static function initHint(hint:Int, value:Int):Void;
 
     @:native("glfwGetVersion")
-    static function getVersion(major:Pointer<Int>, minor:Pointer<Int>, rev:Pointer<Int>):Void;
+    static function getVersion(major:RawPointer<Int>, minor:RawPointer<Int>, rev:RawPointer<Int>):Void;
 
     @:native("glfwGetVersionString")
     static function _getVersionString():ConstCharStar;
@@ -709,28 +705,28 @@ extern class Glfw {
         return _getVersionString().toString();
 
     @:native("glfwGetError")
-    static function getError(desc:Pointer<ConstCharStar>):Int;
+    static function getError(desc:RawPointer<ConstCharStar>):Int;
 
     @:native("glfwSetErrorCallback")
     static function setErrorCallback(func:ErrorFunc):ErrorFunc;
 
     @:native("glfwGetMonitors")
-    static function getMonitors(count:Pointer<Int>):Pointer<GlfwMonitor>;
+    static function getMonitors(count:RawPointer<Int>):RawPointer<GlfwMonitor>;
 
     @:native("glfwGetPrimaryMonitor")
     static function getPrimaryMonitor():GlfwMonitor;
 
     @:native("glfwGetMonitorPos")
-    static function getMonitorPos(monitor:GlfwMonitor, xPos:Pointer<Int>, yPos:Pointer<Int>):Void;
+    static function getMonitorPos(monitor:GlfwMonitor, xPos:RawPointer<Int>, yPos:RawPointer<Int>):Void;
 
     @:native("glfwGetMonitorWorkarea")
-    static function getMonitorWorkarea(monitor:GlfwMonitor, xPos:Pointer<Int>, yPos:Pointer<Int>, width:Pointer<Int>, height:Pointer<Int>):Void;
+    static function getMonitorWorkarea(monitor:GlfwMonitor, xPos:RawPointer<Int>, yPos:RawPointer<Int>, width:RawPointer<Int>, height:RawPointer<Int>):Void;
 
     @:native("glfwGetMonitorPhysicalSize")
-    static function getMonitorPhysicalSize(monitor:GlfwMonitor, widthMM:Pointer<Int>, heightMM:Pointer<Int>):Void;
+    static function getMonitorPhysicalSize(monitor:GlfwMonitor, widthMM:RawPointer<Int>, heightMM:RawPointer<Int>):Void;
 
     @:native("glfwGetMonitorContentScale")
-    static function getMonitorContentScale(monitor:GlfwMonitor, xScale:Pointer<Float>, yScale:Pointer<Float>):Void;
+    static function getMonitorContentScale(monitor:GlfwMonitor, xScale:RawPointer<Float>, yScale:RawPointer<Float>):Void;
 
     @:native("getMonitorName")
     static function _getMonitorName(monitor:GlfwMonitor):ConstCharStar;
@@ -748,7 +744,7 @@ extern class Glfw {
     static function setMonitorCallback(callback:MonitorFunc):MonitorFunc;
 
     @:native("glfwGetVideoModes")
-    static function getVideoModes(monitor:GlfwMonitor, count:Pointer<Int>):cpp.ConstPointer<VideoMode>;
+    static function getVideoModes(monitor:GlfwMonitor, count:RawPointer<Int>):cpp.ConstPointer<VideoMode>;
 
     @:native("glfwGetVideoMode")
     static function getVideoMode(monitor:GlfwMonitor):cpp.ConstPointer<VideoMode>;
@@ -757,10 +753,10 @@ extern class Glfw {
     static function setGamma(monitor:GlfwMonitor, gamma:Float):Void;
 
     @:native("glfwGetGammaRamp")
-    static function getGammaRamp(monitor:GlfwMonitor):ConstPointer<GammaRamp>;
+    static function getGammaRamp(monitor:GlfwMonitor):RawPointer<GammaRamp>;
 
     @:native("glfwSetGammaRamp")
-    static function setGammaRamp(monitor:GlfwMonitor, ramp:ConstPointer<GammaRamp>):Void;
+    static function setGammaRamp(monitor:GlfwMonitor, ramp:RawPointer<GammaRamp>):Void;
 
     @:native("glfwDefaultWindowHints")
     static function defaultWindowHints():Void;
@@ -790,16 +786,16 @@ extern class Glfw {
     static function setWindowTitle(window:GlfwWindow, title:ConstCharStar):Void;
 
     @:native("glfwSetWindowIcon") //TODO: When the Blueprint Texture is finished, make a function for using that for icons.
-    static function setWindowIcon(window:GlfwWindow, count:Int, images:ConstPointer<GlfwImage>):Void;
+    static function setWindowIcon(window:GlfwWindow, count:Int, images:RawPointer<GlfwImage>):Void;
 
     @:native("glfwGetWindowPos")
-    static function getWindowPos(window:GlfwWindow, xPos:Pointer<Int>, yPos:Pointer<Int>):Void;
+    static function getWindowPos(window:GlfwWindow, xPos:RawPointer<Int>, yPos:RawPointer<Int>):Void;
 
     @:native("glfwSetWindowPos")
     static function setWindowPos(window:GlfwWindow, xPos:Int, yPos:Int):Void;
 
     @:native("glfwGetWindowSize")
-    static function getWindowSize(window:GlfwWindow, width:Pointer<Int>, height:Pointer<Int>):Void;
+    static function getWindowSize(window:GlfwWindow, width:RawPointer<Int>, height:RawPointer<Int>):Void;
 
     @:native("glfwSetWindowSizeLimits")
     static function setWindowSizeLimits(window:GlfwWindow, minWidth:Int, minHeight:Int, maxWidth:Int, maxHeight:Int):Void;
@@ -811,13 +807,13 @@ extern class Glfw {
     static function setWindowSize(window:GlfwWindow, width:Int, height:Int):Void;
 
     @:native("glfwGetFramebufferSize")
-    static function getFramebufferSize(window:GlfwWindow, width:Pointer<Int>, height:Pointer<Int>):Void;
+    static function getFramebufferSize(window:GlfwWindow, width:RawPointer<Int>, height:RawPointer<Int>):Void;
 
     @:native("glfwGetWindowFrameSize")
-    static function getWindowFrameSize(window:GlfwWindow, left:Pointer<Int>, top:Pointer<Int>, right:Pointer<Int>, bottom:Pointer<Int>):Void;
+    static function getWindowFrameSize(window:GlfwWindow, left:RawPointer<Int>, top:RawPointer<Int>, right:RawPointer<Int>, bottom:RawPointer<Int>):Void;
 
     @:native("glfwGetWindowContentScale")
-    static function getWindowContentScale(window:GlfwWindow, xScale:Pointer<Float>, yScale:Pointer<Float>):Void;
+    static function getWindowContentScale(window:GlfwWindow, xScale:RawPointer<Float>, yScale:RawPointer<Float>):Void;
 
     @:native("glfwGetWindowOpacity")
     static function getWindowOpacity(window:GlfwWindow):Float;
@@ -928,13 +924,13 @@ extern class Glfw {
     static function getKey(window:GlfwWindow, key:Int):Int;
 
     @:native("glfwGetCursorPos")
-    static function getCursorPos(window:GlfwWindow, xPos:Pointer<Float>, yPos:Pointer<Float>):Void;
+    static function getCursorPos(window:GlfwWindow, xPos:RawPointer<Float>, yPos:RawPointer<Float>):Void;
 
     @:native("glfwSetCursorPos")
     static function setCursorPos(window:GlfwWindow, xPos:Float, yPos:Float):Void;
 
     @:native("glfwCreateCursor")
-    static function createCursor(image:ConstPointer<GlfwImage>, hotspotX:Int, hotspotY:Int):GlfwCursor;
+    static function createCursor(image:RawPointer<GlfwImage>, hotspotX:Int, hotspotY:Int):GlfwCursor;
 
     @:native("glfwCreateStandardCursor")
     static function createStandardCursor(shape:Int):GlfwCursor;
@@ -976,13 +972,13 @@ extern class Glfw {
         return _joystickPresent(joystickID) != 0;
 
     @:native("glfwGetJoystickAxes")
-    static function getJoystickAxes(joystickID:Int, count:Pointer<Int>):ConstPointer<Float>;
+    static function getJoystickAxes(joystickID:Int, count:RawPointer<Int>):RawPointer<Float>;
 
     @:native("glfwGetJoystickButtons")
-    static function getJoystickButtons(joystickID:Int, count:Pointer<Int>):cpp.ConstPointer<Int>;
+    static function getJoystickButtons(joystickID:Int, count:RawPointer<Int>):cpp.ConstPointer<Int>;
 
     @:native("glfwGetJoystickHats")
-    static function getJoystickHats(joystickID:Int, count:Pointer<Int>):cpp.ConstPointer<Int>;
+    static function getJoystickHats(joystickID:Int, count:RawPointer<Int>):cpp.ConstPointer<Int>;
 
     @:native("glfwGetJoystickName")
     static function _getJoystickName(joystickID:Int):ConstCharStar;
@@ -1072,6 +1068,6 @@ extern class Glfw {
         return _vulkanSupported() != 0;
 
     @:native("glfwGetRequiredInstanceExtensions")
-    static function getRequiredInstanceExtensions(count:Pointer<Int>):Pointer<ConstCharStar>;
+    static function getRequiredInstanceExtensions(count:RawPointer<Int>):RawPointer<ConstCharStar>;
 }
 #end

@@ -1,5 +1,7 @@
 package math;
 
+import cpp.RawPointer;
+
 abstract Matrix4x4(Array<Vector4>) from Array<Vector4> to Array<Vector4> {
 	static var rotResult:Matrix4x4 = new Matrix4x4(1.0); // Might be renamed if i have to use this in a another function.
 
@@ -243,9 +245,9 @@ abstract Matrix4x4(Array<Vector4>) from Array<Vector4> to Array<Vector4> {
 	 * 
 	 * NOTE: For proper memory management, please call `CppHelpers.free` when you are fully finished with the c array.
 	 * 
-	 * @return cpp.Star<cpp.Float32>
+	 * @return RawPointer<cpp.Float32>
 	 */
-	public function toStar():cpp.Star<cpp.Float32> {
+	public function toCArray():RawPointer<cpp.Float32> {
 		untyped __cpp__("
 			float* _cArray = (float*)malloc(sizeof(float) * 16);
 			for (int i = 0; i < 4; i++) {

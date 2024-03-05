@@ -1,6 +1,5 @@
 package blueprint;
 
-import cpp.Pointer;
 import cpp.Callable;
 
 import bindings.Glad;
@@ -90,7 +89,7 @@ class Game {
 			offsetX: 0,
 			offsetY: 0
 		};
-		Freetype.init(Pointer.addressOf(Font.library));
+		Freetype.init(RawPointer.addressOf(Font.library));
 
 		currentScene = Type.createInstance(startScene, []);
 
@@ -125,7 +124,9 @@ class Game {
 			Font.clearCache();
 			currentScene = Type.createInstance(queuedSceneChange, []);
 			queuedSceneChange = null;
+			lastTime = Glfw.getTime();
 			cpp.vm.Gc.run(true);
+			return;
 		}
 
 		var runTime:Float = Glfw.getTime();
