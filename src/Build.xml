@@ -5,6 +5,7 @@
 		<compilerflag value="-I${PROJECT_DIR}vendor/include" />
 
 		<file name="${PROJECT_DIR}vendor/src/glad.c" />
+		<file name="${PROJECT_DIR}vendor/src/stb_vorbis.c" />
 	</files>
 
 	<!-- Taken from raylib-hx -->
