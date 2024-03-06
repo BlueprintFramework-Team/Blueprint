@@ -413,6 +413,487 @@ enum STBVorbisError
    VORBIS_ogg_skeleton_not_supported
 };
 
+// global configuration settings (e.g. set these in the project/makefile),
+// or just set them in this file at the top (although ideally the first few
+// should be visible when the header file is compiled too, although it's not
+// crucial)
+
+// STB_VORBIS_NO_PUSHDATA_API
+//     does not compile the code for the various stb_vorbis_*_pushdata()
+//     functions
+// #define STB_VORBIS_NO_PUSHDATA_API
+
+// STB_VORBIS_NO_PULLDATA_API
+//     does not compile the code for the non-pushdata APIs
+// #define STB_VORBIS_NO_PULLDATA_API
+
+// STB_VORBIS_NO_STDIO
+//     does not compile the code for the APIs that use FILE *s internally
+//     or externally (implied by STB_VORBIS_NO_PULLDATA_API)
+// #define STB_VORBIS_NO_STDIO
+
+// STB_VORBIS_NO_INTEGER_CONVERSION
+//     does not compile the code for converting audio sample data from
+//     float to integer (implied by STB_VORBIS_NO_PULLDATA_API)
+// #define STB_VORBIS_NO_INTEGER_CONVERSION
+
+// STB_VORBIS_NO_FAST_SCALED_FLOAT
+//      does not use a fast float-to-int trick to accelerate float-to-int on
+//      most platforms which requires endianness be defined correctly.
+//#define STB_VORBIS_NO_FAST_SCALED_FLOAT
+
+
+// STB_VORBIS_MAX_CHANNELS [number]
+//     globally define this to the maximum number of channels you need.
+//     The spec does not put a restriction on channels except that
+//     the count is stored in a byte, so 255 is the hard limit.
+//     Reducing this saves about 16 bytes per value, so using 16 saves
+//     (255-16)*16 or around 4KB. Plus anything other memory usage
+//     I forgot to account for. Can probably go as low as 8 (7.1 audio),
+//     6 (5.1 audio), or 2 (stereo only).
+#ifndef STB_VORBIS_MAX_CHANNELS
+#define STB_VORBIS_MAX_CHANNELS    16  // enough for anyone?
+#endif
+
+// STB_VORBIS_PUSHDATA_CRC_COUNT [number]
+//     after a flush_pushdata(), stb_vorbis begins scanning for the
+//     next valid page, without backtracking. when it finds something
+//     that looks like a page, it streams through it and verifies its
+//     CRC32. Should that validation fail, it keeps scanning. But it's
+//     possible that _while_ streaming through to check the CRC32 of
+//     one candidate page, it sees another candidate page. This #define
+//     determines how many "overlapping" candidate pages it can search
+//     at once. Note that "real" pages are typically ~4KB to ~8KB, whereas
+//     garbage pages could be as big as 64KB, but probably average ~16KB.
+//     So don't hose ourselves by scanning an apparent 64KB page and
+//     missing a ton of real ones in the interim; so minimum of 2
+#ifndef STB_VORBIS_PUSHDATA_CRC_COUNT
+#define STB_VORBIS_PUSHDATA_CRC_COUNT  4
+#endif
+
+// STB_VORBIS_FAST_HUFFMAN_LENGTH [number]
+//     sets the log size of the huffman-acceleration table.  Maximum
+//     supported value is 24. with larger numbers, more decodings are O(1),
+//     but the table size is larger so worse cache missing, so you'll have
+//     to probe (and try multiple ogg vorbis files) to find the sweet spot.
+#ifndef STB_VORBIS_FAST_HUFFMAN_LENGTH
+#define STB_VORBIS_FAST_HUFFMAN_LENGTH   10
+#endif
+
+// STB_VORBIS_FAST_BINARY_LENGTH [number]
+//     sets the log size of the binary-search acceleration table. this
+//     is used in similar fashion to the fast-huffman size to set initial
+//     parameters for the binary search
+
+// STB_VORBIS_FAST_HUFFMAN_INT
+//     The fast huffman tables are much more efficient if they can be
+//     stored as 16-bit results instead of 32-bit results. This restricts
+//     the codebooks to having only 65535 possible outcomes, though.
+//     (At least, accelerated by the huffman table.)
+#ifndef STB_VORBIS_FAST_HUFFMAN_INT
+#define STB_VORBIS_FAST_HUFFMAN_SHORT
+#endif
+
+// STB_VORBIS_NO_HUFFMAN_BINARY_SEARCH
+//     If the 'fast huffman' search doesn't succeed, then stb_vorbis falls
+//     back on binary searching for the correct one. This requires storing
+//     extra tables with the huffman codes in sorted order. Defining this
+//     symbol trades off space for speed by forcing a linear search in the
+//     non-fast case, except for "sparse" codebooks.
+// #define STB_VORBIS_NO_HUFFMAN_BINARY_SEARCH
+
+// STB_VORBIS_DIVIDES_IN_RESIDUE
+//     stb_vorbis precomputes the result of the scalar residue decoding
+//     that would otherwise require a divide per chunk. you can trade off
+//     space for time by defining this symbol.
+// #define STB_VORBIS_DIVIDES_IN_RESIDUE
+
+// STB_VORBIS_DIVIDES_IN_CODEBOOK
+//     vorbis VQ codebooks can be encoded two ways: with every case explicitly
+//     stored, or with all elements being chosen from a small range of values,
+//     and all values possible in all elements. By default, stb_vorbis expands
+//     this latter kind out to look like the former kind for ease of decoding,
+//     because otherwise an integer divide-per-vector-element is required to
+//     unpack the index. If you define STB_VORBIS_DIVIDES_IN_CODEBOOK, you can
+//     trade off storage for speed.
+//#define STB_VORBIS_DIVIDES_IN_CODEBOOK
+
+#ifdef STB_VORBIS_CODEBOOK_SHORTS
+#error "STB_VORBIS_CODEBOOK_SHORTS is no longer supported as it produced incorrect results for some input formats"
+#endif
+
+// STB_VORBIS_DIVIDE_TABLE
+//     this replaces small integer divides in the floor decode loop with
+//     table lookups. made less than 1% difference, so disabled by default.
+
+// STB_VORBIS_NO_INLINE_DECODE
+//     disables the inlining of the scalar codebook fast-huffman decode.
+//     might save a little codespace; useful for debugging
+// #define STB_VORBIS_NO_INLINE_DECODE
+
+// STB_VORBIS_NO_DEFER_FLOOR
+//     Normally we only decode the floor without synthesizing the actual
+//     full curve. We can instead synthesize the curve immediately. This
+//     requires more memory and is very likely slower, so I don't think
+//     you'd ever want to do it except for debugging.
+// #define STB_VORBIS_NO_DEFER_FLOOR
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+
+#ifdef STB_VORBIS_NO_PULLDATA_API
+   #define STB_VORBIS_NO_INTEGER_CONVERSION
+   #define STB_VORBIS_NO_STDIO
+#endif
+
+#if defined(STB_VORBIS_NO_CRT) && !defined(STB_VORBIS_NO_STDIO)
+   #define STB_VORBIS_NO_STDIO 1
+#endif
+
+#ifndef STB_VORBIS_NO_INTEGER_CONVERSION
+#ifndef STB_VORBIS_NO_FAST_SCALED_FLOAT
+
+   // only need endianness for fast-float-to-int, which we don't
+   // use for pushdata
+
+   #ifndef STB_VORBIS_BIG_ENDIAN
+     #define STB_VORBIS_ENDIAN  0
+   #else
+     #define STB_VORBIS_ENDIAN  1
+   #endif
+
+#endif
+#endif
+
+
+#ifndef STB_VORBIS_NO_STDIO
+#include <stdio.h>
+#endif
+
+#ifndef STB_VORBIS_NO_CRT
+   #include <stdlib.h>
+   #include <string.h>
+   #include <assert.h>
+   #include <math.h>
+
+   // find definition of alloca if it's not in stdlib.h:
+   #if defined(_MSC_VER) || defined(__MINGW32__)
+      #include <malloc.h>
+   #endif
+   #if defined(__linux__) || defined(__linux) || defined(__sun__) || defined(__EMSCRIPTEN__) || defined(__NEWLIB__)
+      #include <alloca.h>
+   #endif
+#else // STB_VORBIS_NO_CRT
+   #define NULL 0
+   #define malloc(s)   0
+   #define free(s)     ((void) 0)
+   #define realloc(s)  0
+#endif // STB_VORBIS_NO_CRT
+
+#include <limits.h>
+
+#ifdef __MINGW32__
+   // eff you mingw:
+   //     "fixed":
+   //         http://sourceforge.net/p/mingw-w64/mailman/message/32882927/
+   //     "no that broke the build, reverted, who cares about C":
+   //         http://sourceforge.net/p/mingw-w64/mailman/message/32890381/
+   #ifdef __forceinline
+   #undef __forceinline
+   #endif
+   #define __forceinline
+   #ifndef alloca
+   #define alloca __builtin_alloca
+   #endif
+#elif !defined(_MSC_VER)
+   #if __GNUC__
+      #define __forceinline inline
+   #else
+      #define __forceinline
+   #endif
+#endif
+
+#if STB_VORBIS_MAX_CHANNELS > 256
+#error "Value of STB_VORBIS_MAX_CHANNELS outside of allowed range"
+#endif
+
+#if STB_VORBIS_FAST_HUFFMAN_LENGTH > 24
+#error "Value of STB_VORBIS_FAST_HUFFMAN_LENGTH outside of allowed range"
+#endif
+
+
+#if 0
+#include <crtdbg.h>
+#define CHECK(f)   _CrtIsValidHeapPointer(f->channel_buffers[1])
+#else
+#define CHECK(f)   ((void) 0)
+#endif
+
+#define MAX_BLOCKSIZE_LOG  13   // from specification
+#define MAX_BLOCKSIZE      (1 << MAX_BLOCKSIZE_LOG)
+
+
+typedef unsigned char  uint8;
+typedef   signed char   int8;
+typedef unsigned short uint16;
+typedef   signed short  int16;
+typedef unsigned int   uint32;
+typedef   signed int    int32;
+
+#ifndef TRUE
+#define TRUE 1
+#define FALSE 0
+#endif
+
+typedef float codetype;
+
+#ifdef _MSC_VER
+#define STBV_NOTUSED(v)  (void)(v)
+#else
+#define STBV_NOTUSED(v)  (void)sizeof(v)
+#endif
+
+// @NOTE
+//
+// Some arrays below are tagged "//varies", which means it's actually
+// a variable-sized piece of data, but rather than malloc I assume it's
+// small enough it's better to just allocate it all together with the
+// main thing
+//
+// Most of the variables are specified with the smallest size I could pack
+// them into. It might give better performance to make them all full-sized
+// integers. It should be safe to freely rearrange the structures or change
+// the sizes larger--nothing relies on silently truncating etc., nor the
+// order of variables.
+
+#define FAST_HUFFMAN_TABLE_SIZE   (1 << STB_VORBIS_FAST_HUFFMAN_LENGTH)
+#define FAST_HUFFMAN_TABLE_MASK   (FAST_HUFFMAN_TABLE_SIZE - 1)
+
+
+typedef struct
+{
+   int dimensions, entries;
+   uint8 *codeword_lengths;
+   float  minimum_value;
+   float  delta_value;
+   uint8  value_bits;
+   uint8  lookup_type;
+   uint8  sequence_p;
+   uint8  sparse;
+   uint32 lookup_values;
+   codetype *multiplicands;
+   uint32 *codewords;
+   #ifdef STB_VORBIS_FAST_HUFFMAN_SHORT
+    int16  fast_huffman[FAST_HUFFMAN_TABLE_SIZE];
+   #else
+    int32  fast_huffman[FAST_HUFFMAN_TABLE_SIZE];
+   #endif
+   uint32 *sorted_codewords;
+   int    *sorted_values;
+   int     sorted_entries;
+} Codebook;
+
+typedef struct
+{
+   uint8 order;
+   uint16 rate;
+   uint16 bark_map_size;
+   uint8 amplitude_bits;
+   uint8 amplitude_offset;
+   uint8 number_of_books;
+   uint8 book_list[16]; // varies
+} Floor0;
+
+typedef struct
+{
+   uint8 partitions;
+   uint8 partition_class_list[32]; // varies
+   uint8 class_dimensions[16]; // varies
+   uint8 class_subclasses[16]; // varies
+   uint8 class_masterbooks[16]; // varies
+   int16 subclass_books[16][8]; // varies
+   uint16 Xlist[31*8+2]; // varies
+   uint8 sorted_order[31*8+2];
+   uint8 neighbors[31*8+2][2];
+   uint8 floor1_multiplier;
+   uint8 rangebits;
+   int values;
+} Floor1;
+
+typedef union
+{
+   Floor0 floor0;
+   Floor1 floor1;
+} Floor;
+
+typedef struct
+{
+   uint32 begin, end;
+   uint32 part_size;
+   uint8 classifications;
+   uint8 classbook;
+   uint8 **classdata;
+   int16 (*residue_books)[8];
+} Residue;
+
+typedef struct
+{
+   uint8 magnitude;
+   uint8 angle;
+   uint8 mux;
+} MappingChannel;
+
+typedef struct
+{
+   uint16 coupling_steps;
+   MappingChannel *chan;
+   uint8  submaps;
+   uint8  submap_floor[15]; // varies
+   uint8  submap_residue[15]; // varies
+} Mapping;
+
+typedef struct
+{
+   uint8 blockflag;
+   uint8 mapping;
+   uint16 windowtype;
+   uint16 transformtype;
+} Mode;
+
+typedef struct
+{
+   uint32  goal_crc;    // expected crc if match
+   int     bytes_left;  // bytes left in packet
+   uint32  crc_so_far;  // running crc
+   int     bytes_done;  // bytes processed in _current_ chunk
+   uint32  sample_loc;  // granule pos encoded in page
+} CRCscan;
+
+typedef struct
+{
+   uint32 page_start, page_end;
+   uint32 last_decoded_sample;
+} ProbedPage;
+
+struct stb_vorbis
+{
+  // user-accessible info
+   unsigned int sample_rate;
+   int channels;
+
+   unsigned int setup_memory_required;
+   unsigned int temp_memory_required;
+   unsigned int setup_temp_memory_required;
+
+   char *vendor;
+   int comment_list_length;
+   char **comment_list;
+
+  // input config
+#ifndef STB_VORBIS_NO_STDIO
+   FILE *f;
+   uint32 f_start;
+   int close_on_free;
+#endif
+
+   uint8 *stream;
+   uint8 *stream_start;
+   uint8 *stream_end;
+
+   uint32 stream_len;
+
+   uint8  push_mode;
+
+   // the page to seek to when seeking to start, may be zero
+   uint32 first_audio_page_offset;
+
+   // p_first is the page on which the first audio packet ends
+   // (but not necessarily the page on which it starts)
+   ProbedPage p_first, p_last;
+
+  // memory management
+   stb_vorbis_alloc alloc;
+   int setup_offset;
+   int temp_offset;
+
+  // run-time results
+   int eof;
+   enum STBVorbisError error;
+
+  // user-useful data
+
+  // header info
+   int blocksize[2];
+   int blocksize_0, blocksize_1;
+   int codebook_count;
+   Codebook *codebooks;
+   int floor_count;
+   uint16 floor_types[64]; // varies
+   Floor *floor_config;
+   int residue_count;
+   uint16 residue_types[64]; // varies
+   Residue *residue_config;
+   int mapping_count;
+   Mapping *mapping;
+   int mode_count;
+   Mode mode_config[64];  // varies
+
+   uint32 total_samples;
+
+  // decode buffer
+   float *channel_buffers[STB_VORBIS_MAX_CHANNELS];
+   float *outputs        [STB_VORBIS_MAX_CHANNELS];
+
+   float *previous_window[STB_VORBIS_MAX_CHANNELS];
+   int previous_length;
+
+   #ifndef STB_VORBIS_NO_DEFER_FLOOR
+   int16 *finalY[STB_VORBIS_MAX_CHANNELS];
+   #else
+   float *floor_buffers[STB_VORBIS_MAX_CHANNELS];
+   #endif
+
+   uint32 current_loc; // sample location of next frame to decode
+   int    current_loc_valid;
+
+  // per-blocksize precomputed data
+
+   // twiddle factors
+   float *A[2],*B[2],*C[2];
+   float *window[2];
+   uint16 *bit_reverse[2];
+
+  // current page/packet/segment streaming info
+   uint32 serial; // stream serial number for verification
+   int last_page;
+   int segment_count;
+   uint8 segments[255];
+   uint8 page_flag;
+   uint8 bytes_in_seg;
+   uint8 first_decode;
+   int next_seg;
+   int last_seg;  // flag that we're on the last segment
+   int last_seg_which; // what was the segment number of the last seg?
+   uint32 acc;
+   int valid_bits;
+   int packet_bytes;
+   int end_seg_with_known_loc;
+   uint32 known_loc_for_packet;
+   int discard_samples_deferred;
+   uint32 samples_output;
+
+  // push mode scanning
+   int page_crc_tests; // only in push_mode: number of tests active; -1 if not searching
+#ifndef STB_VORBIS_NO_PUSHDATA_API
+   CRCscan scan[STB_VORBIS_PUSHDATA_CRC_COUNT];
+#endif
+
+  // sample-access
+   int channel_buffer_start;
+   int channel_buffer_end;
+};
 
 #ifdef __cplusplus
 }
