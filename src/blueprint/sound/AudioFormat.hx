@@ -1,6 +1,8 @@
 package blueprint.sound;
 
 final BUFFER_COUNT:Int = 4;
+final SAMPLE_SIZE:Int = 65536;
+final SAMPLE_COUNT:Int = untyped __cpp__("{0} / sizeof(short)", SAMPLE_SIZE);
 
 interface AudioFormat {
 	private var _cacheKey:Null<String>;

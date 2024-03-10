@@ -25,6 +25,7 @@ class Game {
 
 	public static var currentScene:Scene;
 	private static var queuedSceneChange:Class<Scene> = null;
+	private static var queuedSceneParams:Array<Dynamic> = [];
 
 	public static var elapsed:Float;
 
@@ -117,15 +118,18 @@ class Game {
 	private function update():Void {
 		if (queuedSceneChange != null) {
 			currentScene.destroy();
+
 			Sound.clearSounds();
 			SoundData.clearCache();
 			Texture.clearCache();
 			AnimatedSprite.clearCache();
 			Font.clearCache();
-			currentScene = Type.createInstance(queuedSceneChange, []);
+
+			currentScene = Type.createInstance(queuedSceneChange, queuedSceneParams);
 			queuedSceneChange = null;
 			lastTime = Glfw.getTime();
 			cpp.vm.Gc.run(true);
+
 			return;
 		}
 
@@ -158,7 +162,8 @@ class Game {
 		Glfw.setWindowShouldClose(window.cWindow, 0);
 	}
 
-	public static function changeSceneTo(scene:Class<Scene>) {
+	public static function changeSceneTo(scene:Class<Scene>, ...params:Dynamic) {
 		queuedSceneChange = scene;
+		queuedSceneParams = params.toArray();
 	}
 }

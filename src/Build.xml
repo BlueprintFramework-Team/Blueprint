@@ -6,6 +6,7 @@
 
 		<file name="${PROJECT_DIR}vendor/src/glad.c" />
 		<file name="${PROJECT_DIR}vendor/src/stb_vorbis.c" />
+		<file name="${PROJECT_DIR}vendor/src/dr_mp3.c" />
 	</files>
 
 	<!-- Taken from raylib-hx -->

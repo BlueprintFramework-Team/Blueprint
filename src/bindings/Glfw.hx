@@ -40,10 +40,10 @@ typedef VideoMode = RawPointer<GlfwVidMode>;
 @:native("GLFWgammaramp")
 @:structAccess
 extern class GlfwGammaRamp {
-    var red:UInt;
-    var green:UInt;
-    var blue:UInt;
-    var size:UInt;
+    var red:cpp.UInt16;
+    var green:cpp.UInt16;
+    var blue:cpp.UInt16;
+    var size:cpp.UInt16;
 }
 typedef GammaRamp = RawPointer<GlfwGammaRamp>;
 
@@ -53,7 +53,7 @@ typedef GammaRamp = RawPointer<GlfwGammaRamp>;
 extern class GflwImageStruct {
     var width:Int;
     var height:Int;
-    var pixels:RawPointer<Int>;
+    var pixels:RawPointer<cpp.UInt8>;
 }
 typedef GlfwImage = RawPointer<GflwImageStruct>;
 
@@ -61,8 +61,8 @@ typedef GlfwImage = RawPointer<GflwImageStruct>;
 @:native("GLFWgamepadstate")
 @:structAccess
 extern class GlfwGamepadState {
-    var buttons:Array<cpp.UInt8>;
-    var axes:Array<Float>;
+    var buttons:RawPointer<cpp.UInt8>;
+    var axes:RawPointer<Float>;
 }
 typedef GamepadState = RawPointer<GlfwGamepadState>;
 
@@ -71,9 +71,9 @@ typedef WindowPosFunc = Callable<(window:GlfwWindow, xPos:Int, yPos:Int) -> Void
 typedef WindowSizeFunc = Callable<(window:GlfwWindow, width:Int, height:Int) -> Void>;
 typedef WindowCloseFunc = Callable<(window:GlfwWindow) -> Void>;
 typedef WindowRefreshFunc = Callable<(window:GlfwWindow) -> Void>;
-typedef WindowFocusFunc = Callable<(window:GlfwWindow, focused:Bool) -> Void>;
-typedef WindowIconifyFunc = Callable<(window:GlfwWindow, iconified:Bool) -> Void>;
-typedef WindowMaximizeFunc = Callable<(window:GlfwWindow, maximized:Bool) -> Void>;
+typedef WindowFocusFunc = Callable<(window:GlfwWindow, focused:Int) -> Void>;
+typedef WindowIconifyFunc = Callable<(window:GlfwWindow, iconified:Int) -> Void>;
+typedef WindowMaximizeFunc = Callable<(window:GlfwWindow, maximized:Int) -> Void>;
 typedef FrameBufferSizeFunc = Callable<(window:GlfwWindow, width:Int, height:Int) -> Void>;
 typedef WindowContentScaleFunc = Callable<(window:GlfwWindow, xScale:Float, yScale:Float) -> Void>;
 typedef MouseButtonFunc = Callable<(window:GlfwWindow, button:Int, action:Int, mods:Int) -> Void>;
@@ -81,9 +81,9 @@ typedef CursorPosFunc = Callable<(window:GlfwWindow, xPos:Float, yPos:Float) -> 
 typedef CursorEnterFunc = Callable<(window:GlfwWindow, entered:Int) -> Void>;
 typedef ScrollFunc = Callable<(window:GlfwWindow, xOffset:Float, yOffset:Float) -> Void>;
 typedef KeyInputFunc = Callable<(window:GlfwWindow, key:Int, scancode:Int, action:Int, mods:Int) -> Void>;
-typedef CharFunc = Callable<(window:GlfwWindow, codepoint:UInt) -> Void>;
-typedef CharModsFunc = Callable<(window:GlfwWindow, codepoint:UInt, mods:Int) -> Void>;
-typedef FileDropFunc = Callable<(window:GlfwWindow, pathCount:Int, paths:Array<ConstCharStar>) -> Void>;
+typedef CharFunc = Callable<(window:GlfwWindow, codepoint:cpp.UInt32) -> Void>;
+typedef CharModsFunc = Callable<(window:GlfwWindow, codepoint:cpp.UInt32, mods:Int) -> Void>;
+typedef FileDropFunc = Callable<(window:GlfwWindow, pathCount:Int, paths:RawPointer<ConstCharStar>) -> Void>;
 typedef MonitorFunc = Callable<(monitor:GlfwMonitor, event:Int) -> Void>;
 typedef JoystickFunc = Callable<(joystickID:Int, event:Int) -> Void>;
 
@@ -734,20 +734,20 @@ extern class Glfw {
     static inline function getMonitorName(monitor:GlfwMonitor):String
         return _getMonitorName(monitor).toString();
 
-    @:native("glfwSetMonitorUserPointer")
-    static function setMonitorUserPointer(monitor:GlfwMonitor, pointer:Any):Void;
+    static inline function setMonitorUserPointer(monitor:GlfwMonitor, pointer:Any):Void
+		untyped __cpp__("glfwSetMonitorUserPointer({0}, {1})", monitor, pointer);
 
-    @:native("glfwGetMonitorUserPointer")
-    static function getMonitorUserPointer(monitor:GlfwMonitor):Any;
+    static inline function getMonitorUserPointer<T>(monitor:GlfwMonitor):T
+		return cast untyped __cpp__("glfwGetMonitorUserPointer({0})", monitor);
 
     @:native("glfwSetMonitorCallback")
     static function setMonitorCallback(callback:MonitorFunc):MonitorFunc;
 
     @:native("glfwGetVideoModes")
-    static function getVideoModes(monitor:GlfwMonitor, count:RawPointer<Int>):cpp.ConstPointer<VideoMode>;
+    static function getVideoModes(monitor:GlfwMonitor, count:RawPointer<Int>):RawPointer<VideoMode>;
 
     @:native("glfwGetVideoMode")
-    static function getVideoMode(monitor:GlfwMonitor):cpp.ConstPointer<VideoMode>;
+    static function getVideoMode(monitor:GlfwMonitor):RawPointer<VideoMode>;
 
     @:native("glfwSetGamma")
     static function setGamma(monitor:GlfwMonitor, gamma:Float):Void;
@@ -854,11 +854,11 @@ extern class Glfw {
     @:native("glfwSetWindowAttrib")
     static function setWindowAttribute(window:GlfwWindow, attribute:Int, value:Int):Void;
 
-    @:native("glfwSetWindowUserPointer")
-    static function setWindowUserPointer(window:GlfwWindow, pointer:Any):Void;
+    static inline function setWindowUserPointer(window:GlfwWindow, pointer:Any):Void
+		untyped __cpp__("glfwSetWindowUserPointer({0}, {1})", window, pointer);
 
-    @:native("glfwGetWindowUserPointer")
-    static function getWindowUserPointer(window:GlfwWindow):Any;
+    static inline function getWindowUserPointer<T>(window:GlfwWindow):T
+		return cast untyped __cpp__("glfwGetWindowUserPointer({0})", window);
 
     @:native("glfwSetWindowPosCallback")
     static function setWindowPosCallback(window:GlfwWindow, callback:WindowPosFunc):WindowPosFunc;
@@ -975,10 +975,10 @@ extern class Glfw {
     static function getJoystickAxes(joystickID:Int, count:RawPointer<Int>):RawPointer<Float>;
 
     @:native("glfwGetJoystickButtons")
-    static function getJoystickButtons(joystickID:Int, count:RawPointer<Int>):cpp.ConstPointer<Int>;
+    static function getJoystickButtons(joystickID:Int, count:RawPointer<Int>):RawPointer<Int>;
 
     @:native("glfwGetJoystickHats")
-    static function getJoystickHats(joystickID:Int, count:RawPointer<Int>):cpp.ConstPointer<Int>;
+    static function getJoystickHats(joystickID:Int, count:RawPointer<Int>):RawPointer<Int>;
 
     @:native("glfwGetJoystickName")
     static function _getJoystickName(joystickID:Int):ConstCharStar;
@@ -992,11 +992,11 @@ extern class Glfw {
     static inline function getJoystickGUID(joystickID:Int):String
         return _getJoystickGUID(joystickID).toString();
 
-    @:native("glfwSetJoystickUserPointer")
-    static function setJoystickUserPointer(joystickID:Int, pointer:Any):Void;
+    static inline function setJoystickUserPointer(joystickID:Int, pointer:Any):Void
+		untyped __cpp__("glfwSetJoystickUserPointer({0}, {1})", joystickID, pointer);
 
-    @:native("glfwGetJoystickUserPointer")
-    static function getJoystickUserPointer(joystickID:Int):Any;
+    static inline function getJoystickUserPointer<T>(joystickID:Int):T
+		return cast untyped __cpp__("glfwGetJoystickUserPointer({0})", joystickID);
 
     @:native("glfwJoystickIsGamepad")
     static function _joystickIsGamepad(joystickID:Int):Int;
