@@ -1,4 +1,9 @@
 /*
+NOTE: A portion of this file was moved to a seperate c file.
+      Please check "vendor/src/dr_mp3.c"
+*/
+
+/*
 MP3 audio decoder. Choice of public domain or MIT-0. See license statements at the end of this file.
 dr_mp3 - v0.6.38 - 2023-11-02
 

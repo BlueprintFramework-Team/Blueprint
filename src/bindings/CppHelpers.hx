@@ -35,7 +35,7 @@ extern class CppHelpers {
 		return untyped __cpp__("printf({0}, {1})", toTrace, formatParams);
 	}
 
-	inline static function free(pointer:Any):Void {
+	inline static function free<T>(pointer:T):Void {
 		return untyped __cpp__('free({0})', pointer);
 	}
 }
