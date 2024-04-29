@@ -14,15 +14,15 @@ import cpp.RawPointer;
 @:native('drflac_allocation_callbacks')
 @:structAccess
 extern class DrFLACAllocationCallbacks {
-    @:native("pUserData")
+	@:native("pUserData")
 	var userData:RawPointer<cpp.Void>;
 
-    @:native("onMalloc")
+	@:native("onMalloc")
 	var onMalloc:RawPointer<Callable<(size:cpp.UInt64, userdata:RawPointer<cpp.Void>) -> RawPointer<cpp.Void>>>;
-    @:native("onRealloc")
-    var onRealloc:RawPointer<Callable<(pointer:RawPointer<cpp.Void>, size:cpp.UInt64, userdata:RawPointer<cpp.Void>) -> RawPointer<cpp.Void>>>;
-    @:native("onFree")
-    var onFree:RawPointer<Callable<(pointer:RawPointer<cpp.Void>, userdata:RawPointer<cpp.Void>) -> RawPointer<cpp.Void>>>;
+	@:native("onRealloc")
+	var onRealloc:RawPointer<Callable<(pointer:RawPointer<cpp.Void>, size:cpp.UInt64, userdata:RawPointer<cpp.Void>) -> RawPointer<cpp.Void>>>;
+	@:native("onFree")
+	var onFree:RawPointer<Callable<(pointer:RawPointer<cpp.Void>, userdata:RawPointer<cpp.Void>) -> RawPointer<cpp.Void>>>;
 }
 
 @:include('audio/dr_flac.h')
@@ -92,48 +92,45 @@ extern enum abstract DrFLACPictureType(cpp.UInt32) {
 }
 
 enum abstract DrFLACContainer(cpp.UInt32) {
-    var NATIVE;
-    var OGG;
+	var NATIVE;
+	var OGG;
 	var UNKNOWN;
 }
 
-enum abstract DrFLACSeekOrigin(cpp.UInt32) {
-    var START;
-    var CURRENT;
-}
+typedef DrFLACSeekOrigin = DrMP3.DrMP3SeekOrigin;
 
 @:include('audio/dr_flac.h')
 @:native('drflac_seek_point')
 @:structAccess
 extern class DrFLACSeekPoint {
-    @:native("firstPCMFrame")
-    var firstPCMFrame:cpp.UInt64;
-    @:native("flacFrameOffset")
-    var flacFrameOffset:cpp.UInt64;
-    @:native("pcmFrameCount")
-    var pcmFrameCount:cpp.UInt64;
+	@:native("firstPCMFrame")
+	var firstPCMFrame:cpp.UInt64;
+	@:native("flacFrameOffset")
+	var flacFrameOffset:cpp.UInt64;
+	@:native("pcmFrameCount")
+	var pcmFrameCount:cpp.UInt64;
 }
 
 @:include('audio/dr_flac.h')
 @:native('drflac_streaminfo')
 @:structAccess
 extern class DrFLACStreamInfo {
-    @:native("minBlockSizeInPCMFrames")
-    var minBlockSizeInPCMFrames:cpp.UInt16;
-    @:native("maxBlockSizeInPCMFrames")
-    var maxBlockSizeInPCMFrames:cpp.UInt16;
-    @:native("minFrameSizeInPCMFrames")
-    var minFrameSizeInPCMFrames:cpp.UInt32;
+	@:native("minBlockSizeInPCMFrames")
+	var minBlockSizeInPCMFrames:cpp.UInt16;
+	@:native("maxBlockSizeInPCMFrames")
+	var maxBlockSizeInPCMFrames:cpp.UInt16;
+	@:native("minFrameSizeInPCMFrames")
+	var minFrameSizeInPCMFrames:cpp.UInt32;
 	@:native("maxFrameSizeInPCMFrames")
 	var maxFrameSizeInPCMFrames:cpp.UInt32;
 	@:native("sampleRate")
 	var sampleRate:cpp.UInt32;
 	@:native("channels")
-    var channels:cpp.UInt8;
-    @:native("bitsPerSample")
-    var bitsPerSample:cpp.UInt8;
-    @:native("totalPCMFrameCount")
-    var totalPCMFrameCount:cpp.UInt64;
+	var channels:cpp.UInt8;
+	@:native("bitsPerSample")
+	var bitsPerSample:cpp.UInt8;
+	@:native("totalPCMFrameCount")
+	var totalPCMFrameCount:cpp.UInt64;
 	@:native("md5")
 	var md5:RawPointer<cpp.UInt8>;
 }
@@ -366,14 +363,16 @@ extern class DrFLACCuesheetTrack {
 
 @:include('audio/dr_flac.h')
 extern class DrFLAC {
-    @:native("DRFLAC_VERSION_MAJOR")
-    static final VERSION_MAJOR:cpp.UInt32;
-    @:native("DRFLAC_VERSION_MINOR")
-    static final VERSION_MINOR:cpp.UInt32;
-    @:native("DRFLAC_VERSION_REVISION")
-    static final VERSION_REVISION:cpp.UInt32;
-    @:native("DRFLAC_VERSION_STRING")
-    static final VERSION_STRING:ConstCharStar;
+	@:native("DRFLAC_VERSION_MAJOR")
+	static final VERSION_MAJOR:cpp.UInt32;
+	@:native("DRFLAC_VERSION_MINOR")
+	static final VERSION_MINOR:cpp.UInt32;
+	@:native("DRFLAC_VERSION_REVISION")
+	static final VERSION_REVISION:cpp.UInt32;
+	@:native("DRFLAC_VERSION_STRING")
+	static final VERSION_STRING:ConstCharStar;
+
+
 
 	@:native("drflac_open")
 	static function open(onRead:DrFLACReadProc, onSeek:DrFLACSeekProc, userdata:RawPointer<cpp.Void>, allocationCallbacks:RawPointer<DrFLACAllocationCallbacks>):DrFLACData;
@@ -382,16 +381,18 @@ extern class DrFLAC {
 	static function openRelaxed(onRead:DrFLACReadProc, onSeek:DrFLACSeekProc, container:DrFLACContainer, userdata:RawPointer<cpp.Void>, allocationCallbacks:RawPointer<DrFLACAllocationCallbacks>):DrFLACData;
 
 	@:native("drflac_open_with_metadata")
-	static function openMetadata(onRead:DrFLACReadProc, onSeek:DrFLACSeekProc, onMeta:DrFLACMetaProc, userdata:RawPointer<cpp.Void>, allocationCallbacks:RawPointer<DrFLACAllocationCallbacks>):DrFLACData;
+	static function openWithMetadata(onRead:DrFLACReadProc, onSeek:DrFLACSeekProc, onMeta:DrFLACMetaProc, userdata:RawPointer<cpp.Void>, allocationCallbacks:RawPointer<DrFLACAllocationCallbacks>):DrFLACData;
 
 	@:native("drflac_open_with_metadata_relaxed")
-	static function openMetadataRelaxed(onRead:DrFLACReadProc, onSeek:DrFLACSeekProc, onMeta:DrFLACMetaProc, container:DrFLACContainer, userdata:RawPointer<cpp.Void>, allocationCallbacks:RawPointer<DrFLACAllocationCallbacks>):DrFLACData;
+	static function openWithMetadataRelaxed(onRead:DrFLACReadProc, onSeek:DrFLACSeekProc, onMeta:DrFLACMetaProc, container:DrFLACContainer, userdata:RawPointer<cpp.Void>, allocationCallbacks:RawPointer<DrFLACAllocationCallbacks>):DrFLACData;
 
 	@:native("drflac_close")
 	static function close(data:DrFLACData):Void;
 
+
+
 	@:native("drflac_read_pcm_frames_s32")
-	static function readPCMFramesShort32(data:DrFLACData, framesToRead:cpp.UInt64, bufferOut:RawPointer<cpp.Int32>):cpp.UInt64;
+	static function readPCMFramesSigned32(data:DrFLACData, framesToRead:cpp.UInt64, bufferOut:RawPointer<cpp.Int32>):cpp.UInt64;
 
 	@:native("drflac_read_pcm_frames_s16")
 	static function readPCMFramesShort16(data:DrFLACData, framesToRead:cpp.UInt64, bufferOut:RawPointer<cpp.Int16>):cpp.UInt64;
@@ -401,6 +402,8 @@ extern class DrFLAC {
 
 	static inline function seekToPCMFrame(data:DrFLACData, frame:cpp.UInt64):Bool
 		return untyped __cpp__("drflac_seek_to_pcm_frame({0}, {1})", data, frame) == 1;
+
+
 
 	@:native("drflac_open_file")
 	static function openFile(fileName:ConstCharStar, allocationCallbacks:RawPointer<DrFLACAllocationCallbacks>):DrFLACData;
@@ -414,14 +417,18 @@ extern class DrFLAC {
 	@:native("drflac_open_file_with_metadata_w")
 	static function openFileWithMetadataW(fileName:RawPointer<cpp.UInt16>, onMeta:DrFLACMetaProc, userdata:RawPointer<cpp.Void>, allocationCallbacks:RawPointer<DrFLACAllocationCallbacks>):DrFLACData;
 
+
+
 	@:native("drflac_open_memory")
 	static function openMemory(data:RawPointer<cpp.Void>, dataSize:cpp.UInt64, allocationCallbacks:RawPointer<DrFLACAllocationCallbacks>):DrFLACData;
 
 	@:native("drflac_open_memory_with_metadata")
 	static function openMemoryWithMetadata(data:RawPointer<cpp.Void>, dataSize:cpp.UInt64, onMeta:DrFLACMetaProc, userdata:RawPointer<cpp.Void>, allocationCallbacks:RawPointer<DrFLACAllocationCallbacks>):DrFLACData;
 
+
+
 	@:native('drflac_open_and_read_pcm_frames_s32')
-	static function openAndReadPCMFramesShort32(onRead:DrFLACReadProc, onSeek:DrFLACSeekProc, userdata:RawPointer<cpp.Void>, channels:cpp.RawPointer<cpp.UInt32>, sampleRate:cpp.RawPointer<cpp.UInt32>,
+	static function openAndReadPCMFramesSigned32(onRead:DrFLACReadProc, onSeek:DrFLACSeekProc, userdata:RawPointer<cpp.Void>, channels:cpp.RawPointer<cpp.UInt32>, sampleRate:cpp.RawPointer<cpp.UInt32>,
 		totalFrameCount:cpp.RawPointer<DrFLACUInt64>, allocationCallbacks:RawPointer<DrFLACAllocationCallbacks>):cpp.RawPointer<cpp.Int32>;
 
 	@:native('drflac_open_and_read_pcm_frames_s16')
@@ -432,8 +439,10 @@ extern class DrFLAC {
 	static function openAndReadPCMFramesFloat32(onRead:DrFLACReadProc, onSeek:DrFLACSeekProc, userdata:RawPointer<cpp.Void>, channels:cpp.RawPointer<cpp.UInt32>, sampleRate:cpp.RawPointer<cpp.UInt32>,
 		totalFrameCount:cpp.RawPointer<DrFLACUInt64>, allocationCallbacks:RawPointer<DrFLACAllocationCallbacks>):cpp.RawPointer<Float>;
 
+
+
 	@:native('drflac_open_file_and_read_pcm_frames_s32')
-	static function openFileAndReadPCMFramesShort32(fileName:ConstCharStar, channels:cpp.RawPointer<cpp.UInt32>, sampleRate:cpp.RawPointer<cpp.UInt32>,
+	static function openFileAndReadPCMFramesSigned32(fileName:ConstCharStar, channels:cpp.RawPointer<cpp.UInt32>, sampleRate:cpp.RawPointer<cpp.UInt32>,
 		totalFrameCount:cpp.RawPointer<DrFLACUInt64>, allocationCallbacks:RawPointer<DrFLACAllocationCallbacks>):cpp.RawPointer<cpp.Int32>;
 
 	@:native('drflac_open_file_and_read_pcm_frames_s16')
@@ -444,8 +453,10 @@ extern class DrFLAC {
 	static function openFileAndReadPCMFramesFloat32(fileName:ConstCharStar, channels:cpp.RawPointer<cpp.UInt32>, sampleRate:cpp.RawPointer<cpp.UInt32>,
 		totalFrameCount:cpp.RawPointer<DrFLACUInt64>, allocationCallbacks:RawPointer<DrFLACAllocationCallbacks>):cpp.RawPointer<Float>;
 
+
+		
 	@:native('drflac_open_memory_and_read_pcm_frames_s32')
-	static function openMemoryAndReadPCMFramesShort32(data:RawPointer<cpp.Void>, dataSize:cpp.UInt64, channels:cpp.RawPointer<cpp.UInt32>, sampleRate:cpp.RawPointer<cpp.UInt32>,
+	static function openMemoryAndReadPCMFramesSigned32(data:RawPointer<cpp.Void>, dataSize:cpp.UInt64, channels:cpp.RawPointer<cpp.UInt32>, sampleRate:cpp.RawPointer<cpp.UInt32>,
 		totalFrameCount:cpp.RawPointer<DrFLACUInt64>, allocationCallbacks:RawPointer<DrFLACAllocationCallbacks>):cpp.RawPointer<cpp.Int32>;
 
 	@:native('drflac_open_memory_and_read_pcm_frames_s16')
@@ -455,6 +466,8 @@ extern class DrFLAC {
 	@:native('drflac_open_memory_and_read_pcm_frames_f32')
 	static function openMemoryAndReadPCMFramesFloat32(data:RawPointer<cpp.Void>, dataSize:cpp.UInt64, channels:cpp.RawPointer<cpp.UInt32>, sampleRate:cpp.RawPointer<cpp.UInt32>,
 		totalFrameCount:cpp.RawPointer<DrFLACUInt64>, allocationCallbacks:RawPointer<DrFLACAllocationCallbacks>):cpp.RawPointer<Float>;	
+
+
 
 	inline static function free(data:Any, allocationCallbacks:cpp.RawPointer<DrFLACAllocationCallbacks>):Void {
 		untyped __cpp__('drflac_free({0}, {1})', data, allocationCallbacks);
