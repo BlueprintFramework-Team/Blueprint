@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="frameworkArt/logo.png" alt="Framework logo" width="150" height="150"/>
+  <img src="frameworkArt/logo.png" alt="Framework logo" width="200" height="200"/>
 </div>
 
 # Blueprint
