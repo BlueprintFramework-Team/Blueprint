@@ -1,10 +1,12 @@
-<img src="frameworkArt/logo.png" alt="Framework logo" align="right" width="150" height="150" />
+<div align="center">
+  <img src="frameworkArt/logo.png" alt="Framework logo" width="200" height="200"/>
+</div>
 
 # Blueprint
 
 Blueprint is a Game Framework made in [Haxe](https://haxe.org) that compiles to native platforms using hxcpp.
 Blueprint is powered by a wide range of native libraries such as [GLFW](https://www.glfw.org/),
-[OpenAL (soft)](https://openal-soft.org/), and [stb_image](https://github.com/nothings/stb).
+[OpenAL Soft](https://openal-soft.org/), and [stb_image](https://github.com/nothings/stb).
 
 ## Getting started
 
