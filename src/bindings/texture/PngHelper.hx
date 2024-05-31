@@ -16,4 +16,7 @@ import cpp.ConstCharStar;
 extern class PngHelper {
     @:native("loadPng")
     static function loadPng(path:ConstCharStar, width:RawPointer<Int>, height:RawPointer<Int>):Int;
+
+    @:native("loadPngFromMemory")
+    static function loadPngFromMemory(data:RawPointer<cpp.UInt8>, dataLength:cpp.UInt64, width:RawPointer<Int>, height:RawPointer<Int>):Int;
 }

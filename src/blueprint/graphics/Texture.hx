@@ -1,5 +1,6 @@
 package blueprint.graphics;
 
+import ResourceHelper.InternalResource;
 import haxe.io.Path;
 import cpp.RawPointer;
 import sys.FileSystem;
@@ -35,17 +36,19 @@ class Texture {
 		path = filePath;
 		Glad.bindTexture(Glad.TEXTURE_2D, ID);
 
-		var daPath = FileSystem.absolutePath(path);
-		if (!FileSystem.exists(daPath)) {
+		var res:InternalResource = ResourceHelper.getResource(path);
+		var fullPath = FileSystem.absolutePath(path);
+		var fileExists = FileSystem.exists(fullPath);
+		if (!fileExists && res.dataLength <= 0) {
 			Sys.println('Failed to load "$path": File nonexistant.');
 			return this;
 		}
 
 		switch (Path.extension(path)) {
 			case "png":
-				loaded = PngHelper.loadPng(daPath, RawPointer.addressOf(width), RawPointer.addressOf(height)) == 1;
+				loaded = (!fileExists ? PngHelper.loadPngFromMemory(res.data, cast res.dataLength, RawPointer.addressOf(width), RawPointer.addressOf(height)) : PngHelper.loadPng(fullPath, RawPointer.addressOf(width), RawPointer.addressOf(height))) == 1;
 			default:
-				var data:RawPointer<cpp.UInt8> = StbImage.load(daPath, RawPointer.addressOf(width), RawPointer.addressOf(height), RawPointer.addressOf(numChannels), 0);
+				var data:RawPointer<cpp.UInt8> = !fileExists ? StbImage.loadFromMemory(res.data, res.dataLength, RawPointer.addressOf(width), RawPointer.addressOf(height), RawPointer.addressOf(numChannels), 0) : StbImage.load(fullPath, RawPointer.addressOf(width), RawPointer.addressOf(height), RawPointer.addressOf(numChannels), 0);
 	
 				var imageFormat = (numChannels == 4) ? Glad.RGBA : Glad.RGB;
 		

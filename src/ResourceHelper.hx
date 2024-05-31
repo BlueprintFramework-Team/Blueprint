@@ -20,11 +20,18 @@ class ResourceHelper {
     @:native("hx::GetResources")
     public static extern function getResources():RawPointer<InternalResource>;
 
+    /**
+     * Returns an InternalResource instance with the matching name.
+     * 
+     * NOTE: DO NOT CHECK IF IT IS NULL THROUGH `== null`!
+     * Instead, use `.name == null` or `.dataLength == 0`
+     * @param name 
+     * @return InternalResource
+     */
     public static function getResource(name:String):InternalResource {
         var resources = getResources();
         var i = 0;
-        var size = untyped __cpp__("sizeof({0}) / 2", resources); // an array of 4 gave me a size of 8.
-        while (i < size) {
+        while (resources[i].name != null) {
             if (resources[i].name == name)
                 return resources[i];
             i++;
@@ -35,8 +42,7 @@ class ResourceHelper {
     public static function getResourceIndex(name:String):Int {
         var resources = getResources();
         var i = 0;
-        var size = untyped __cpp__("sizeof({0}) / 2", resources); // an array of 4 gave me a size of 8.
-        while (i < size) {
+        while (resources[i].name != null) {
             if (resources[i].name == name)
                 return i;
             i++;
@@ -47,8 +53,7 @@ class ResourceHelper {
     public static function getRawResourceBytes(name:String):RawPointer<cpp.UInt8> {
         var resources = getResources();
         var i = 0;
-        var size = untyped __cpp__("sizeof({0}) / 2", resources); // an array of 4 gave me a size of 8.
-        while (i < size) {
+        while (resources[i].name != null) {
             if (resources[i].name == name)
                 return resources[i].data;
             i++;
@@ -59,8 +64,7 @@ class ResourceHelper {
     public static function getRawResourceBytesLength(name:String):Int {
         var resources = getResources();
         var i = 0;
-        var size = untyped __cpp__("sizeof({0}) / 2", resources);
-        while (i < size) {
+        while (resources[i].name != null) {
             if (resources[i].name == name)
                 return resources[i].dataLength;
             i++;

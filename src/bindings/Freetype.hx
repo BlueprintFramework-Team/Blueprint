@@ -1,9 +1,6 @@
 package bindings;
 
-import cpp.Star;
-import cpp.ConstStar;
 import cpp.ConstCharStar;
-import cpp.Pointer;
 import cpp.RawPointer;
 
 typedef FTErr = Int;
@@ -452,7 +449,7 @@ extern class Freetype {
     static function newFace(lib:FreetypeLib, filePath:ConstCharStar, index:cpp.Int32, facePtr:RawPointer<FreetypeFace>):FTErr;
 
     @:native("FT_New_Memory_Face")
-    static function newMemoryFace(lib:FreetypeLib, bytes:ConstStar<cpp.Int8>, size:cpp.Int32, index:cpp.Int32, facePtr:RawPointer<FreetypeFace>):FTErr;
+    static function newMemoryFace(lib:FreetypeLib, bytes:RawPointer<cpp.UInt8>, size:cpp.Int32, index:cpp.Int32, facePtr:RawPointer<FreetypeFace>):FTErr;
 
     // TODO: FT_Open_Face, FT_Attach_Stream & FT_Open_Args
 

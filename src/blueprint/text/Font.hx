@@ -5,6 +5,7 @@ package blueprint.text;
  * 	- Fix Freetype.errorString returning `null`.
  */
 
+import ResourceHelper.InternalResource;
 import cpp.RawPointer;
 import sys.FileSystem;
 
@@ -35,11 +36,23 @@ class Font {
 	
 	public function new(path:String) {
 		this.path = path;
-		final daPath = FileSystem.absolutePath(path);
-		final errCode = Freetype.newFace(library, daPath, 0, RawPointer.addressOf(face));
-		loaded = errCode == 0;
+
+		var error:Int = 0;
+		final fullPath = sys.FileSystem.absolutePath(path);
+		if (!sys.FileSystem.exists(fullPath)) {
+			var res:InternalResource = ResourceHelper.getResource(path);
+			if (res.dataLength > 0) // dont check if its "null". its fucky with that.
+				error = Freetype.newMemoryFace(library, res.data, res.dataLength, 0, RawPointer.addressOf(face));
+			else {
+				Sys.println('Failed to load "$path": File nonexistent.');
+				return;
+			}
+		} else
+			error = Freetype.newFace(library, fullPath, 0, RawPointer.addressOf(face));
+
+		loaded = error == 0;
 		if (!loaded)
-			Sys.println('Failed to load "$path": Error Code $errCode');
+			Sys.println('Failed to load "$path": Error Code $error');
 			//Sys.println('Failed to load "$path": ${Freetype.errorString(errCode)}');
 	}
 
@@ -147,7 +160,8 @@ class Font {
 	}
 
 	public function destroy() {
-		Freetype.doneFace(face);
+		if (face != null)
+			Freetype.doneFace(face);
 		for (size in sizes.iterator()) {
 			for (tex in size.iterator())
 				tex.texture.destroy();
