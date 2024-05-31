@@ -159,7 +159,7 @@ extern class DrMP3 {
 	static inline function init(data:DrMP3Ptr, onRead:DrMP3ReadProc, onSeek:DrMP3SeekProc, userdata:Any, allocationCallbacks:RawPointer<DrMP3AllocationCallbacks>):Bool
 		return untyped __cpp__("drmp3_init({0}, {1}, {2}, {3}, {4})", data, onRead, onSeek, userdata, allocationCallbacks) == 1;
 
-	static inline function initMemory(data:DrMP3Ptr, memData:Any, dataSize:cpp.UInt64, allocationCallbacks:RawPointer<DrMP3AllocationCallbacks>):Bool
+	static inline function initMemory(data:DrMP3Ptr, memData:RawPointer<cpp.UInt8>, dataSize:cpp.UInt64, allocationCallbacks:RawPointer<DrMP3AllocationCallbacks>):Bool
 		return untyped __cpp__("drmp3_init_memory({0}, {1}, {2}, {3})", data, memData, dataSize, allocationCallbacks) == 1;
 
 	static inline function initFile(data:DrMP3Ptr, filePath:ConstCharStar, allocationCallbacks:RawPointer<DrMP3AllocationCallbacks>):Bool
@@ -208,10 +208,10 @@ extern class DrMP3 {
 	static function openAndReadPCMFramesShort16(onRead:DrMP3ReadProc, onSeek:DrMP3SeekProc, userdata:Any, config:RawPointer<DrMP3Config>, totalFrameCount:RawPointer<DrMP3UInt64>, allocationCallbacks:RawPointer<DrMP3AllocationCallbacks>):RawPointer<cpp.Int16>;
 
 	@:native('drmp3_open_memory_and_read_pcm_frames_f32')
-	static function openMemoryAndReadPCMFramesFloat32(memData:Any, dataSize:cpp.UInt64, config:RawPointer<DrMP3Config>, totalFrameCount:RawPointer<DrMP3UInt64>, allocationCallbacks:RawPointer<DrMP3AllocationCallbacks>):RawPointer<Float>;
+	static function openMemoryAndReadPCMFramesFloat32(memData:RawPointer<cpp.UInt8>, dataSize:cpp.UInt64, config:RawPointer<DrMP3Config>, totalFrameCount:RawPointer<DrMP3UInt64>, allocationCallbacks:RawPointer<DrMP3AllocationCallbacks>):RawPointer<Float>;
 
 	@:native('drmp3_open_memory_and_read_pcm_frames_s16')
-	static function openMemoryAndReadPCMFramesShort16(memData:Any, dataSize:cpp.UInt64, config:RawPointer<DrMP3Config>, totalFrameCount:RawPointer<DrMP3UInt64>, allocationCallbacks:RawPointer<DrMP3AllocationCallbacks>):RawPointer<cpp.Int16>;
+	static function openMemoryAndReadPCMFramesShort16(memData:RawPointer<cpp.UInt8>, dataSize:cpp.UInt64, config:RawPointer<DrMP3Config>, totalFrameCount:RawPointer<DrMP3UInt64>, allocationCallbacks:RawPointer<DrMP3AllocationCallbacks>):RawPointer<cpp.Int16>;
 
 	@:native('drmp3_open_file_and_read_pcm_frames_f32')
 	static function openFileAndReadPCMFramesFloat32(fileName:cpp.ConstCharStar, config:RawPointer<DrMP3Config>, totalFrameCount:RawPointer<DrMP3UInt64>, allocationCallbacks:RawPointer<DrMP3AllocationCallbacks>):RawPointer<Float>;

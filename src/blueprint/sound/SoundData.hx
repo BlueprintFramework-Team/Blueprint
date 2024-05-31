@@ -1,148 +1,60 @@
 package blueprint.sound;
 
-import bindings.audio.StbVorbis;
-import bindings.audio.DrWav;
-import bindings.audio.DrFLAC;
-import bindings.audio.DrMP3;
-import bindings.audio.AL;
-import bindings.CppHelpers;
-import cpp.RawPointer;
+import blueprint.sound.formats.*;
+import blueprint.sound.SoundPlayer;
+import ThreadHelper.ThreadLoopFlag;
 
+@:allow(blueprint.Game)
+@:allow(blueprint.sound.SoundPlayer)
 class SoundData {
-	static var soundCache:Map<String, SoundData> = [];
+	private static var curSounds:Array<SoundPlayer> = [];
+	private static var lastSoundUpdate:Float = 0.0;
 
-	var _cacheKey:Null<String>;
-	public var useCount:Int = 0;
-    public var path:String;
-	public var loaded:Bool = false;
-	public var buffer:cpp.UInt32 = 0;
-	public var length:Float = 0;
-
-    public function new(?filePath:String) {
-        AL.genBuffers(1, RawPointer.addressOf(buffer));
-
-		if (filePath != null)
-			loadFromFile(filePath);
-    }
-
-    public function loadFromFile(filePath:String) {
-		path = filePath;
-        filePath = sys.FileSystem.absolutePath(filePath);
-		if (!sys.FileSystem.exists(filePath)) {
-            Sys.println('Failed to load "$path": File nonexistant.');
-            return this;
-        }
-
-        var format:Int = 0;
-        var sampleData:RawPointer<cpp.Int16> = null;
-    
-        var extension:String = filePath.substring(filePath.lastIndexOf('.') + 1).toLowerCase();
-
-		switch (extension) {
-			case 'wav':
-				var channels:cpp.UInt32 = 0;
-				var sampleRate:cpp.UInt32 = 0;
-				var totalFrameCount:cpp.UInt64 = 0;
-				sampleData = DrWav.openFileAndReadPCMFramesShort16(filePath, CppHelpers.makePointer(channels), CppHelpers.makePointer(sampleRate), CppHelpers.makePointer(totalFrameCount), null);
-
-				if (sampleData == null) {
-					Sys.println('Failed to load "$path": Sample Data was null.');
-				} else {
-					format = channels > 1 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16;
-
-					// I swear to god. Haxe (via hxcpp) is one of the most ANNOYING programming languages I have EVER had to deal with.
-					// Seriously. Does it make ANY SENSE to ANYONE why a cpp.UInt64 ISN'T replaced with an "unsigned long long" OR EVEN an "unsigned long".
-					// It just uses a stupid extra type which makes things more painful for the developer. ISTG porting dr_wav even MINORLY was H E L L because of this shit.
-					// Like no joke, I feel like I could rip my hair out. I have to MANUALLY use UNTYPED CPP just to FUCKING GET THE LENGTH TOO.
-					// Honestly I should've just wrote this whole function in cpp, but where is the fun in that y'know? Anyways, sorry for the ramble, hxcpp is just pain.
-					// - MidnightBloxxer or something I guess.
-
-					// also btw idk why we multiply by 4 and not 2 but 2 cuts it off half way so ig i missed something somewhere but whatever /shrug
-					AL.bufferData(buffer, format, sampleData, untyped __cpp__('{0} * (unsigned long)(4)', totalFrameCount), cast sampleRate);
-					loaded = true;
-				}
-
-				DrWav.free(sampleData, null);
-			case 'ogg':
-				var channels:Int = 0;
-				var sampleRate:Int = 0;
-				var totalFrameCount:Int = StbVorbis.decodeFileName(filePath, CppHelpers.makePointer(channels), CppHelpers.makePointer(sampleRate), CppHelpers.makePointer(sampleData));
-
-				format = channels > 1 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16;
-
-				length = totalFrameCount / sampleRate;
-				AL.bufferData(buffer, format, sampleData, untyped __cpp__('{0} * (unsigned long)(4)', totalFrameCount), sampleRate);
-				CppHelpers.free(sampleData);
-				loaded = true;
-			case 'mp3':
-				var config:RawPointer<DrMP3Config> = null;
-				untyped __cpp__('
-					drmp3_config config_but_good;
-					{0} = &config_but_good;
-				', config);
-
-				var totalFrameCount:DrMP3UInt64 = 0;
-				sampleData = DrMP3.openFileAndReadPCMFramesShort16(filePath, config, CppHelpers.makePointer(totalFrameCount), null);
-
-				if (sampleData == null) {
-					Sys.println('Failed to load "$path": Sample Data was null.');
-				} else {
-					format = config[0].channels > 1 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16;
-					AL.bufferData(buffer, format, sampleData, untyped __cpp__('{0} * (unsigned long)(4)', totalFrameCount), cast config[0].sampleRate);
-					loaded = true;
-				}
-
-				DrMP3.free(sampleData, null);
-			case 'flac' | 'oga':
-				var channels:cpp.UInt32 = 0;
-				var sampleRate:cpp.UInt32 = 0;
-				var totalFrameCount:DrFLACUInt64 = 0;
-				sampleData = DrFLAC.openFileAndReadPCMFramesShort16(filePath, CppHelpers.makePointer(channels), CppHelpers.makePointer(sampleRate), CppHelpers.makePointer(totalFrameCount), null);
-
-				if (sampleData == null) {
-					Sys.println('Failed to load "$path": Sample Data was null.');
-				} else {
-					format = channels > 1 ? AL.FORMAT_STEREO16 : AL.FORMAT_MONO16;
-
-					AL.bufferData(buffer, format, sampleData, untyped __cpp__('{0} * (unsigned long)(4)', totalFrameCount), cast sampleRate);
-					loaded = true;
-				}
-
-				DrFLAC.free(sampleData, null);
-			default:
-				Sys.println('Failed to load "$path": Format $extension is currently unsupported.');
+	public static function getSoundData(filePath:String):AudioFormat {
+		var data = switch (haxe.io.Path.extension(filePath)) {
+			case "flac": 	new FlacFormat(filePath);
+			case "mp3": 	new MP3Format(filePath);
+			case "wav": 	new WavFormat(filePath);
+			default: 		new OggFormat(filePath);
 		}
 
-		return this;
-    }
-
-	public function destroy() {
-		AL.deleteBuffers(1, RawPointer.addressOf(buffer));
-
-		if (_cacheKey != null)
-			soundCache.remove(_cacheKey);
-	}
-
-	public static function getCachedSound(filePath:String) {
-		if (!soundCache.exists(filePath)) {
-			var data = new SoundData(filePath);
-			if (!data.loaded) {
-				data.destroy();
-				data = null;
-			} else
-				data._cacheKey = filePath;
-			soundCache.set(filePath, data);
+		if (!data.loaded) {
+			data.destroy();
+			data = null;
 		}
 
-		return soundCache[filePath];
+		return data;
 	}
 
-	public static function clearCache() {
-		for (key in soundCache.keys()) {
-			if (soundCache[key] == null)
-				soundCache.remove(key);
-			else if (soundCache[key].useCount <= 0)
-				soundCache[key].destroy();
+	private static function updateSounds(runTime:Float):ThreadLoopFlag {
+		final elapsed = runTime - lastSoundUpdate;
+		lastSoundUpdate = runTime;
+
+		for (sound in curSounds) {
+			if (sound.data == null) continue;
+
+			@:bypassAccessor {
+				sound.time += elapsed * CppHelpers.boolToInt(sound.playing);
+				if (sound.looping && sound.time >= sound.length)
+					sound.play(0.0);
+				else if (sound.time >= sound.length) {
+					sound.pause();
+					sound.time = sound.length;
+				}
+			}
+			sound.update();
+		}
+
+		return CONTINUE_THREAD;
+	}
+
+	public static function clearSounds() {
+		var i:Int = 0; // So I have more control over the iterator. (Removing stuff can mess up for loops.)
+		while (i < curSounds.length) {
+			if (curSounds[i].keepOnSwitch)
+				i++;
+			else
+				curSounds[i].destroy();
 		}
 	}
 }

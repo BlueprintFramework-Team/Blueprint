@@ -16,7 +16,6 @@ import blueprint.graphics.Shader;
 import blueprint.graphics.Window;
 import blueprint.sound.SoundData;
 import blueprint.sound.Mixer;
-import blueprint.sound.Sound;
 import blueprint.text.Font;
 import blueprint.text.Text;
 
@@ -96,13 +95,17 @@ class Game {
 
 		Glfw.setKeyCallback(window.cWindow, Callable.fromStaticFunction(keyInput));
 
+		ThreadHelper.startWindowThread(SoundData.updateSounds, 0.5); // may make a static var in the future to change the interval. (theres a delay to lower cpu on audio)
+		ThreadHelper.mutex.acquire();
 		while (!Glfw.windowShouldClose(window.cWindow)) {
+			ThreadHelper.mutex.release();
 			update();
+			ThreadHelper.mutex.acquire();
 		}
+		ThreadHelper.mutex.release();
 
 		currentScene.destroy();
-		Sound.clearSounds();
-		SoundData.clearCache();
+		SoundData.clearSounds();
 		Texture.clearCache();
 		AnimatedSprite.clearCache();
 		Font.clearCache();
@@ -119,8 +122,7 @@ class Game {
 		if (queuedSceneChange != null) {
 			currentScene.destroy();
 
-			Sound.clearSounds();
-			SoundData.clearCache();
+			SoundData.clearSounds();
 			Texture.clearCache();
 			AnimatedSprite.clearCache();
 			Font.clearCache();

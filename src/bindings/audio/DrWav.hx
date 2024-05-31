@@ -787,13 +787,13 @@ extern class DrWav {
 
 
 
-	static inline function initMemory(wav:DrWavPtr, data:RawPointer<cpp.Void>, dataSize:cpp.UInt64, allocationCallbacks:RawPointer<DrWavAllocationCallbacks>):Bool
+	static inline function initMemory(wav:DrWavPtr, data:RawPointer<cpp.UInt8>, dataSize:cpp.UInt64, allocationCallbacks:RawPointer<DrWavAllocationCallbacks>):Bool
 		return untyped __cpp__("drwav_init_memory({0}, {1}, {2}, {3})", wav, data, dataSize, allocationCallbacks) == 1;
 
-	static inline function initMemoryEX(wav:DrWavPtr, data:RawPointer<cpp.Void>, dataSize:cpp.UInt64, onChunk:DrWavChunkProc, chunkUserdata:Any, flags:cpp.UInt32, allocationCallbacks:RawPointer<DrWavAllocationCallbacks>):Bool
+	static inline function initMemoryEX(wav:DrWavPtr, data:RawPointer<cpp.UInt8>, dataSize:cpp.UInt64, onChunk:DrWavChunkProc, chunkUserdata:Any, flags:cpp.UInt32, allocationCallbacks:RawPointer<DrWavAllocationCallbacks>):Bool
 		return untyped __cpp__("drwav_init_memory_ex({0}, {1}, {2}, {3}, {4}, {5}, {6})", wav, data, dataSize, onChunk, chunkUserdata, flags, allocationCallbacks) == 1;
 
-	static inline function initMemoryWithMetadata(wav:DrWavPtr, data:RawPointer<cpp.Void>, dataSize:cpp.UInt64, flags:cpp.UInt32, allocationCallbacks:RawPointer<DrWavAllocationCallbacks>):Bool
+	static inline function initMemoryWithMetadata(wav:DrWavPtr, data:RawPointer<cpp.UInt8>, dataSize:cpp.UInt64, flags:cpp.UInt32, allocationCallbacks:RawPointer<DrWavAllocationCallbacks>):Bool
 		return untyped __cpp__("drwav_init_memory_with_metadata({0}, {1}, {2}, {3}, {4})", wav, data, dataSize, flags, allocationCallbacks) == 1;
 
 	static inline function initMemoryWrite(wav:DrWavPtr, data:RawPointer<RawPointer<cpp.Void>>, dataSize:RawPointer<cpp.UInt64>, format:DrWavDataFormat, allocationCallbacks:RawPointer<DrWavAllocationCallbacks>):Bool
@@ -849,15 +849,15 @@ extern class DrWav {
 
 
 	@:native('drwav_open_memory_and_read_pcm_frames_s16')
-	static function openMemoryAndReadPCMFramesShort16(data:RawPointer<cpp.Void>, dataSize:cpp.UInt64, channels:RawPointer<cpp.UInt32>, sampleRate:RawPointer<cpp.UInt32>,
+	static function openMemoryAndReadPCMFramesShort16(data:RawPointer<cpp.UInt8>, dataSize:cpp.UInt64, channels:RawPointer<cpp.UInt32>, sampleRate:RawPointer<cpp.UInt32>,
 		totalFrameCount:RawPointer<cpp.UInt64>, allocationCallbacks:RawPointer<DrWavAllocationCallbacks>):RawPointer<cpp.Int16>;
 
 	@:native('drwav_open_memory_and_read_pcm_frames_f32')
-	static function openMemoryAndReadPCMFramesFloat32(data:RawPointer<cpp.Void>, dataSize:cpp.UInt64, channels:RawPointer<cpp.UInt32>, sampleRate:RawPointer<cpp.UInt32>,
+	static function openMemoryAndReadPCMFramesFloat32(data:RawPointer<cpp.UInt8>, dataSize:cpp.UInt64, channels:RawPointer<cpp.UInt32>, sampleRate:RawPointer<cpp.UInt32>,
 		totalFrameCount:RawPointer<cpp.UInt64>, allocationCallbacks:RawPointer<DrWavAllocationCallbacks>):RawPointer<Float>;
 
 	@:native('drwav_open_memory_and_read_pcm_frames_s32')
-	static function openMemoryAndReadPCMFramesSigned32(data:RawPointer<cpp.Void>, dataSize:cpp.UInt64, channels:RawPointer<cpp.UInt32>, sampleRate:RawPointer<cpp.UInt32>,
+	static function openMemoryAndReadPCMFramesSigned32(data:RawPointer<cpp.UInt8>, dataSize:cpp.UInt64, channels:RawPointer<cpp.UInt32>, sampleRate:RawPointer<cpp.UInt32>,
 		totalFrameCount:RawPointer<cpp.UInt64>, allocationCallbacks:RawPointer<DrWavAllocationCallbacks>):RawPointer<cpp.Int32>;
 
 

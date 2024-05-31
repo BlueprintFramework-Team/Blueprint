@@ -420,10 +420,10 @@ extern class DrFLAC {
 
 
 	@:native("drflac_open_memory")
-	static function openMemory(data:RawPointer<cpp.Void>, dataSize:cpp.UInt64, allocationCallbacks:RawPointer<DrFLACAllocationCallbacks>):DrFLACData;
+	static function openMemory(data:RawPointer<cpp.UInt8>, dataSize:cpp.UInt64, allocationCallbacks:RawPointer<DrFLACAllocationCallbacks>):DrFLACData;
 
 	@:native("drflac_open_memory_with_metadata")
-	static function openMemoryWithMetadata(data:RawPointer<cpp.Void>, dataSize:cpp.UInt64, onMeta:DrFLACMetaProc, userdata:RawPointer<cpp.Void>, allocationCallbacks:RawPointer<DrFLACAllocationCallbacks>):DrFLACData;
+	static function openMemoryWithMetadata(data:RawPointer<cpp.UInt8>, dataSize:cpp.UInt64, onMeta:DrFLACMetaProc, userdata:RawPointer<cpp.Void>, allocationCallbacks:RawPointer<DrFLACAllocationCallbacks>):DrFLACData;
 
 
 
@@ -456,15 +456,15 @@ extern class DrFLAC {
 
 		
 	@:native('drflac_open_memory_and_read_pcm_frames_s32')
-	static function openMemoryAndReadPCMFramesSigned32(data:RawPointer<cpp.Void>, dataSize:cpp.UInt64, channels:cpp.RawPointer<cpp.UInt32>, sampleRate:cpp.RawPointer<cpp.UInt32>,
+	static function openMemoryAndReadPCMFramesSigned32(data:RawPointer<cpp.UInt8>, dataSize:cpp.UInt64, channels:cpp.RawPointer<cpp.UInt32>, sampleRate:cpp.RawPointer<cpp.UInt32>,
 		totalFrameCount:cpp.RawPointer<DrFLACUInt64>, allocationCallbacks:RawPointer<DrFLACAllocationCallbacks>):cpp.RawPointer<cpp.Int32>;
 
 	@:native('drflac_open_memory_and_read_pcm_frames_s16')
-	static function openMemoryAndReadPCMFramesShort16(data:RawPointer<cpp.Void>, dataSize:cpp.UInt64, channels:cpp.RawPointer<cpp.UInt32>, sampleRate:cpp.RawPointer<cpp.UInt32>,
+	static function openMemoryAndReadPCMFramesShort16(data:RawPointer<cpp.UInt8>, dataSize:cpp.UInt64, channels:cpp.RawPointer<cpp.UInt32>, sampleRate:cpp.RawPointer<cpp.UInt32>,
 		totalFrameCount:cpp.RawPointer<DrFLACUInt64>, allocationCallbacks:RawPointer<DrFLACAllocationCallbacks>):cpp.RawPointer<cpp.Int16>;
 
 	@:native('drflac_open_memory_and_read_pcm_frames_f32')
-	static function openMemoryAndReadPCMFramesFloat32(data:RawPointer<cpp.Void>, dataSize:cpp.UInt64, channels:cpp.RawPointer<cpp.UInt32>, sampleRate:cpp.RawPointer<cpp.UInt32>,
+	static function openMemoryAndReadPCMFramesFloat32(data:RawPointer<cpp.UInt8>, dataSize:cpp.UInt64, channels:cpp.RawPointer<cpp.UInt32>, sampleRate:cpp.RawPointer<cpp.UInt32>,
 		totalFrameCount:cpp.RawPointer<DrFLACUInt64>, allocationCallbacks:RawPointer<DrFLACAllocationCallbacks>):cpp.RawPointer<Float>;	
 
 
