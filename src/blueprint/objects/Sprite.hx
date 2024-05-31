@@ -16,6 +16,8 @@ class Sprite {
 	public static var defaultShader:Shader;
 	public static var defaultTexture:Texture;
 
+	public var memberOf(default, set):Group;
+
 	public var position:Vector2;
 	public var positionOffset:Vector2 = new Vector2(0, 0);
 	public var dynamicOffset:Vector2 = new Vector2(0, 0);
@@ -131,6 +133,17 @@ class Sprite {
 	public function destroy() {
 		shader = null;
 		texture = null;
+	}
+
+	function set_memberOf(parent:Group) {
+		if (memberOf == parent)
+			return parent;
+
+		if (memberOf != null)
+			memberOf.remove(this);
+		if (parent != null)
+			memberOf.add(this);
+		return memberOf = parent;
 	}
 
 	function set_rotation(newRot:Float) {
