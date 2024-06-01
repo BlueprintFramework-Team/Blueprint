@@ -16,6 +16,7 @@ class Group extends Sprite {
 			return false;
 
 		members.push(object);
+		@:bypassAccessor object.memberOf = this;
 		return true;
 	}
 
@@ -26,6 +27,7 @@ class Group extends Sprite {
 			members.splice(index, 1);
 			return true;
 		}
+		@:bypassAccessor object.memberOf = null;
 		return false;
 	}
 
@@ -34,6 +36,7 @@ class Group extends Sprite {
 			return false;
 
 		members.insert(index, object);
+		@:bypassAccessor object.memberOf = this;
 		return true;
 	}
 
