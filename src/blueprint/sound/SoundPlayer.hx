@@ -19,7 +19,7 @@ class SoundPlayer {
 	public var pitch(default, set):Float;
 	public var gain(default, set):Float;
 
-	@:isVar public var time(get, set):Float;
+	public var time(get, set):Float;
 	public var length(default, null):Float;
 	public var playing(default, set):Bool;
 	public var keepOnSwitch:Bool = false;
@@ -67,7 +67,9 @@ class SoundPlayer {
 
 	public function play(?atTime:Float):SoundPlayer {
 		if (data == null) return this;
-		@:bypassAccessor set_time((atTime != null) ? atTime : time);
+		if (atTime != null)
+			time = atTime;
+		lastStartTimestamp = Glfw.getTime();
 
 		if (source != 0) {
 			AL.sourcePlay(source);
@@ -86,8 +88,8 @@ class SoundPlayer {
 
 		if (resetTime)
 			time = 0;
-		else 
-			@:bypassAccessor time = get_time();
+		else
+			lastStartTime = time;
 
 		@:bypassAccessor playing = false;
 		return this;
@@ -99,7 +101,7 @@ class SoundPlayer {
 		if (source != 0)
 			AL.sourcePause(source);
 
-		@:bypassAccessor time = get_time();
+		lastStartTime = time;
 		@:bypassAccessor playing = false;
 		return this;
 	}
@@ -117,12 +119,14 @@ class SoundPlayer {
 			if (data != null) {
 				stop();
 				length = 0.0;
-				@:bypassAccessor time = 0.0;
+				lastStartTime = 0.0;
 				unqueueAllBuffers();
 				data.destroy();
 			}
-			if (newData != null)
+			if (newData != null) {
 				length = newData.getLength();
+				newData.startSource(source);
+			}
 		}
 
 		return data = newData;
@@ -142,8 +146,10 @@ class SoundPlayer {
 		return gain = value;
 	}
 
+	private var lastStartTime:Float;
+	private var lastStartTimestamp:Float;
 	function get_time():Float {
-		@:privateAccess return time + (Game.lastTime - SoundData.lastSoundUpdate) * CppHelpers.boolToInt(playing);
+		return lastStartTime + (Glfw.getTime() - lastStartTimestamp) * CppHelpers.boolToInt(playing);
 	}
 
 	function set_time(value:Float):Float {
@@ -162,7 +168,9 @@ class SoundPlayer {
 			AL.sourcef(source, AL.SEC_OFFSET, value - Math.floor(value * data.sampleRate) / data.sampleRate);
 		}
 
-		return time = value;
+		lastStartTime = value;
+		lastStartTimestamp = Glfw.getTime();
+		return value;
 	}
 
 	function set_playing(value:Bool):Bool {

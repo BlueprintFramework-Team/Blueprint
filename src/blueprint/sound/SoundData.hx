@@ -33,14 +33,12 @@ class SoundData {
 		for (sound in curSounds) {
 			if (sound.data == null) continue;
 
-			@:bypassAccessor var soundTime = sound.time;
-			@:bypassAccessor soundTime += elapsed * CppHelpers.boolToInt(sound.playing);
-			@:bypassAccessor sound.time = soundTime;
+			var soundTime = sound.time;
 			if (sound.looping && soundTime >= sound.length)
 				sound.play(0.0);
 			else if (soundTime >= sound.length) {
 				sound.pause();
-				@:bypassAccessor sound.time = sound.length;
+				sound.time = sound.length;
 			}
 			sound.update();
 		}
