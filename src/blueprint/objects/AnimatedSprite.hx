@@ -126,7 +126,7 @@ class AnimatedSprite extends Sprite {
 			shader.transform.rotate(_sinMult, _cosMult, [0, 0, 1]);
 		shader.transform.translate([
 			position.x + positionOffset.x + width * 0.5 - ((animWidth - sourceRect.x) * scale.x) * anchor.x,
-			position.y + positionOffset.y + height * 0.5 - ((animHeight - sourceRect.y) * scale.x) * anchor.y,
+			position.y + positionOffset.y + height * 0.5 - ((animHeight - sourceRect.y) * scale.y) * anchor.y,
 			0
 		]);
 		shader.setUniform("transform", shader.transform);

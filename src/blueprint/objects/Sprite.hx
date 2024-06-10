@@ -124,8 +124,15 @@ class Sprite {
 	}
 
 	function offScreen():Bool {
-		final onScreenX:Bool = (position.x + width * anchor.x >= 0) && (position.x * (1 - anchor.x) < Game.window.width);
-		final onScreenY:Bool = (position.y + height * anchor.y >= 0) && (position.y * (1 - anchor.y) < Game.window.height);
+		final offsetX:Float = (dynamicOffset.x * scale.x * _cosMult - dynamicOffset.y * scale.y * _sinMult) + positionOffset.x;
+		final offsetY:Float = (dynamicOffset.x * scale.x * _sinMult + dynamicOffset.y * scale.y * _cosMult) + positionOffset.y;
+		var width:Float = width;
+		var height:Float = height;
+		width = (width * _cosMult - height * _sinMult);
+		height = (width * _sinMult + height * _cosMult);
+
+		final onScreenX:Bool = (position.x + offsetX - width * anchor.x >= 0) || (position.x + offsetX + width * (1 - anchor.x) <= Game.window.width);
+		final onScreenY:Bool = (position.y + offsetY - height * anchor.y >= 0) || (position.y + offsetY + height * (1 - anchor.y) <= Game.window.height);
 
 		return !(onScreenX && onScreenY);
 	}
