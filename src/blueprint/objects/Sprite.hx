@@ -129,7 +129,7 @@ class Sprite {
 		var width:Float = width;
 		var height:Float = height;
 		width = (width * _cosMult - height * _sinMult);
-		height = (width * _sinMult + height * _cosMult);
+		height = (this.width * _sinMult + height * _cosMult);
 
 		final onScreenX:Bool = (position.x + offsetX - width * anchor.x >= 0) || (position.x + offsetX + width * (1 - anchor.x) <= Game.window.width);
 		final onScreenY:Bool = (position.y + offsetY - height * anchor.y >= 0) || (position.y + offsetY + height * (1 - anchor.y) <= Game.window.height);

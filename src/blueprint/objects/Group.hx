@@ -61,10 +61,16 @@ class Group extends Sprite {
 			final ogY = object.position.y;
 			final ogScaleX = object.scale.x;
 			final ogScaleY = object.scale.y;
+			final width = object.width;
+			final height = object.height;
 
 			object.position *= _cosMult;
-			object.position.x += ogY * -_sinMult;
-			object.position.y += ogX * _sinMult;
+			// man i need to find a better way to fix anchoring with rotated groups.
+			// this is just..... duct tape glore.
+			object.position.x += ogY * -_sinMult + width * (object.anchor.x - 0.5);
+			object.position.y += ogX * _sinMult + height * (object.anchor.y - 0.5);
+			object.position.x += (width * (0.5 - object.anchor.x) * _cosMult - height * (0.5 - object.anchor.y) * _sinMult);
+			object.position.y += (width * (0.5 - object.anchor.x) * _sinMult + height * (0.5 - object.anchor.y) * _cosMult);
 			object.position *= scale;
 			object.position += position;
 
