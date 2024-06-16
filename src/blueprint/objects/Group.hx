@@ -8,6 +8,7 @@ import math.MathExtras;
 import blueprint.objects.Sprite;
 
 class Group extends Sprite {
+	public var positionFactor:Float = 1.0;
 	public var members:Array<Sprite> = [];
 	public var skipProperties:Bool = false;
 
@@ -72,7 +73,7 @@ class Group extends Sprite {
 			object.position.x += (width * (0.5 - object.anchor.x) * _cosMult - height * (0.5 - object.anchor.y) * _sinMult);
 			object.position.y += (width * (0.5 - object.anchor.x) * _sinMult + height * (0.5 - object.anchor.y) * _cosMult);
 			object.position *= scale;
-			object.position += position;
+			object.position += position * positionFactor;
 
 			object.scale *= scale;
 
