@@ -8,7 +8,7 @@ import math.MathExtras;
 import blueprint.objects.Sprite;
 
 class Group extends Sprite {
-	public var positionFactor:Float = 1.0;
+	public var positionFactor:Vector2 = new Vector2(1.0);
 	public var members:Array<Sprite> = [];
 	public var skipProperties:Bool = false;
 
