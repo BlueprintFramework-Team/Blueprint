@@ -1,6 +1,13 @@
 package math;
 
+typedef Color = Vector4;
+typedef Rect = Vector4;
+
 @:forward extern abstract Vector4(Vector4Base) from Vector4Base to Vector4Base {
+	public inline function new(?x:Float, ?y:Float, ?z:Float, ?w:Float) {
+		this = new Vector4Base(x, y, z, w);
+	}
+
     @:op(-A) public inline function negative()      return this.multiplyFloat(-1);
 
 	@:op(A + B) public inline function addOp(vec:Vector4Base)		return this.add(vec);

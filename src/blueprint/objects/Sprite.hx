@@ -1,5 +1,6 @@
 package blueprint.objects;
 
+import math.Vector3;
 import bindings.Glad;
 
 import math.MathExtras;
@@ -15,6 +16,7 @@ import blueprint.graphics.Shader;
 class Sprite {
 	public static var defaultShader:Shader;
 	public static var defaultTexture:Texture;
+	static var _refVec3:Vector3 = new Vector3();
 
 	public var memberOf(default, set):Group;
 
@@ -40,7 +42,7 @@ class Sprite {
 
 	@:isVar public var shader(get, default):Shader;
 	@:isVar public var texture(get, default):Texture;
-	public var tint:Vector4 = new Vector4(1.0);
+	public var tint:Color = new Color(1.0);
 
 	public var sourceRect:Rect = new Rect(0.0, 0.0, -1.0, -1.0);
 	public var horizontalWrap:Int;
@@ -96,15 +98,15 @@ class Sprite {
 		final height = height;
 		
 		shader.transform.reset(1.0);
-		shader.transform.translate([dynamicOffset.x / sourceWidth, dynamicOffset.y / sourceHeight, 0]);
-		shader.transform.scale([width, height, 1]);
+		shader.transform.translate(_refVec3.set(dynamicOffset.x / sourceWidth, dynamicOffset.y / sourceHeight, 0));
+		shader.transform.scale(_refVec3.set(width, height, 1));
 		if (rotation != 0)
-			shader.transform.rotate(_sinMult, _cosMult, [0, 0, 1]);
-		shader.transform.translate([
+			shader.transform.rotate(_sinMult, _cosMult, _refVec3.set(0, 0, 1));
+		shader.transform.translate(_refVec3.set(
 			position.x + positionOffset.x + width * anchorX,
 			position.y + positionOffset.y + height * anchorY,
 			0
-		]);
+		));
 		shader.setUniform("transform", shader.transform);
 
 		shader.setUniform("tint", tint);

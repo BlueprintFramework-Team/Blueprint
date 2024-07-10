@@ -1,15 +1,17 @@
 package blueprint.text;
 
-import bindings.CppHelpers;
 import math.Vector2;
+
+import bindings.Glad;
+import bindings.CppHelpers;
+
+import blueprint.objects.Sprite;
 import blueprint.graphics.Shader;
 
 /**
  * TODO:
  *	- Allow Field Widths
  */
-
-import bindings.Glad;
 
 enum abstract TextAlignment(cpp.Int8) from cpp.Int8 to cpp.Int8 {
 	var LEFT = 0;
@@ -80,21 +82,21 @@ class Text extends blueprint.objects.Sprite {
 			Glad.texParameteri(Glad.TEXTURE_2D, Glad.TEXTURE_MAG_FILTER, filter);
 			
 			shader.transform.reset(1.0);
-			shader.transform.translate([
+			shader.transform.translate(Sprite._refVec3.set(
 				((curX + letter.bearingX) + (letter.texture.width * 0.5) - (_textWidth * 0.5 * textQuality) + (dynamicOffset.x * textQuality)) / letter.texture.width,
 				((scaledSize * lineNum + scaledSize) + (letter.texture.height - letter.bearingY) - (letter.texture.height * 0.5) - (_textHeight * 0.5 * textQuality) + (dynamicOffset.y * textQuality)) / letter.texture.height,
 				0
-			]);
+			));
 			final letterWidth = Math.abs(letter.texture.width * scale.x * qualityFract);
 			final letterHeight = Math.abs(letter.texture.height * scale.y * qualityFract);
-			shader.transform.scale([letterWidth, letterHeight, 1]);
+			shader.transform.scale(Sprite._refVec3.set(letterWidth, letterHeight, 1));
 			if (rotation != 0)
-				shader.transform.rotate(_sinMult, _cosMult, [0, 0, 1]);
-			shader.transform.translate([
+				shader.transform.rotate(_sinMult, _cosMult, Sprite._refVec3.set(0, 0, 1));
+			shader.transform.translate(Sprite._refVec3.set(
 				position.x + positionOffset.x + width * (0.5 - anchor.x),
 				position.y + positionOffset.y + height * (0.5 - anchor.y),
 				0
-			]);
+			));
 			final transStar = shader.transform.toCArray();
 			Glad.uniformMatrix4fv(transLoc, 1, Glad.FALSE, transStar);
 			CppHelpers.free(transStar);

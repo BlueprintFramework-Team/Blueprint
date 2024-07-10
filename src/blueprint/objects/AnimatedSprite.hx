@@ -120,15 +120,15 @@ class AnimatedSprite extends Sprite {
 		final height = height;
 
 		shader.transform.reset(1.0);
-		shader.transform.translate([(dynamicOffset.x + frame.offsetX) / sourceWidth, (dynamicOffset.y + frame.offsetY) / sourceHeight, 0]);
-		shader.transform.scale([width, height, 1]);
+		shader.transform.translate(Sprite._refVec3.set((dynamicOffset.x + frame.offsetX) / sourceWidth, (dynamicOffset.y + frame.offsetY) / sourceHeight, 0));
+		shader.transform.scale(Sprite._refVec3.set(width, height, 1));
 		if (rotation != 0)
-			shader.transform.rotate(_sinMult, _cosMult, [0, 0, 1]);
-		shader.transform.translate([
+			shader.transform.rotate(_sinMult, _cosMult, Sprite._refVec3.set(0, 0, 1));
+		shader.transform.translate(Sprite._refVec3.set(
 			position.x + positionOffset.x + width * 0.5 - ((animWidth - sourceRect.x) * scale.x) * anchor.x,
 			position.y + positionOffset.y + height * 0.5 - ((animHeight - sourceRect.y) * scale.y) * anchor.y,
 			0
-		]);
+		));
 		shader.setUniform("transform", shader.transform);
 
 		shader.setUniform("tint", tint);

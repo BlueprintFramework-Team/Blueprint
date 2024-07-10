@@ -1,6 +1,10 @@
 package math;
 
 @:forward extern abstract Vector2(Vector2Base) from Vector2Base to Vector2Base {
+	public inline function new(?x:Float, ?y:Float) {
+		this = new Vector2Base(x, y);
+	}
+
     @:op(-A) public inline function negative()      return this.multiplyFloat(-1);
 
 	@:op(A + B) public inline function addOp(vec:Vector2Base)		return this.add(vec);

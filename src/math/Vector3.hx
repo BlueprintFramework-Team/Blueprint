@@ -1,6 +1,10 @@
 package math;
 
 @:forward extern abstract Vector3(Vector3Base) from Vector3Base to Vector3Base {
+	public inline function new(?x:Float, ?y:Float, ?z:Float) {
+		this = new Vector3Base(x, y, z);
+	}
+
     @:op(-A) public inline function negative()      return this.multiplyFloat(-1);
 
 	@:op(A + B) public inline function addOp(vec:Vector3Base)		return this.add(vec);
