@@ -1,5 +1,6 @@
 package blueprint;
 
+import blueprint.input.InputHandler;
 import cpp.Callable;
 
 import bindings.Glad;
@@ -93,9 +94,10 @@ class Game {
 
 		currentScene = Type.createInstance(startScene, []);
 
-		Glfw.setKeyCallback(window.cWindow, Callable.fromStaticFunction(keyInput));
+		Glfw.setKeyCallback(window.cWindow, Callable.fromStaticFunction(InputHandler.keyInput));
 
 		ThreadHelper.startWindowThread(SoundData.updateSounds, 0.5); // may make a static var in the future to change the interval. (theres a delay to lower cpu on audio)
+		ThreadHelper.startWindowThread(InputHandler.updateInputs);
 		ThreadHelper.mutex.acquire();
 		while (!Glfw.windowShouldClose(window.cWindow)) {
 			ThreadHelper.mutex.release();
@@ -146,14 +148,6 @@ class Game {
 
 		Glfw.swapBuffers(window.cWindow);
 		Glfw.pollEvents();
-	}
-
-	static function keyInput(window:GlfwWindow, key:Int, scancode:Int, action:Int, mods:Int) {
-		switch (action) {
-			case Glfw.PRESS: Game.currentScene.keyDown(key, scancode, mods);
-			case Glfw.REPEAT: Game.currentScene.keyRepeat(key, scancode, mods);
-			case Glfw.RELEASE: Game.currentScene.keyUp(key, scancode, mods);
-		}
 	}
 
 	public static function queueClose():Void {

@@ -30,10 +30,10 @@ class ThreadHelper {
 			var continueThread:ThreadLoopFlag = CONTINUE_THREAD;
 			mutex.acquire();
 			while (!Glfw.windowShouldClose(Game.window.cWindow) && func != null && continueThread) {
+				continueThread = func(Glfw.getTime());
 				mutex.release();
 				if (interval > 0)
 					Sys.sleep(interval - (Glfw.getTime() % interval));
-				continueThread = func(Glfw.getTime());
 				mutex.acquire();
 			}
 			mutex.release();

@@ -128,11 +128,12 @@ class Sprite {
 		final offsetY:Float = (dynamicOffset.x * scale.x * _sinMult + dynamicOffset.y * scale.y * _cosMult) + positionOffset.y;
 		var width:Float = width;
 		var height:Float = height;
-		width = (width * _cosMult - height * _sinMult);
-		height = (this.width * _sinMult + height * _cosMult);
+		// TODO: get the proper formula for proper sizes.
+		// width = (width * _cosMult - height * _sinMult);
+		// height = (this.width * _sinMult + height * _cosMult);
 
-		final onScreenX:Bool = (position.x + offsetX - width * anchor.x >= 0) || (position.x + offsetX + width * (1 - anchor.x) <= Game.window.width);
-		final onScreenY:Bool = (position.y + offsetY - height * anchor.y >= 0) || (position.y + offsetY + height * (1 - anchor.y) <= Game.window.height);
+		final onScreenX:Bool = (position.x + offsetX - width * anchor.x <= Game.window.width) && (position.x + offsetX + width * (1 - anchor.x) >= 0);
+		final onScreenY:Bool = (position.y + offsetY - height * anchor.y <= Game.window.height) && (position.y + offsetY + height * (1 - anchor.y) >= 0);
 
 		return !(onScreenX && onScreenY);
 	}

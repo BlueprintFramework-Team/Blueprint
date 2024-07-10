@@ -7,8 +7,6 @@ import blueprint.graphics.Shader;
 /**
  * TODO:
  *	- Allow Field Widths
- *	- Fix Rotation
- *	- Fix Y Positioning
  */
 
 import bindings.Glad;

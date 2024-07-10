@@ -23,7 +23,7 @@ class Window {
 	public var clearColor(default, set):Vector4;
 
 	private function set_clearColor(value:Vector4):Vector4 {
-		Glad.clearColor(value.x, value.y, value.z, value.w);
+		Glad.clearColor(value.r * value.a, value.g * value.a, value.b * value.a, value.a);
 		return value;
 	}
 
@@ -94,6 +94,7 @@ class Window {
 	}
 
 	public function destroy() {
+		Glfw.destroyWindow(cWindow);
 		Glad.deleteVertexArrays(1, RawPointer.addressOf(VAO));
 		Glad.deleteBuffers(1, RawPointer.addressOf(VBO));
 		Glad.genBuffers(1, RawPointer.addressOf(EBO));
