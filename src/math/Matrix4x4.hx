@@ -10,21 +10,21 @@ abstract Matrix4x4(Array<Vector4>) from Array<Vector4> to Array<Vector4> {
 	public function new(?x:Float = 0) {
 		this = [for (i in 0...4) {
 			new Vector4(
-				(i == 0) ? x : 0,
-				(i == 1) ? x : 0,
-				(i == 2) ? x : 0,
-				(i == 3) ? x : 0
+				(i == 0) ? x : 0.0,
+				(i == 1) ? x : 0.0,
+				(i == 2) ? x : 0.0,
+				(i == 3) ? x : 0.0
 			);
 		}];
 	}
 
 	public inline function reset(?x:Float = 0) {
 		for (i in 0...4) {
-			this[i].set(
-				(i == 0) ? x : 0,
-				(i == 1) ? x : 0,
-				(i == 2) ? x : 0,
-				(i == 3) ? x : 0
+			this[i].setFull(
+				(i == 0) ? x : 0.0,
+				(i == 1) ? x : 0.0,
+				(i == 2) ? x : 0.0,
+				(i == 3) ? x : 0.0
 			);
 		}
 	}
@@ -67,21 +67,21 @@ abstract Matrix4x4(Array<Vector4>) from Array<Vector4> to Array<Vector4> {
 		rotResult[2].y = (z * y * (1 - cos) + x * sin);
 		rotResult[2].z = (cos + z * z * (1 - cos));
 
-		rotResult[0].set(
+		rotResult[0].setFull(
 			(this[0].x * rotResult[0].x + this[1].x * rotResult[0].y + this[2].x * rotResult[0].z),
 			(this[0].y * rotResult[0].x + this[1].y * rotResult[0].y + this[2].y * rotResult[0].z),
 			(this[0].z * rotResult[0].x + this[1].z * rotResult[0].y + this[2].z * rotResult[0].z),
 			(this[0].w * rotResult[0].x + this[1].w * rotResult[0].y + this[2].w * rotResult[0].z)
 		);
 
-		rotResult[1].set(
+		rotResult[1].setFull(
 			(this[0].x * rotResult[1].x + this[1].x * rotResult[1].y + this[2].x * rotResult[1].z),
 			(this[0].y * rotResult[1].x + this[1].y * rotResult[1].y + this[2].y * rotResult[1].z),
 			(this[0].z * rotResult[1].x + this[1].z * rotResult[1].y + this[2].z * rotResult[1].z),
 			(this[0].w * rotResult[1].x + this[1].w * rotResult[1].y + this[2].w * rotResult[1].z)
 		);
 
-		rotResult[2].set(
+		rotResult[2].setFull(
 			(this[0].x * rotResult[2].x + this[1].x * rotResult[2].y + this[2].x * rotResult[2].z),
 			(this[0].y * rotResult[2].x + this[1].y * rotResult[2].y + this[2].y * rotResult[2].z),
 			(this[0].z * rotResult[2].x + this[1].z * rotResult[2].y + this[2].z * rotResult[2].z),

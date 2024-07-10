@@ -49,6 +49,15 @@ class Vector4Base {
 		set(x, y, z, w);
 	}
 
+    public inline function setFull(x:Float, y:Float, z:Float, w:Float):Vector4Base {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.w = w;
+
+        return this;
+    }
+
 	public inline function set(?x:Float, ?y:Float, ?z:Float, ?w:Float):Vector4Base {
 		this.x = (x != null) ? x : 0;
 		this.y = (y != null) ? y : this.x;
@@ -61,41 +70,41 @@ class Vector4Base {
 	public inline function add(vec:Vector4Base):Vector4Base
         return new Vector4Base(this.x + vec.x, this.y + vec.y, this.z + vec.z, this.w + vec.w);
 	public inline function addEq(vec:Vector4Base):Vector4Base
-        return set(this.x + vec.x, this.y + vec.y, this.z + vec.z, this.w + vec.w);
+        return setFull(this.x + vec.x, this.y + vec.y, this.z + vec.z, this.w + vec.w);
     public inline function addFloat(val:Float):Vector4Base
         return new Vector4Base(this.x + val, this.y + val, this.z + val, this.w + val);
     public inline function addFloatEq(val:Float):Vector4Base
-        return set(this.x + val, this.y + val, this.z + val, this.w + val);
+        return setFull(this.x + val, this.y + val, this.z + val, this.w + val);
 
     public inline function subtract(vec:Vector4Base):Vector4Base
         return new Vector4Base(this.x - vec.x, this.y - vec.y, this.z - vec.z, this.w - vec.w);
     public inline function subtractEq(vec:Vector4Base):Vector4Base
-        return set(this.x - vec.x, this.y - vec.y, this.z - vec.z, this.w - vec.w);
+        return setFull(this.x - vec.x, this.y - vec.y, this.z - vec.z, this.w - vec.w);
     public inline function subtractFloat(val:Float):Vector4Base
         return new Vector4Base(this.x - val, this.y - val, this.z - val, this.w - val);
     public inline function subtractFloatEq(val:Float):Vector4Base 
-        return set(this.x - val, this.y - val, this.z - val, this.w - val);
+        return setFull(this.x - val, this.y - val, this.z - val, this.w - val);
 
     public inline function multiply(vec:Vector4Base):Vector4Base
         return new Vector4Base(this.x * vec.x, this.y * vec.y, this.z * vec.z, this.w * vec.w);
     public inline function multiplyEq(vec:Vector4Base):Vector4Base
-        return set(this.x * vec.x, this.y * vec.y, this.z * vec.z, this.w * vec.w);
+        return setFull(this.x * vec.x, this.y * vec.y, this.z * vec.z, this.w * vec.w);
     public inline function multiplyFloat(val:Float):Vector4Base
         return new Vector4Base(this.x * val, this.y * val, this.z * val, this.w * val);
     public inline function multiplyFloatEq(val:Float):Vector4Base
-        return set(this.x * val, this.y * val, this.z * val, this.w * val);
+        return setFull(this.x * val, this.y * val, this.z * val, this.w * val);
 
     public inline function divide(vec:Vector4Base):Vector4Base
         return new Vector4Base(this.x / vec.x, this.y / vec.y, this.z / vec.z, this.w / vec.w);
     public inline function divideEq(vec:Vector4Base):Vector4Base
-        return set(this.x / vec.x, this.y / vec.y, this.z / vec.z, this.w / vec.w);
+        return setFull(this.x / vec.x, this.y / vec.y, this.z / vec.z, this.w / vec.w);
     public inline function divideFloat(val:Float):Vector4Base
         return new Vector4Base(this.x / val, this.y / val, this.z / val, this.w / val);
     public inline function divideFloatEq(val:Float):Vector4Base
-        return set(this.x / val, this.y / val, this.z / val, this.w / val);
+        return setFull(this.x / val, this.y / val, this.z / val, this.w / val);
 
 	public inline function copyFrom(vec:Vector4Base):Vector4Base
-        return set(vec.x, vec.y, vec.z, vec.w);
+        return setFull(vec.x, vec.y, vec.z, vec.w);
 
 	/**
 	 * Converts the vector into a c array, mainly used for OpenGL Shaders.

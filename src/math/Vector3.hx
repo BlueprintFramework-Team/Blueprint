@@ -44,6 +44,14 @@ class Vector3Base {
 		set(x, y, z);
 	}
 
+    public inline function setFull(x:Float, y:Float, z:Float):Vector3Base {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+
+        return this;
+    }
+
 	public inline function set(?x:Float, ?y:Float, ?z:Float):Vector3Base {
 		this.x = (x != null) ? x : 0;
 		this.y = (y != null) ? y : this.x;
@@ -55,41 +63,41 @@ class Vector3Base {
 	public inline function add(vec:Vector3Base):Vector3Base
         return new Vector3Base(this.x + vec.x, this.y + vec.y, this.z + vec.z);
 	public inline function addEq(vec:Vector3Base):Vector3Base
-        return set(this.x + vec.x, this.y + vec.y, this.z + vec.z);
+        return setFull(this.x + vec.x, this.y + vec.y, this.z + vec.z);
     public inline function addFloat(val:Float):Vector3Base
         return new Vector3Base(this.x + val, this.y + val, this.z + val);
     public inline function addFloatEq(val:Float):Vector3Base
-        return set(this.x + val, this.y + val, this.z + val);
+        return setFull(this.x + val, this.y + val, this.z + val);
 
     public inline function subtract(vec:Vector3Base):Vector3Base
         return new Vector3Base(this.x - vec.x, this.y - vec.y, this.z - vec.z);
     public inline function subtractEq(vec:Vector3Base):Vector3Base
-        return set(this.x - vec.x, this.y - vec.y, this.z - vec.z);
+        return setFull(this.x - vec.x, this.y - vec.y, this.z - vec.z);
     public inline function subtractFloat(val:Float):Vector3Base
         return new Vector3Base(this.x - val, this.y - val, this.z - val);
     public inline function subtractFloatEq(val:Float):Vector3Base 
-        return set(this.x - val, this.y - val, this.z - val);
+        return setFull(this.x - val, this.y - val, this.z - val);
 
     public inline function multiply(vec:Vector3Base):Vector3Base
         return new Vector3Base(this.x * vec.x, this.y * vec.y, this.z * vec.z);
     public inline function multiplyEq(vec:Vector3Base):Vector3Base
-        return set(this.x * vec.x, this.y * vec.y, this.z * vec.z);
+        return setFull(this.x * vec.x, this.y * vec.y, this.z * vec.z);
     public inline function multiplyFloat(val:Float):Vector3Base
         return new Vector3Base(this.x * val, this.y * val, this.z * val);
     public inline function multiplyFloatEq(val:Float):Vector3Base
-        return set(this.x * val, this.y * val, this.z * val);
+        return setFull(this.x * val, this.y * val, this.z * val);
 
     public inline function divide(vec:Vector3Base):Vector3Base
         return new Vector3Base(this.x / vec.x, this.y / vec.y, this.z / vec.z);
     public inline function divideEq(vec:Vector3Base):Vector3Base
-        return set(this.x / vec.x, this.y / vec.y, this.z / vec.z);
+        return setFull(this.x / vec.x, this.y / vec.y, this.z / vec.z);
     public inline function divideFloat(val:Float):Vector3Base
         return new Vector3Base(this.x / val, this.y / val, this.z / val);
     public inline function divideFloatEq(val:Float):Vector3Base
-        return set(this.x / val, this.y / val, this.z / val);
+        return setFull(this.x / val, this.y / val, this.z / val);
 
 	public inline function copyFrom(vec:Vector3Base):Vector3Base
-        return set(vec.x, vec.y, vec.z);
+        return setFull(vec.x, vec.y, vec.z);
 
 	/**
 	 * Converts the vector into a c array, mainly used for OpenGL Shaders.

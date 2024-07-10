@@ -38,6 +38,13 @@ class Vector2Base {
 		set(x, y);
 	}
 
+    public inline function setFull(x:Float, y:Float):Vector2Base {
+        this.x = x;
+        this.y = y;
+
+        return this;
+    }
+
 	public inline function set(?x:Float, ?y:Float):Vector2Base {
 		this.x = (x != null) ? x : 0;
 		this.y = (y != null) ? y : this.x;
@@ -48,41 +55,41 @@ class Vector2Base {
 	public inline function add(vec:Vector2Base):Vector2Base
         return new Vector2Base(this.x + vec.x, this.y + vec.y);
 	public inline function addEq(vec:Vector2Base):Vector2Base
-        return set(this.x + vec.x, this.y + vec.y);
+        return setFull(this.x + vec.x, this.y + vec.y);
     public inline function addFloat(val:Float):Vector2Base
         return new Vector2Base(this.x + val, this.y + val);
     public inline function addFloatEq(val:Float):Vector2Base
-        return set(this.x + val, this.y + val);
+        return setFull(this.x + val, this.y + val);
 
     public inline function subtract(vec:Vector2Base):Vector2Base
         return new Vector2Base(this.x - vec.x, this.y - vec.y);
     public inline function subtractEq(vec:Vector2Base):Vector2Base
-        return set(this.x - vec.x, this.y - vec.y);
+        return setFull(this.x - vec.x, this.y - vec.y);
     public inline function subtractFloat(val:Float):Vector2Base
         return new Vector2Base(this.x - val, this.y - val);
     public inline function subtractFloatEq(val:Float):Vector2Base 
-        return set(this.x - val, this.y - val);
+        return setFull(this.x - val, this.y - val);
 
     public inline function multiply(vec:Vector2Base):Vector2Base
         return new Vector2Base(this.x * vec.x, this.y * vec.y);
     public inline function multiplyEq(vec:Vector2Base):Vector2Base
-        return set(this.x * vec.x, this.y * vec.y);
+        return setFull(this.x * vec.x, this.y * vec.y);
     public inline function multiplyFloat(val:Float):Vector2Base
         return new Vector2Base(this.x * val, this.y * val);
     public inline function multiplyFloatEq(val:Float):Vector2Base
-        return set(this.x * val, this.y * val);
+        return setFull(this.x * val, this.y * val);
 
     public inline function divide(vec:Vector2Base):Vector2Base
         return new Vector2Base(this.x / vec.x, this.y / vec.y);
     public inline function divideEq(vec:Vector2Base):Vector2Base
-        return set(this.x / vec.x, this.y / vec.y);
+        return setFull(this.x / vec.x, this.y / vec.y);
     public inline function divideFloat(val:Float):Vector2Base
         return new Vector2Base(this.x / val, this.y / val);
     public inline function divideFloatEq(val:Float):Vector2Base
-        return set(this.x / val, this.y / val);
+        return setFull(this.x / val, this.y / val);
 
 	public inline function copyFrom(vec:Vector2Base):Vector2Base
-        return set(vec.x, vec.y);
+        return setFull(vec.x, vec.y);
 
 	/**
 	 * Converts the vector into a c array, mainly used for OpenGL Shaders.
