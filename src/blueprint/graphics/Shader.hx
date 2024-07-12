@@ -69,31 +69,51 @@ class Shader {
 		CppHelpers.free(projectStar);
 	}
 
+	public function setUniformVar(name:ConstCharStar, value:Any) {
+		switch (Type.getClass(value)) {
+			case Int:
+				Glad.uniform1i(Glad.getUniformLocation(ID, name), value);
+			case Float:
+				Glad.uniform1f(Glad.getUniformLocation(ID, name), value);
+			case Vector2Base:
+				var vec:Vector2Base = cast value;
+				setUniform(name, vec);
+			case Vector3Base:
+				var vec:Vector3Base = cast value;
+				setUniform(name, vec);
+			case Vector4Base:
+				var vec:Vector4Base = cast value;
+				setUniform(name, vec);
+			// case Matrix4x4:
+			// 	var mat:Matrix4x4 = cast value;
+			// 	setUniform(name, mat);
+		}
+	}
+
 	overload public inline extern function setUniform(name:ConstCharStar, value:Int) {
-		untyped __cpp__("glUniform1i(glGetUniformLocation({0}, {1}), {2})", ID, name, value);
+		Glad.uniform1i(Glad.getUniformLocation(ID, name), value);
 	}
 
 	overload public inline extern function setUniform(name:ConstCharStar, value:Float) {
-		untyped __cpp__("glUniform1f(glGetUniformLocation({0}, {1}), {2})", ID, name, value);
+		Glad.uniform1f(Glad.getUniformLocation(ID, name), value);
 	}
 
-	overload public inline extern function setUniform(name:ConstCharStar, value:Vector2) {
-		untyped __cpp__("glUniform2f(glGetUniformLocation({0}, {1}), {2}, {3})", ID, name, value.x, value.y);
+	overload public inline extern function setUniform(name:ConstCharStar, value:Vector2Base) {
+		Glad.uniform2f(Glad.getUniformLocation(ID, name), value.x, value.y);
 	}
 
-	overload public inline extern function setUniform(name:ConstCharStar, value:Vector3) {
-		untyped __cpp__("glUniform3f(glGetUniformLocation({0}, {1}), {2}, {3}, {4})", ID, name, value.x, value.y, value.z);
+	overload public inline extern function setUniform(name:ConstCharStar, value:Vector3Base) {
+		Glad.uniform3f(Glad.getUniformLocation(ID, name), value.x, value.y, value.z);
 	}
 
-	overload public inline extern function setUniform(name:ConstCharStar, value:Vector4) {
-		untyped __cpp__("glUniform4f(glGetUniformLocation({0}, {1}), {2}, {3}, {4}, {5})", ID, name, value.x, value.y, value.z, value.w);
+	overload public inline extern function setUniform(name:ConstCharStar, value:Vector4Base) {
+		Glad.uniform4f(Glad.getUniformLocation(ID, name), value.x, value.y, value.z, value.w);
 	}
 
 	overload public inline extern function setUniform(name:ConstCharStar, value:Matrix4x4) {
-		untyped __cpp__("
-			float* _star = {0};
-			glUniformMatrix4fv(glGetUniformLocation({1}, {2}), 1, GL_FALSE, _star);
-			free(_star)", value.toCArray(), this.ID, name);
+		final star = value.toCArray();
+		Glad.uniformMatrix4fv(Glad.getUniformLocation(ID, name), 1, Glad.FALSE, star);
+		CppHelpers.free(star);
 	}
 
 	public static final defaultVertexSource:String = "
