@@ -1,227 +1,125 @@
 package math;
 
-import cpp.RawPointer;
+@:forward extern abstract Vector3(Vector3Base) from Vector3Base to Vector3Base {
+	public inline function new(?x:Float, ?y:Float, ?z:Float) {
+		this = new Vector3Base(x, y, z);
+	}
 
-/**
- * Utilized from Droplet developed by Swordcube. (https://github.com/swordcube/Droplet-Framework/tree/master)
- */
-abstract Vector3(Array<Float>) from Array<Float> to Array<Float> {
-    public var x(get, set):Float;
-    public var y(get, set):Float;
-    public var z(get, set):Float;
+    @:op(-A) public inline function negative()      return this.multiplyFloat(-1);
 
-    public var magnitude(get, never):Float;
+	@:op(A + B) public inline function addOp(vec:Vector3Base)		return this.add(vec);
+	@:op(A += B) public inline function addEqOp(vec:Vector3Base)	return this.addEq(vec);
+    @:op(A + B) public inline function addFloatOp(val:Float)		return this.addFloat(val);
+    @:op(A += B) public inline function addFloatEqOp(val:Float)		return this.addFloatEq(val);
 
-    public function new(?x:Float, ?y:Float, ?z:Float) {
-        set(x, y, z);
-    }
+    @:op(A - B) public inline function subtractOp(vec:Vector3Base)		return this.subtract(vec);
+    @:op(A -= B) public inline function subtractEqOp(vec:Vector3Base)	return this.subtractEq(vec);
+    @:op(A - B) public inline function subtractFloatOp(val:Float)		return this.subtractFloat(val);
+    @:op(A -= B) public inline function subtractFloatEqOp(val:Float)	return this.subtractFloatEq(val);
 
-    public inline function set(?x:Float, ?y:Float, ?z:Float) {
-        if (x == null) x = 0;
-        if (y == null) y = x;
-        if (z == null) z = y;
+    @:op(A * B) public inline function multiplyOp(vec:Vector3Base)		return this.multiply(vec);
+    @:op(A *= B) public inline function multiplyEqOp(vec:Vector3Base)	return this.multiplyEq(vec);
+    @:op(A * B) public inline function multiplyFloatOp(val:Float)		return this.multiplyFloat(val);
+    @:op(A *= B) public inline function multiplyFloatEqOp(val:Float)	return this.multiplyFloatEq(val);
 
-        this = [x, y, z];
-    }
+    @:op(A / B) public inline function divideOp(vec:Vector3Base)		return this.divide(vec);
+    @:op(A /= B) public inline function divideEqOp(vec:Vector3Base)		return this.divideEq(vec);
+    @:op(A / B) public inline function divideFloatOp(val:Float)			return this.divideFloat(val);
+    @:op(A /= B) public inline function divideFloatEqOp(val:Float)		return this.divideFloatEq(val);
+}
 
-    @:op(A + B)
-    public inline function add(vec:Vector3):Vector3 {
-        var newVec:Vector3 = cast [];
+@:build(blueprint.Macros.swizzle(["x", "y", "z"], [
+	["r", "red::255"],
+	["g", "green::255"],
+	["b", "blue::255"]
+]))
+class Vector3Base {
+	@:isVar public var x(get, set):Float;
+	@:isVar public var y(get, set):Float;
+	@:isVar public var z(get, set):Float;
 
-        for (i in 0...3)
-            newVec[i] = this[i] + vec[i];
+	public var magnitude(get, never):Float;
 
-        return newVec;
-    }
+	public function new(?x:Float, ?y:Float, ?z:Float) {
+		set(x, y, z);
+	}
 
-    @:op(A - B)
-    public inline function subtract(vec:Vector3):Vector3 {
-        var newVec:Vector3 = cast [];
-
-        for (i in 0...3)
-            newVec[i] = this[i] - vec[i];
-
-        return newVec;
-    }
-
-    @:op(A * B)
-    public inline function multiply(vec:Vector3):Vector3 {
-        var newVec:Vector3 = cast [];
-
-        for (i in 0...3)
-            newVec[i] = this[i] * vec[i];
-
-        return newVec;
-    }
-
-    @:op(A / B)
-    public inline function divide(vec:Vector3):Vector3 {
-        var newVec:Vector3 = cast [];
-
-        for (i in 0...3)
-            newVec[i] = this[i] / vec[i];
-
-        return newVec;
-    }
-
-    @:op(A + B)
-    public inline function addFloat(add:Float):Vector3 {
-        var newVec:Vector3 = cast [];
-
-        for (i in 0...3)
-            newVec[i] = this[i] + add;
-
-        return newVec;
-    }
-
-    @:op(A - B)
-    public inline function subFloat(sub:Float):Vector3 {
-        var newVec:Vector3 = cast [];
-
-        for (i in 0...3)
-            newVec[i] = this[i] - sub;
-
-        return newVec;
-    }
-
-    @:op(A * B)
-    public inline function multFloat(mult:Float):Vector3 {
-        var newVec:Vector3 = cast [];
-
-        for (i in 0...3)
-            newVec[i] = this[i] * mult;
-
-        return newVec;
-    }
-
-    @:op(A / B)
-    public inline function divFloat(div:Float):Vector3 {
-        var newVec:Vector3 = cast [];
-
-        for (i in 0...3)
-            newVec[i] = this[i] / div;
-
-        return newVec;
-    }
-
-    @:op(A += B)
-    public inline function addEq(vec:Vector3):Vector3 {
-        for (i in 0...3)
-            this[i] += vec[i];
+    public inline function setFull(x:Float, y:Float, z:Float):Vector3Base {
+        this.x = x;
+        this.y = y;
+        this.z = z;
 
         return this;
     }
 
-    @:op(A -= B)
-    public inline function subtractEq(vec:Vector3):Vector3 {
-        for (i in 0...3)
-            this[i] -= vec[i];
+	public inline function set(?x:Float, ?y:Float, ?z:Float):Vector3Base {
+		this.x = (x != null) ? x : 0;
+		this.y = (y != null) ? y : this.x;
+		this.z = (z != null) ? z : this.y;
 
         return this;
-    }
+	}
 
-    @:op(A *= B)
-    public inline function multiplyEq(vec:Vector3):Vector3 {
-        for (i in 0...3)
-            this[i] *= vec[i];
+	public inline function add(vec:Vector3Base):Vector3Base
+        return new Vector3Base(this.x + vec.x, this.y + vec.y, this.z + vec.z);
+	public inline function addEq(vec:Vector3Base):Vector3Base
+        return setFull(this.x + vec.x, this.y + vec.y, this.z + vec.z);
+    public inline function addFloat(val:Float):Vector3Base
+        return new Vector3Base(this.x + val, this.y + val, this.z + val);
+    public inline function addFloatEq(val:Float):Vector3Base
+        return setFull(this.x + val, this.y + val, this.z + val);
 
-        return this;
-    }
+    public inline function subtract(vec:Vector3Base):Vector3Base
+        return new Vector3Base(this.x - vec.x, this.y - vec.y, this.z - vec.z);
+    public inline function subtractEq(vec:Vector3Base):Vector3Base
+        return setFull(this.x - vec.x, this.y - vec.y, this.z - vec.z);
+    public inline function subtractFloat(val:Float):Vector3Base
+        return new Vector3Base(this.x - val, this.y - val, this.z - val);
+    public inline function subtractFloatEq(val:Float):Vector3Base 
+        return setFull(this.x - val, this.y - val, this.z - val);
 
-    @:op(A /= B)
-    public inline function divideEq(vec:Vector3):Vector3 {
-        for (i in 0...3)
-            this[i] /= vec[i];
+    public inline function multiply(vec:Vector3Base):Vector3Base
+        return new Vector3Base(this.x * vec.x, this.y * vec.y, this.z * vec.z);
+    public inline function multiplyEq(vec:Vector3Base):Vector3Base
+        return setFull(this.x * vec.x, this.y * vec.y, this.z * vec.z);
+    public inline function multiplyFloat(val:Float):Vector3Base
+        return new Vector3Base(this.x * val, this.y * val, this.z * val);
+    public inline function multiplyFloatEq(val:Float):Vector3Base
+        return setFull(this.x * val, this.y * val, this.z * val);
 
-        return this;
-    }
+    public inline function divide(vec:Vector3Base):Vector3Base
+        return new Vector3Base(this.x / vec.x, this.y / vec.y, this.z / vec.z);
+    public inline function divideEq(vec:Vector3Base):Vector3Base
+        return setFull(this.x / vec.x, this.y / vec.y, this.z / vec.z);
+    public inline function divideFloat(val:Float):Vector3Base
+        return new Vector3Base(this.x / val, this.y / val, this.z / val);
+    public inline function divideFloatEq(val:Float):Vector3Base
+        return setFull(this.x / val, this.y / val, this.z / val);
 
-    @:op(A += B)
-    public inline function addFloatEq(add:Float):Vector3 {
-        for (i in 0...3)
-            this[i] += add;
+	public inline function copyFrom(vec:Vector3Base):Vector3Base
+        return setFull(vec.x, vec.y, vec.z);
 
-        return this;
-    }
-
-    @:op(A -= B)
-    public inline function subFloatEq(sub:Float):Vector3 {
-        for (i in 0...3)
-            this[i] -= sub;
-
-        return this;
-    }
-
-    @:op(A *= B)
-    public inline function multFloatEq(mult:Float):Vector3 {
-        for (i in 0...3)
-            this[i] *= mult;
-
-        return this;
-    }
-
-    @:op(A /= B)
-    public inline function divFloatEq(div:Float):Vector3 {
-        for (i in 0...3)
-            this[i] /= div;
-
-        return this;
-    }
-
-    public inline function copyFrom(vec:Vector3) {
-        set(vec.x, vec.y, vec.z);
-    }
-
-    /**
-     * Converts the vector into a c array, mainly used for OpenGL Shaders.
-     * 
-     * NOTE: For proper memory management, please call `CppHelpers.free` when you are fully finished with the c array.
-     * 
+	/**
+	 * Converts the vector into a c array, mainly used for OpenGL Shaders.
+	 * 
+	 * NOTE: For proper memory management, please call `CppHelpers.free` when you are fully finished with the c array.
+	 * 
      * @return RawPointer<cpp.Float32>
      */
-     public function toCArray():RawPointer<cpp.Float32> {
-        untyped __cpp__("
-            float* _cArray = (float*)malloc(sizeof(float) * 3);
-            for (int i = 0; i < 3; i++) {
-                _cArray[i] = {0}->__get(i);
-            }", this);
-        return untyped __cpp__("_cArray");
-    }
+	public function toCArray():cpp.RawPointer<cpp.Float32> {
+		untyped __cpp__("float _cArray[3] = { {0}, {1}, {2} }", this.x, this.y, this.z);
+		return untyped __cpp__("_cArray");
+	}
 
-    @:noCompletion
-    private inline function get_x():Float {
-        return this[0];
-    }
+	@:noCompletion private inline function get_x():Float return this.x;
+	@:noCompletion private inline function set_x(v:Float):Float return this.x = v;
 
-    @:noCompletion
-    private inline function set_x(v:Float):Float {
-        return this[0] = v;
-    }
+	@:noCompletion private inline function get_y():Float return this.y;
+	@:noCompletion private inline function set_y(v:Float):Float return this.y = v;
 
-    @:noCompletion
-    private inline function get_y():Float {
-        return this[1];
-    }
+	@:noCompletion private inline function get_z():Float return this.z;
+	@:noCompletion private inline function set_z(v:Float):Float return this.z = v;
 
-    @:noCompletion
-    private inline function set_y(v:Float):Float {
-        return this[1] = v;
-    }
-
-    @:noCompletion
-    private inline function get_z():Float {
-        return this[2];
-    }
-
-    @:noCompletion
-    private inline function set_z(v:Float):Float {
-        return this[2] = v;
-    }
-
-    public function get_magnitude() {
-        var toSqrt:Float = 0;
-        for (i in 0...3)
-            toSqrt += this[i] * this[i];
-        return Math.sqrt(toSqrt);
-    }
+	public function get_magnitude():Float
+		return Math.sqrt(x * x + y * y + z * z);
 }

@@ -1,33 +1,45 @@
 package math;
 
+import bindings.CppHelpers;
+import math.Vector4;
 import cpp.RawPointer;
 
 abstract Matrix4x4(Array<Vector4>) from Array<Vector4> to Array<Vector4> {
 	static var rotResult:Matrix4x4 = new Matrix4x4(1.0); // Might be renamed if i have to use this in a another function.
 
 	public function new(?x:Float = 0) {
-		reset(x);
+		this = [for (i in 0...4) {
+			new Vector4(
+				(i == 0) ? x : 0.0,
+				(i == 1) ? x : 0.0,
+				(i == 2) ? x : 0.0,
+				(i == 3) ? x : 0.0
+			);
+		}];
 	}
 
 	public inline function reset(?x:Float = 0) {
-		this = [
-			[x, 0, 0, 0],
-			[0, x, 0, 0],
-			[0, 0, x, 0],
-			[0, 0, 0, x]
-		];
+		for (i in 0...4) {
+			this[i].setFull(
+				(i == 0) ? x : 0.0,
+				(i == 1) ? x : 0.0,
+				(i == 2) ? x : 0.0,
+				(i == 3) ? x : 0.0
+			);
+		}
 	}
 
 	public function translate(move:Vector3):Matrix4x4 {
-		for (i in 0...3)
-			this[i][3] += move[i];
+		this[0].w += move.x;
+		this[1].w += move.y;
+		this[2].w += move.z;
 		return this;
 	}
 
 	public function scale(scalar:Vector3):Matrix4x4 {
-		this[0] *= scalar[0];
-		this[1] *= scalar[1];
-		this[2] *= scalar[2];
+		this[0] *= scalar.x;
+		this[1] *= scalar.y;
+		this[2] *= scalar.z;
 		return this;
 	}
 
@@ -43,140 +55,121 @@ abstract Matrix4x4(Array<Vector4>) from Array<Vector4> to Array<Vector4> {
 		var y = inputAxis.y;
 		var z = inputAxis.z;
 
-		rotResult[0][0] = (cos + x * x * (1 - cos));
-		rotResult[0][1] = (x * y * (1 - cos) - z * sin);
-		rotResult[0][2] = (x * z * (1 - cos) + y * sin);
+		rotResult[0].x = (cos + x * x * (1 - cos));
+		rotResult[0].y = (x * y * (1 - cos) - z * sin);
+		rotResult[0].z = (x * z * (1 - cos) + y * sin);
 
-		rotResult[1][0] = (y * x * (1 - cos) + z * sin);
-		rotResult[1][1] = (cos + y * y * (1 - cos));
-		rotResult[1][2] = (y * z * (1 - cos) - x * sin);
+		rotResult[1].x = (y * x * (1 - cos) + z * sin);
+		rotResult[1].y = (cos + y * y * (1 - cos));
+		rotResult[1].z = (y * z * (1 - cos) - x * sin);
 
-		rotResult[2][0] = (z * x * (1 - cos) - y * sin);
-		rotResult[2][1] = (z * y * (1 - cos) + x * sin);
-		rotResult[2][2] = (cos + z * z * (1 - cos));
+		rotResult[2].x = (z * x * (1 - cos) - y * sin);
+		rotResult[2].y = (z * y * (1 - cos) + x * sin);
+		rotResult[2].z = (cos + z * z * (1 - cos));
 
-		rotResult[0].set(
-			(this[0][0] * rotResult[0][0] + this[1][0] * rotResult[0][1] + this[2][0] * rotResult[0][2]),
-			(this[0][1] * rotResult[0][0] + this[1][1] * rotResult[0][1] + this[2][1] * rotResult[0][2]),
-			(this[0][2] * rotResult[0][0] + this[1][2] * rotResult[0][1] + this[2][2] * rotResult[0][2]),
-			(this[0][3] * rotResult[0][0] + this[1][3] * rotResult[0][1] + this[2][3] * rotResult[0][2])
+		rotResult[0].setFull(
+			(this[0].x * rotResult[0].x + this[1].x * rotResult[0].y + this[2].x * rotResult[0].z),
+			(this[0].y * rotResult[0].x + this[1].y * rotResult[0].y + this[2].y * rotResult[0].z),
+			(this[0].z * rotResult[0].x + this[1].z * rotResult[0].y + this[2].z * rotResult[0].z),
+			(this[0].w * rotResult[0].x + this[1].w * rotResult[0].y + this[2].w * rotResult[0].z)
 		);
 
-		rotResult[1].set(
-			(this[0][0] * rotResult[1][0] + this[1][0] * rotResult[1][1] + this[2][0] * rotResult[1][2]),
-			(this[0][1] * rotResult[1][0] + this[1][1] * rotResult[1][1] + this[2][1] * rotResult[1][2]),
-			(this[0][2] * rotResult[1][0] + this[1][2] * rotResult[1][1] + this[2][2] * rotResult[1][2]),
-			(this[0][3] * rotResult[1][0] + this[1][3] * rotResult[1][1] + this[2][3] * rotResult[1][2])
+		rotResult[1].setFull(
+			(this[0].x * rotResult[1].x + this[1].x * rotResult[1].y + this[2].x * rotResult[1].z),
+			(this[0].y * rotResult[1].x + this[1].y * rotResult[1].y + this[2].y * rotResult[1].z),
+			(this[0].z * rotResult[1].x + this[1].z * rotResult[1].y + this[2].z * rotResult[1].z),
+			(this[0].w * rotResult[1].x + this[1].w * rotResult[1].y + this[2].w * rotResult[1].z)
 		);
 
-		rotResult[2].set(
-			(this[0][0] * rotResult[2][0] + this[1][0] * rotResult[2][1] + this[2][0] * rotResult[2][2]),
-			(this[0][1] * rotResult[2][0] + this[1][1] * rotResult[2][1] + this[2][1] * rotResult[2][2]),
-			(this[0][2] * rotResult[2][0] + this[1][2] * rotResult[2][1] + this[2][2] * rotResult[2][2]),
-			(this[0][3] * rotResult[2][0] + this[1][3] * rotResult[2][1] + this[2][3] * rotResult[2][2])
+		rotResult[2].setFull(
+			(this[0].x * rotResult[2].x + this[1].x * rotResult[2].y + this[2].x * rotResult[2].z),
+			(this[0].y * rotResult[2].x + this[1].y * rotResult[2].y + this[2].y * rotResult[2].z),
+			(this[0].z * rotResult[2].x + this[1].z * rotResult[2].y + this[2].z * rotResult[2].z),
+			(this[0].w * rotResult[2].x + this[1].w * rotResult[2].y + this[2].w * rotResult[2].z)
 		);
 
-		rotResult[3] = this[3];
+		rotResult[3].copyFrom(this[3]);
 		
 		return copyFrom(rotResult);
 	}
 
 	@:op(A + B)
 	public inline function add(mat:Matrix4x4):Matrix4x4 {
-		var newMat = [[], [], [], []];
+		var newMat = new Matrix4x4().copyFrom(this);
 
-		for (i in 0...16)
-			newMat[i % 4][Math.floor(i / 4)] = this[i % 4][Math.floor(i / 4)] + mat[i % 4][Math.floor(i / 4)];
+		for (i in 0...4)
+			newMat[i].addEq(mat[i]);
 
 		return newMat;
 	}
 
 	@:op(A - B)
 	public inline function subtract(mat:Matrix4x4):Matrix4x4 {
-		var newMat = [[], [], [], []];
+		var newMat = new Matrix4x4().copyFrom(this);
 
-		for (i in 0...16)
-			newMat[i % 4][Math.floor(i / 4)] = this[i % 4][Math.floor(i / 4)] - mat[i % 4][Math.floor(i / 4)];
+		for (i in 0...4)
+			newMat[i].subtractEq(mat[i]);
 
 		return newMat;
 	}
 
 	@:op(A * B)
 	public inline function multiply(mat:Matrix4x4):Matrix4x4 {
-		var newMat = [[], [], [], []];
+		var newMat = new Matrix4x4();
 
 		for (i in 0...4) {
-			newMat[0][i] = this[0][i] * mat[i][0] + this[0][i] * mat[i][1] + this[0][i] * mat[i][2] + this[0][i] * mat[i][3];
-			newMat[1][i] = this[1][i] * mat[i][0] + this[1][i] * mat[i][1] + this[1][i] * mat[i][2] + this[1][i] * mat[i][3];
-			newMat[2][i] = this[2][i] * mat[i][0] + this[2][i] * mat[i][1] + this[2][i] * mat[i][2] + this[2][i] * mat[i][3];
-			newMat[3][i] = this[3][i] * mat[i][0] + this[3][i] * mat[i][1] + this[3][i] * mat[i][2] + this[3][i] * mat[i][3];
+			// i dont even know if this is right
+			newMat[i].x = this[i].x * mat[0].x + this[i].x * mat[0].y + this[i].x * mat[0].z + this[i].x * mat[0].w;
+			newMat[i].y = this[i].y * mat[1].x + this[i].y * mat[1].y + this[i].y * mat[1].z + this[i].y * mat[1].w;
+			newMat[i].z = this[i].z * mat[2].x + this[i].z * mat[2].y + this[i].z * mat[2].z + this[i].z * mat[2].w;
+			newMat[i].w = this[i].w * mat[3].x + this[i].w * mat[3].y + this[i].w * mat[3].z + this[i].w * mat[3].w;
 		}
 
 		return newMat;
 	}
 
-	@:op(A / B)
-	public inline function divide(mat:Matrix4x4):Matrix4x4 {
-		var newMat = [[], [], [], []];
-
-		for (i in 0...16)
-			newMat[i % 4][Math.floor(i / 4)] = this[i % 4][Math.floor(i / 4)] / mat[i % 4][Math.floor(i / 4)];
-
-		return newMat;
-	}
-
 	@:op(A + B)
-	public inline function addFloat(add:Float):Matrix4x4 {
-		var newMat = [];
+	public inline function addFloat(val:Float):Matrix4x4 {
+		var newMat = new Matrix4x4().copyFrom(this);
 
-		for (i in 0...16)
-			newMat[i % 4][Math.floor(i / 4)] = this[i % 4][Math.floor(i / 4)] + add;
+		for (i in 0...4)
+			newMat[i].addFloatEq(val);
 
 		return newMat;
 	}
 
 	@:op(A - B)
-	public inline function subFloat(sub:Float):Matrix4x4 {
-		var newMat = [];
+	public inline function subtractFloat(val:Float):Matrix4x4 {
+		var newMat = new Matrix4x4().copyFrom(this);
 
-		for (i in 0...16)
-			newMat[i % 4][Math.floor(i / 4)] = this[i % 4][Math.floor(i / 4)] - sub;
+		for (i in 0...4)
+			newMat[i].subtractFloatEq(val);
 
 		return newMat;
 	}
 
 	@:op(A * B)
-	public inline function multFloat(mult:Float):Matrix4x4 {
-		var newMat = [];
+	public inline function multiplyFloat(val:Float):Matrix4x4 {
+		var newMat = new Matrix4x4().copyFrom(this);
 
-		for (i in 0...16)
-			newMat[i % 4][Math.floor(i / 4)] = this[i % 4][Math.floor(i / 4)] * mult;
-
-		return newMat;
-	}
-
-	@:op(A / B)
-	public inline function divFloat(div:Float):Matrix4x4 {
-		var newMat = [];
-
-		for (i in 0...16)
-			newMat[i % 4][Math.floor(i / 4)] = this[i % 4][Math.floor(i / 4)] / div;
+		for (i in 0...4)
+			newMat[i].multiplyFloatEq(val);
 
 		return newMat;
 	}
 
 	@:op(A += B)
 	public inline function addEq(mat:Matrix4x4):Matrix4x4 {
-		for (i in 0...16)
-			this[i % 4][Math.floor(i / 4)] += mat[i % 4][Math.floor(i / 4)];
+		for (i in 0...4)
+			this[i].addEq(mat[i]);
 
 		return this;
 	}
 
 	@:op(A -= B)
 	public inline function subtractEq(mat:Matrix4x4):Matrix4x4 {
-		for (i in 0...16)
-			this[i % 4][Math.floor(i / 4)] -= mat[i % 4][Math.floor(i / 4)];
+		for (i in 0...4)
+			this[i].subtractEq(mat[i]);
 
 		return this;
 	}
@@ -184,58 +177,44 @@ abstract Matrix4x4(Array<Vector4>) from Array<Vector4> to Array<Vector4> {
 	@:op(A *= B)
 	public inline function multiplyEq(mat:Matrix4x4):Matrix4x4 {
 		for (i in 0...4) {
-			this[0][i] = this[0][i] * mat[i][0] + this[0][i] * mat[i][1] + this[0][i] * mat[i][2] + this[0][i] * mat[i][3];
-			this[1][i] = this[1][i] * mat[i][0] + this[1][i] * mat[i][1] + this[1][i] * mat[i][2] + this[1][i] * mat[i][3];
-			this[2][i] = this[2][i] * mat[i][0] + this[2][i] * mat[i][1] + this[2][i] * mat[i][2] + this[2][i] * mat[i][3];
-			this[3][i] = this[3][i] * mat[i][0] + this[3][i] * mat[i][1] + this[3][i] * mat[i][2] + this[3][i] * mat[i][3];
+			// i dont even know if this is right
+			this[i].x = this[i].x * mat[0].x + this[i].x * mat[0].y + this[i].x * mat[0].z + this[i].x * mat[0].w;
+			this[i].y = this[i].y * mat[1].x + this[i].y * mat[1].y + this[i].y * mat[1].z + this[i].y * mat[1].w;
+			this[i].z = this[i].z * mat[2].x + this[i].z * mat[2].y + this[i].z * mat[2].z + this[i].z * mat[2].w;
+			this[i].w = this[i].w * mat[3].x + this[i].w * mat[3].y + this[i].w * mat[3].z + this[i].w * mat[3].w;
 		}
 
 		return this;
 	}
 
-	@:op(A /= B)
-	public inline function divideEq(mat:Matrix4x4):Matrix4x4 {
-		for (i in 0...16)
-			this[i % 4][Math.floor(i / 4)] /= mat[i % 4][Math.floor(i / 4)];
-
-		return this;
-	}
-
 	@:op(A += B)
-	public inline function addFloatEq(add:Float):Matrix4x4 {
-		for (i in 0...16)
-			this[i % 4][Math.floor(i / 4)] += add;
+	public inline function addFloatEq(val:Float):Matrix4x4 {
+		for (i in 0...4)
+			this[i].addFloatEq(val);
 
 		return this;
 	}
 
 	@:op(A -= B)
-	public inline function subFloatEq(sub:Float):Matrix4x4 {
-		for (i in 0...16)
-			this[i % 4][Math.floor(i / 4)] -= sub;
+	public inline function subFloatEq(val:Float):Matrix4x4 {
+		for (i in 0...4)
+			this[i].subtractFloatEq(val);
 
 		return this;
 	}
 
 	@:op(A *= B)
-	public inline function multFloatEq(mult:Float):Matrix4x4 {
-		for (i in 0...16)
-			this[i % 4][Math.floor(i / 4)] *= mult;
+	public inline function multFloatEq(val:Float):Matrix4x4 {
+		for (i in 0...4)
+			this[i].multiplyFloatEq(val);
 
 		return this;
 	}
 
-	@:op(A /= B)
-	public inline function divFloatEq(div:Float):Matrix4x4 {
-		for (i in 0...16)
-			this[i % 4][Math.floor(i / 4)] /= div;
-
-		return this;
-	}
 
 	public inline function copyFrom(mat:Matrix4x4):Matrix4x4 {
-		for (i in 0...16)
-			this[i % 4][Math.floor(i / 4)] = mat[i % 4][Math.floor(i / 4)];
+		for (i in 0...4)
+			this[i].copyFrom(mat[i]);
 
 		return this;
 	}
@@ -248,27 +227,27 @@ abstract Matrix4x4(Array<Vector4>) from Array<Vector4> to Array<Vector4> {
 	 * @return RawPointer<cpp.Float32>
 	 */
 	public function toCArray():RawPointer<cpp.Float32> {
-		untyped __cpp__("
-			float* _cArray = (float*)malloc(sizeof(float) * 16);
-			for (int i = 0; i < 4; i++) {
-				_cArray[i * 4] = {0}->__get(i);
-				_cArray[i * 4 + 1] = {1}->__get(i);
-				_cArray[i * 4 + 2] = {2}->__get(i);
-				_cArray[i * 4 + 3] = {3}->__get(i);
-			}", this[0], this[1], this[2], this[3]);
-		return untyped __cpp__("_cArray");
+		final cArray:RawPointer<cpp.Float32> = CppHelpers.malloc(16, cpp.Float32);
+		for (i in 0...4) {
+			final vector = this[i];
+			cArray[i] = cast vector.x;
+			cArray[4 + i] = cast vector.y;
+			cArray[8 + i] = cast vector.z;
+			cArray[12 + i] = cast vector.w;
+		}
+		return cArray;
 	}
 
 	public static function ortho(left:Float, right:Float, bottom:Float, top:Float, zNear:Float, zFar:Float) {
 		var toReturn = new Matrix4x4(1);
 
-		toReturn[0][0] = 2 / (right - left);
-		toReturn[1][1] = 2 / (top - bottom);
-		toReturn[0][3] = -(right + left) / (right - left);
-		toReturn[1][3] = -(top + bottom) / (top - bottom);
+		toReturn[0].x = 2 / (right - left);
+		toReturn[1].y = 2 / (top - bottom);
+		toReturn[0].w = -(right + left) / (right - left);
+		toReturn[1].w = -(top + bottom) / (top - bottom);
 
-		toReturn[2][2] = -2 / (zFar - zNear);
-		toReturn[2][3] = -(zFar + zNear) / (zFar - zNear);
+		toReturn[2].z = -2 / (zFar - zNear);
+		toReturn[2].w = -(zFar + zNear) / (zFar - zNear);
 
 		return toReturn;
 	}
