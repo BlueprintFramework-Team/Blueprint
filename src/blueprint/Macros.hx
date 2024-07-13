@@ -1,14 +1,17 @@
 package blueprint;
 
-import haxe.macro.TypeTools;
-#if macro
 import haxe.io.Path;
 
 import haxe.macro.Context;
 import haxe.macro.Expr;
-import haxe.macro.ExprTools;
+import haxe.macro.Type;
+
+using haxe.macro.ExprTools;
+using haxe.macro.TypeTools;
+using StringTools;
 
 class Macros {
+    #if macro
     public static macro function embedAssets():Array<Field> {
         //var blueprintDir = Path.directory(Context.resolvePath("blueprint"));
         var process = new sys.io.Process("haxelib", ["libpath", "blueprint"]);
@@ -21,8 +24,8 @@ class Macros {
 
     //public static macro function swizzle(props:Map<String, Array<String>>):Array<Field> {
     public static macro function swizzle(mainProps:Expr, newProps:Expr):Array<Field> {
-        var mainFields:Array<String> = ExprTools.getValue(mainProps);
-        var newFields:Array<Array<String>> = ExprTools.getValue(newProps);
+        var mainFields:Array<String> = mainProps.getValue();
+        var newFields:Array<Array<String>> = newProps.getValue();
         var fields = Context.getBuildFields();
         var pos = Context.currentPos();
 
@@ -69,5 +72,35 @@ class Macros {
 
         return fields;
     }
+    #end
+
+    public static macro function fieldsToMap(classPath:String, prefix:String, reverse:Bool):Expr {
+        var classType:Type = Context.getType(classPath);
+        var baseType:BaseType;
+        var mapValues = [];
+
+        switch (classType.follow()) {
+            case TInst(_.get() => cls, _):
+                baseType = cls;
+                for (field in cls.statics.get()) {
+                    if (field.name.startsWith(prefix))
+                        mapValues.push({fullKey: field.name, trimKey: field.name.replace(prefix, "")});
+                }
+            case TAbstract(_.get() => abs, _):
+                baseType = abs;
+                for (field in abs.impl.get().statics.get()) {
+                    if (field.name.startsWith(prefix))
+                        mapValues.push({fullKey: field.name, trimKey: field.name.replace(prefix, "")});
+                }
+            default:
+                // nothin
+        }
+
+        var arrayMap = reverse ? function(mapVal) {
+            return macro $p{baseType.pack.concat([baseType.name, mapVal.fullKey])} => $v{mapVal.trimKey};
+        } : function(mapVal) {
+            return macro $v{mapVal.trimKey} => $p{baseType.pack.concat([baseType.name, mapVal.fullKey])};
+        };
+        return macro $a{mapValues.map(arrayMap)};
+    }
 }
-#end

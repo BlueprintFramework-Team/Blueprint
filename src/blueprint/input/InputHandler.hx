@@ -6,8 +6,11 @@ import ThreadHelper.ThreadLoopFlag;
 
 @:allow(blueprint.Game)
 class InputHandler {
-    static function updateInputs(runTime:Float):ThreadLoopFlag {
-        Glfw.pollEvents();
+	public static final keyNames:Map<Int, String> = blueprint.Macros.fieldsToMap("bindings.Glfw", "KEY_", true);
+	public static final keyValues:Map<String, Int> = blueprint.Macros.fieldsToMap("bindings.Glfw", "KEY_", false);
+	
+	static function updateInputs(runTime:Float):ThreadLoopFlag {
+		Glfw.pollEvents();
         return CONTINUE_THREAD;
     }
 
