@@ -142,12 +142,12 @@ class AnimatedSprite extends Sprite {
 
 	override function get_sourceWidth():Float {
 		final frame = (frames == null || frames.length <= 0) ? backupFrame : frames[curFrame];
-		return ((sourceRect.width <= 0) ? frame.sourceWidth : sourceRect.width) - sourceRect.x;
+		return (sourceRect.width <= 0) ? frame.sourceWidth : sourceRect.width;
 	}
 
 	override function get_sourceHeight():Float {
 		final frame = (frames == null || frames.length <= 0) ? backupFrame : frames[curFrame];
-		return ((sourceRect.height <= 0) ? frame.sourceHeight : sourceRect.height) - sourceRect.y;
+		return (sourceRect.height <= 0) ? frame.sourceHeight : sourceRect.height;
 	}
 
 	static function loadFromFile(filePath:String) {

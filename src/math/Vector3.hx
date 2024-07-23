@@ -122,4 +122,7 @@ class Vector3Base {
 
 	public function get_magnitude():Float
 		return Math.sqrt(x * x + y * y + z * z);
+    
+    public function toString():String
+        return '($x, $y, $z)';
 }

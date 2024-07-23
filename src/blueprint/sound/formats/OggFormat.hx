@@ -17,6 +17,7 @@ class OggFormat implements AudioFormat {
 	public var loaded:Bool = false;
 	public var path:String;
 
+	var stopLoading:Bool = false;
 	var framesToLoad:Int;
 	var loadFormat:cpp.UInt32;
 	var data:VorbisData;
@@ -48,20 +49,24 @@ class OggFormat implements AudioFormat {
 	}
 
 	public function startSource(sourceID:Int) {
+		stopLoading = false;
 		for (i in 0...BUFFER_COUNT) {
 			final sample = CppHelpers.malloc(framesToLoad, cpp.Int16);
-			final samplesStored = StbVorbis.getSamplesShortInterleaved(data, data[0].channels, sample, SAMPLE_COUNT);
+			final framesRead = StbVorbis.getSamplesShortInterleaved(data, data[0].channels, sample, SAMPLE_COUNT);
 
-			if (samplesStored == 0) {
+			if (framesRead == 0 || stopLoading) {
 				--bufferNum;
+				stopLoading = true;
 				AL.deleteBuffers(1, RawPointer.addressOf(buffers[i]));
 				CppHelpers.free(sample);
 				continue;
 			}
+			stopLoading = framesRead < framesToLoad;
 
-			AL.bufferData(buffers[i], loadFormat, sample, SAMPLE_SIZE, sampleRate);
+			AL.bufferData(buffers[i], loadFormat, sample, untyped __cpp__("{0} * sizeof(short) * {1}", framesRead, data[0].channels), sampleRate);
 			CppHelpers.free(sample);
 		}
+
 		AL.sourceQueueBuffers(sourceID, bufferNum, buffers);
 	}
 
@@ -69,18 +74,26 @@ class OggFormat implements AudioFormat {
         final buffer:cpp.UInt32 = 0;
 		AL.sourceUnqueueBuffers(sourceID, 1, RawPointer.addressOf(buffer));
 
-		final newSample = CppHelpers.malloc(framesToLoad, cpp.Int16);
-		final samplesStored = StbVorbis.getSamplesShortInterleaved(data, data[0].channels, newSample, SAMPLE_COUNT);
+		final sample = CppHelpers.malloc(framesToLoad, cpp.Int16);
+		final framesRead = StbVorbis.getSamplesShortInterleaved(data, data[0].channels, sample, SAMPLE_COUNT);
 
-		AL.bufferData(buffer, loadFormat, newSample, SAMPLE_SIZE, sampleRate);
-		CppHelpers.free(newSample);
+		if (framesRead == 0 || stopLoading) {
+			stopLoading = true;
+			CppHelpers.free(sample);
+			return;
+		}
+		stopLoading = framesRead < framesToLoad;
 
-		if (samplesStored > 0) {
+		AL.bufferData(buffer, loadFormat, sample, untyped __cpp__("{0} * sizeof(short) * {1}", framesRead, data[0].channels), sampleRate);
+		CppHelpers.free(sample);
+
+		if (framesRead > 0) {
 			AL.sourceQueueBuffers(sourceID, 1, RawPointer.addressOf(buffer));
 		}
 	}
 
     public function seek(seconds:Float) {
+		bufferNum = BUFFER_COUNT;
         StbVorbis.seek(data, Math.floor(sampleRate * seconds));
     }
 

@@ -111,4 +111,7 @@ class Vector2Base {
 
 	public function get_magnitude():Float
 		return Math.sqrt(x * x + y * y);
+
+    public function toString():String
+        return '($x, $y)';
 }

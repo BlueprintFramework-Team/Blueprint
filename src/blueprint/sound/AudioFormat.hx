@@ -11,6 +11,7 @@ interface AudioFormat {
 	public var loaded:Bool;
 	public var path:String;
 	private var loadFormat:cpp.UInt32;
+	private var stopLoading:Bool;
 
 	public function startSource(sourceID:Int):Void;
 	public function queueBuffers(sourceID:Int):Void;

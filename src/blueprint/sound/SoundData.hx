@@ -31,7 +31,7 @@ class SoundData {
 		lastSoundUpdate = runTime;
 
 		for (sound in curSounds) {
-			if (sound.data == null) continue;
+			if (sound.data == null || !sound.playing) continue;
 
 			var soundTime = sound.time;
 			if (sound.looping && soundTime >= sound.length)
@@ -39,6 +39,7 @@ class SoundData {
 			else if (soundTime >= sound.length) {
 				sound.pause();
 				sound.time = sound.length;
+				sound.finished.emit(sound);
 			}
 			sound.update();
 		}

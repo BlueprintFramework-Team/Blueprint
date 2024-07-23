@@ -8,20 +8,18 @@ class Signal<T:Function> {
     public function new() {}
 
     public function emit(...params:Dynamic) {
-        var toRemove:Array<T> = [];
         var params:Array<Dynamic> = params.toArray();
 
-        for (func in funcsToCall) {
-            if (func == null) {
-                toRemove.push(func);
+        var i:Int = 0;
+        while (i < funcsToCall.length) {
+            if (funcsToCall[i] == null) {
+                funcsToCall.splice(i, 1);
                 continue;
             }
 
-            Reflect.callMethod(null, func, params);
+            Reflect.callMethod(null, funcsToCall[i], params);
+            i++;
         }
-
-        for (remove in toRemove)
-            funcsToCall.remove(remove);
     }
 
     public function add(func:T, ?allowDups:Bool = false) {

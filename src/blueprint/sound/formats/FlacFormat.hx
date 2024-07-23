@@ -17,6 +17,7 @@ class FlacFormat implements AudioFormat {
 	public var loaded:Bool = false;
 	public var path:String;
 
+	var stopLoading:Bool = false;
 	var framesToRead:cpp.UInt64;
 	var loadFormat:cpp.UInt32;
 	var data:DrFLACData;
@@ -47,7 +48,7 @@ class FlacFormat implements AudioFormat {
 
 
 	public function startSource(sourceID:Int):Void {
-		var stopLoading:Bool = false;
+		stopLoading = false;
 		for (i in 0...BUFFER_COUNT) {
 			final sample:RawPointer<cpp.Int16> = CppHelpers.malloc(SAMPLE_COUNT, cpp.Int16);
 			final framesRead = DrFLAC.readPCMFramesShort16(data, framesToRead, sample);
@@ -71,11 +72,18 @@ class FlacFormat implements AudioFormat {
         final buffer:cpp.UInt32 = 0;
 		AL.sourceUnqueueBuffers(sourceID, 1, RawPointer.addressOf(buffer));
 
-		final newSample:RawPointer<cpp.Int16> = CppHelpers.malloc(SAMPLE_COUNT, cpp.Int16);
-		final framesRead = DrFLAC.readPCMFramesShort16(data, framesToRead, CppHelpers.makePointer(newSample[0]));
+		final sample:RawPointer<cpp.Int16> = CppHelpers.malloc(SAMPLE_COUNT, cpp.Int16);
+		final framesRead = DrFLAC.readPCMFramesShort16(data, framesToRead, sample);
 
-		AL.bufferData(buffer, loadFormat, newSample, untyped __cpp__("{0} * sizeof(short) * {1}", framesRead, data[0].channels), sampleRate);
-		CppHelpers.free(newSample);
+		if (framesRead.toInt() == 0 || stopLoading) {
+			stopLoading = true;
+			CppHelpers.free(sample);
+			return;
+		}
+		stopLoading = (untyped __cpp__("{0} < {1}", framesRead, framesToRead));
+
+		AL.bufferData(buffer, loadFormat, sample, untyped __cpp__("{0} * sizeof(short) * {1}", framesRead, data[0].channels), sampleRate);
+		CppHelpers.free(sample);
 
 		if (framesRead.toInt() > 0) {
 			AL.sourceQueueBuffers(sourceID, 1, RawPointer.addressOf(buffer));
@@ -83,6 +91,7 @@ class FlacFormat implements AudioFormat {
     }
 
 	public function seek(seconds:Float):Void {
+		bufferNum = BUFFER_COUNT;
 		DrFLAC.seekToPCMFrame(data, cast sampleRate * seconds);
     }
 

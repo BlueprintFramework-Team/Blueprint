@@ -1,5 +1,6 @@
 package blueprint;
 
+import blueprint.tweening.BaseTween;
 import blueprint.input.InputHandler;
 import cpp.Callable;
 
@@ -128,6 +129,7 @@ class Game {
 			Texture.clearCache();
 			AnimatedSprite.clearCache();
 			Font.clearCache();
+			BaseTween.curTweens.splice(0, BaseTween.curTweens.length);
 
 			currentScene = Type.createInstance(queuedSceneChange, queuedSceneParams);
 			queuedSceneChange = null;
@@ -141,6 +143,7 @@ class Game {
 		elapsed = runTime - lastTime;
 		lastTime = runTime;
 		currentScene.update(elapsed);
+		BaseTween.updateTweens(elapsed);
 
 		Glad.clear(Glad.COLOR_BUFFER_BIT);
 

@@ -42,6 +42,10 @@ class Vector4Base {
 	@:isVar public var y(get, set):Float;
 	@:isVar public var z(get, set):Float;
 	@:isVar public var w(get, set):Float;
+    public var left(get, set):Float;
+    public var right(get, set):Float;
+    public var top(get, set):Float;
+    public var bottom(get, set):Float;
 
 	public var magnitude(get, never):Float;
 
@@ -130,6 +134,33 @@ class Vector4Base {
 	@:noCompletion private inline function get_w():Float return this.w;
 	@:noCompletion private inline function set_w(v:Float):Float return this.w = v;
 
+    @:noCompletion private inline function get_left():Float return this.x;
+	@:noCompletion private inline function set_left(v:Float):Float {
+        this.z += (this.x - v);
+        return this.x = v;
+    }
+
+	@:noCompletion private inline function get_right():Float return this.z - this.x;
+	@:noCompletion private inline function set_right(v:Float):Float {
+        this.z = (v - this.x);
+        return v;
+    }
+
+	@:noCompletion private inline function get_top():Float return this.y;
+	@:noCompletion private inline function set_top(v:Float):Float {
+        this.w += (this.y - v);
+        return this.y = v;
+    }
+
+	@:noCompletion private inline function get_bottom():Float return this.w - this.y;
+	@:noCompletion private inline function set_bottom(v:Float):Float {
+        this.w = (v - this.y);
+        return v;
+    }
+
 	public function get_magnitude():Float
 		return Math.sqrt(x * x + y * y + z * z + w * w);
+
+    public function toString():String
+        return '($x, $y, $z, $w)';
 }

@@ -15,6 +15,7 @@ class SoundPlayer {
 	public var data(default, set):AudioFormat;
 	private var source:cpp.UInt32 = 0;
 
+	public var shortSound:Bool = false;
 	public var looping:Bool;
 	public var pitch(default, set):Float;
 	public var gain(default, set):Float;
@@ -23,6 +24,7 @@ class SoundPlayer {
 	public var length(default, null):Float;
 	public var playing(default, set):Bool;
 	public var keepOnSwitch:Bool = false;
+	public var finished:Signal<SoundPlayer->Void>;
 
 	public var position(default, set):Vector3;
 	public var velocity(default, set):Vector3;
@@ -38,6 +40,7 @@ class SoundPlayer {
 		this.pitch = pitch;
 		this.gain = gain;
 		this.looping = looping;
+		this.finished = new Signal();
 
 		if (autoPlay)
 			play();
@@ -45,7 +48,7 @@ class SoundPlayer {
 	}
 
 	function update() {
-		if (data.bufferNum < BUFFER_COUNT)
+		if (shortSound)
 			return;
 
 		var buffersProcessed = 0;
@@ -66,14 +69,15 @@ class SoundPlayer {
 	}
 
 	public function play(?atTime:Float):SoundPlayer {
-		if (data == null) return this;
+		final startTime:Float = (atTime != null) ? atTime : time;
+		if (data == null || startTime >= length) return this;
 		if (atTime != null)
 			time = atTime;
 		lastStartTimestamp = Glfw.getTime();
 
 		if (source != 0) {
 			AL.sourcePlay(source);
-			@:bypassAccessor AL.sourcef(source, AL.SEC_OFFSET, time - Math.floor(time * data.sampleRate) / data.sampleRate);
+			AL.sourcef(source, AL.SEC_OFFSET, shortSound ? lastStartTime : lastStartTime - Math.floor(lastStartTime * data.sampleRate) / data.sampleRate);
 		}
 
 		@:bypassAccessor playing = true;
@@ -81,7 +85,7 @@ class SoundPlayer {
 	}
 
 	public function stop(resetTime:Bool = false):SoundPlayer {
-		if (data == null) return this;
+		if (data == null || !playing) return this;
 
 		if (source != 0) 
 			AL.sourceStop(source);
@@ -96,7 +100,7 @@ class SoundPlayer {
 	}
 
 	public function pause():SoundPlayer {
-		if (data == null) return this;
+		if (data == null|| !playing) return this;
 		
 		if (source != 0)
 			AL.sourcePause(source);
@@ -125,7 +129,9 @@ class SoundPlayer {
 			}
 			if (newData != null) {
 				length = newData.getLength();
+				newData.seek(0.0);
 				newData.startSource(source);
+				shortSound = (newData.bufferNum < BUFFER_COUNT);
 			}
 		}
 
@@ -154,18 +160,21 @@ class SoundPlayer {
 
 	function set_time(value:Float):Float {
 		if (data == null || source <= 0) return 0;
+		value = Math.min(Math.max(value, 0), length);
 
 		if (playing)
-			AL.sourceStop(source);
+			AL.sourceRewind(source);
 
 		data.seek(value);
-
-		unqueueAllBuffers();
-		data.startSource(source);
+		if (!shortSound) {
+			unqueueAllBuffers();
+			data.startSource(source);
+		}
 		
+		playing = playing && (value < length);
 		if (playing) {
 			AL.sourcePlay(source);
-			AL.sourcef(source, AL.SEC_OFFSET, value - Math.floor(value * data.sampleRate) / data.sampleRate);
+			AL.sourcef(source, AL.SEC_OFFSET, (shortSound) ? value : value - Math.floor(value * data.sampleRate) / data.sampleRate);
 		}
 
 		lastStartTime = value;
