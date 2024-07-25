@@ -11,13 +11,13 @@ import blueprint.sound.AudioFormat;
 import haxe.io.Bytes;
 
 class MP3Format implements AudioFormat {
+	public var stopLoading:Bool = false;
 	public var sampleRate:Int;
 	public var bufferNum:Int = BUFFER_COUNT;
 	public var buffers:cpp.RawPointer<cpp.UInt32>;
 	public var loaded:Bool = false;
 	public var path:String;
 
-	var stopLoading:Bool = false;
 	var framesToRead:cpp.UInt64;
 	var loadFormat:cpp.UInt32;
 	var data:DrMP3Data;
@@ -52,13 +52,17 @@ class MP3Format implements AudioFormat {
 	public function startSource(sourceID:Int):Void {
 		stopLoading = false;
 		for (i in 0...BUFFER_COUNT) {
+			if (stopLoading) {
+				--bufferNum;
+				continue;
+			}
+
 			final sample:RawPointer<cpp.Int16> = CppHelpers.malloc(SAMPLE_COUNT, cpp.Int16);
 			final framesRead = DrMP3.readPCMFramesShort16(dataPtr, framesToRead, sample);
 
-			if (framesRead.toInt() == 0 || stopLoading) {
+			if (framesRead.toInt() == 0) {
 				--bufferNum;
 				stopLoading = true;
-				AL.deleteBuffers(1, RawPointer.addressOf(buffers[i]));
 				CppHelpers.free(sample);
 				continue;
 			}
@@ -71,13 +75,15 @@ class MP3Format implements AudioFormat {
     }
 
 	public function queueBuffers(sourceID:Int):Void {
+		if (stopLoading) return;
+
         final buffer:cpp.UInt32 = 0;
 		AL.sourceUnqueueBuffers(sourceID, 1, RawPointer.addressOf(buffer));
 
 		final sample:RawPointer<cpp.Int16> = CppHelpers.malloc(SAMPLE_COUNT, cpp.Int16);
 		final framesRead = DrMP3.readPCMFramesShort16(dataPtr, framesToRead, sample);
 
-		if (framesRead.toInt() == 0 || stopLoading) {
+		if (framesRead.toInt() == 0) {
 			stopLoading = true;
 			CppHelpers.free(sample);
 			return;

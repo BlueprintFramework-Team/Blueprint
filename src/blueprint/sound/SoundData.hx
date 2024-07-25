@@ -37,7 +37,7 @@ class SoundData {
 			if (sound.looping && soundTime >= sound.length)
 				sound.play(0.0);
 			else if (soundTime >= sound.length) {
-				sound.pause();
+				sound.stop();
 				sound.time = sound.length;
 				sound.finished.emit(sound);
 			}

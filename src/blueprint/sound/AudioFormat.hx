@@ -5,13 +5,13 @@ final SAMPLE_SIZE:Int = 65536;
 final SAMPLE_COUNT:Int = untyped __cpp__("{0} / sizeof(short)", SAMPLE_SIZE);
 
 interface AudioFormat {
+	public var stopLoading:Bool;
 	public var sampleRate:Int;
 	public var bufferNum:Int;
 	public var buffers:RawPointer<cpp.UInt32>;
 	public var loaded:Bool;
 	public var path:String;
 	private var loadFormat:cpp.UInt32;
-	private var stopLoading:Bool;
 
 	public function startSource(sourceID:Int):Void;
 	public function queueBuffers(sourceID:Int):Void;

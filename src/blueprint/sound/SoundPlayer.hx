@@ -48,7 +48,7 @@ class SoundPlayer {
 	}
 
 	function update() {
-		if (shortSound)
+		if (data.stopLoading)
 			return;
 
 		var buffersProcessed = 0;
@@ -60,36 +60,24 @@ class SoundPlayer {
 		}
 	}
 
-	extern inline function unqueueAllBuffers() {
-		final queuedBuffers:Int = 0;
-		AL.getSourcei(source, AL.BUFFERS_QUEUED, CppHelpers.makePointer(queuedBuffers));
-		final buffers:RawPointer<cpp.UInt32> = CppHelpers.malloc(queuedBuffers, cpp.UInt32); 
-		AL.sourceUnqueueBuffers(source, queuedBuffers, buffers);
-		CppHelpers.free(buffers);
-	}
-
 	public function play(?atTime:Float):SoundPlayer {
 		final startTime:Float = (atTime != null) ? atTime : time;
-		if (data == null || startTime >= length) return this;
+		if (data == null || source <= 0 || startTime >= length) return this;
+
 		if (atTime != null)
 			time = atTime;
 		lastStartTimestamp = Glfw.getTime();
 
-		if (source != 0) {
-			AL.sourcePlay(source);
-			AL.sourcef(source, AL.SEC_OFFSET, shortSound ? lastStartTime : lastStartTime - Math.floor(lastStartTime * data.sampleRate) / data.sampleRate);
-		}
+		AL.sourcePlay(source);
 
 		@:bypassAccessor playing = true;
 		return this;
 	}
 
 	public function stop(resetTime:Bool = false):SoundPlayer {
-		if (data == null || !playing) return this;
+		if (data == null || source <= 0) return this;
 
-		if (source != 0) 
-			AL.sourceStop(source);
-
+		AL.sourceStop(source);
 		if (resetTime)
 			time = 0;
 		else
@@ -100,31 +88,32 @@ class SoundPlayer {
 	}
 
 	public function pause():SoundPlayer {
-		if (data == null|| !playing) return this;
+		if (data == null || source <= 0) return this;
 		
-		if (source != 0)
-			AL.sourcePause(source);
-
+		AL.sourcePause(source);
 		lastStartTime = time;
 		@:bypassAccessor playing = false;
 		return this;
 	}
 
 	public function destroy():Void {
-		if (source != 0)
+		if (source > 0)
 			AL.deleteSources(1, cpp.RawPointer.addressOf(source));
 
 		data = null;
+		source = 0;
 		SoundData.curSounds.remove(this);
 	}
 
 	function set_data(newData:AudioFormat) {
 		if (data != newData) {
 			if (data != null) {
-				stop();
+				if (source > 0) 
+					AL.sourceStop(source);
+				@:bypassAccessor playing = false;
 				length = 0.0;
 				lastStartTime = 0.0;
-				unqueueAllBuffers();
+				AL.sourcei(source, AL.BUFFER, 0);
 				data.destroy();
 			}
 			if (newData != null) {
@@ -139,16 +128,14 @@ class SoundPlayer {
 	}
 
 	function set_pitch(value:Float):Float {
-		if (data == null || source <= 0) return pitch;
-		
-		AL.sourcef(source, AL.PITCH, value);
+		if (data != null && source > 0)
+			AL.sourcef(source, AL.PITCH, value);
 		return pitch = value;
 	}
 
 	function set_gain(value:Float):Float {
-		if (data == null || source <= 0) return gain;
-
-		AL.sourcef(source, AL.GAIN, value);
+		if (data != null && source > 0)
+			AL.sourcef(source, AL.GAIN, value);
 		return gain = value;
 	}
 
@@ -163,11 +150,11 @@ class SoundPlayer {
 		value = Math.min(Math.max(value, 0), length);
 
 		if (playing)
-			AL.sourceRewind(source);
+			AL.sourceStop(source);
 
 		data.seek(value);
 		if (!shortSound) {
-			unqueueAllBuffers();
+			AL.sourcei(source, AL.BUFFER, 0);
 			data.startSource(source);
 		}
 		
@@ -194,12 +181,14 @@ class SoundPlayer {
 	}
 
 	private function set_position(value:Vector3):Vector3 {
-		AL.source3f(source, AL.POSITION, value.x, value.y, value.z);
+		if (data != null && source > 0)
+			AL.source3f(source, AL.POSITION, value.x, value.y, value.z);
 		return position = value;
 	}
 
 	private function set_velocity(value:Vector3):Vector3 {
-		AL.source3f(source, AL.VELOCITY, value.x, value.y, value.z);
+		if (data != null && source > 0)
+			AL.source3f(source, AL.VELOCITY, value.x, value.y, value.z);
 		return velocity = value;
 	}
 }

@@ -11,13 +11,13 @@ import blueprint.sound.AudioFormat;
 import haxe.io.Bytes;
 
 class OggFormat implements AudioFormat {
+	public var stopLoading:Bool = false;
 	public var sampleRate:Int;
 	public var bufferNum:Int = BUFFER_COUNT;
 	public var buffers:cpp.RawPointer<cpp.UInt32>;
 	public var loaded:Bool = false;
 	public var path:String;
 
-	var stopLoading:Bool = false;
 	var framesToLoad:Int;
 	var loadFormat:cpp.UInt32;
 	var data:VorbisData;
@@ -51,13 +51,17 @@ class OggFormat implements AudioFormat {
 	public function startSource(sourceID:Int) {
 		stopLoading = false;
 		for (i in 0...BUFFER_COUNT) {
+			if (stopLoading) {
+				--bufferNum;
+				continue;
+			}
+
 			final sample = CppHelpers.malloc(framesToLoad, cpp.Int16);
 			final framesRead = StbVorbis.getSamplesShortInterleaved(data, data[0].channels, sample, SAMPLE_COUNT);
 
-			if (framesRead == 0 || stopLoading) {
+			if (framesRead == 0) {
 				--bufferNum;
 				stopLoading = true;
-				AL.deleteBuffers(1, RawPointer.addressOf(buffers[i]));
 				CppHelpers.free(sample);
 				continue;
 			}
@@ -71,13 +75,15 @@ class OggFormat implements AudioFormat {
 	}
 
 	public function queueBuffers(sourceID:Int) {
+		if (stopLoading) return;
+		
         final buffer:cpp.UInt32 = 0;
 		AL.sourceUnqueueBuffers(sourceID, 1, RawPointer.addressOf(buffer));
 
 		final sample = CppHelpers.malloc(framesToLoad, cpp.Int16);
 		final framesRead = StbVorbis.getSamplesShortInterleaved(data, data[0].channels, sample, SAMPLE_COUNT);
 
-		if (framesRead == 0 || stopLoading) {
+		if (framesRead == 0) {
 			stopLoading = true;
 			CppHelpers.free(sample);
 			return;
