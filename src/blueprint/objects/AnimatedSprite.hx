@@ -42,10 +42,13 @@ class AnimatedSprite extends Sprite {
 	var animTime:Float = 0.0;
 	var curFrame:Int = 0;
 
+	public var finished:Signal<String->Void>;
+
 	public function new(?x:Float = 0, ?y:Float = 0, ?filePath:String) {
 		super(x, y);
 		animWidth = backupFrame.sourceWidth;
 		animHeight = backupFrame.sourceHeight;
+		finished = new Signal();
 
 		if (filePath != null)
 			loadFrames(filePath);
@@ -74,7 +77,7 @@ class AnimatedSprite extends Sprite {
 		if (indices != null && indices.length > 0)
 			anim.indexes = [for (i in indices) anim.indexes[i]];
 
-		anim.length *= anim.indexes.length - 1;
+		anim.length *= anim.indexes.length - 0.01;
 		animData.set(animName, anim);
 	}
 
@@ -99,9 +102,12 @@ class AnimatedSprite extends Sprite {
 
 		if (animData.exists(curAnim)) {
 			final data = animData[curAnim];
+			final alreadyFinished = animFinished;
 
 			animTime = (data.loop) ? (animTime + Game.elapsed) % data.length : Math.min(animTime + Game.elapsed, data.length);
 			animFinished = (animTime >= data.length && !data.loop);
+			if (animFinished && !alreadyFinished)
+				finished.emit(curAnim);
 			curFrame = data.indexes[Math.floor(animTime * data.fps)];
 		}
 		

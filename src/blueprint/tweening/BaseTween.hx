@@ -34,11 +34,11 @@ class BaseTween {
         updatePercent(elapsed);
     }
     public function updatePercent(elapsed:Float) {
-        curTime += elapsed;
-        percent = easeFunc((curTime - delay) / duration);
-        percent = Math.min(Math.max(percent, 0), 1);
+        curTime = Math.min(curTime + elapsed, duration + delay);
+        percent = Math.max(curTime - delay, 0) / duration;
         if (reverse)
             percent = 1 - percent;
+        percent = easeFunc(percent);
     }
 
     public function start(?time:Float = 0.0) {

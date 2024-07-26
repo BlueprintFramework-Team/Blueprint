@@ -39,6 +39,7 @@ class SoundData {
 			else if (soundTime >= sound.length) {
 				sound.stop();
 				sound.time = sound.length;
+				sound.complete = true;
 				sound.finished.emit(sound);
 			}
 			sound.update();

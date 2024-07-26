@@ -17,6 +17,7 @@ class SoundPlayer {
 
 	public var shortSound:Bool = false;
 	public var looping:Bool;
+	public var complete:Bool = false;
 	public var pitch(default, set):Float;
 	public var gain(default, set):Float;
 
@@ -148,6 +149,7 @@ class SoundPlayer {
 	function set_time(value:Float):Float {
 		if (data == null || source <= 0) return 0;
 		value = Math.min(Math.max(value, 0), length);
+		complete = value >= length;
 
 		if (playing)
 			AL.sourceStop(source);
@@ -158,7 +160,7 @@ class SoundPlayer {
 			data.startSource(source);
 		}
 		
-		playing = playing && (value < length);
+		playing = playing && !complete;
 		if (playing) {
 			AL.sourcePlay(source);
 			AL.sourcef(source, AL.SEC_OFFSET, (shortSound) ? value : value - Math.floor(value * data.sampleRate) / data.sampleRate);
