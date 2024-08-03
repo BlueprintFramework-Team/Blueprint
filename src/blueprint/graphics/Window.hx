@@ -102,18 +102,25 @@ class Window {
 
 	// function by MidnightBloxxer, using code by swordcube for reference.
 	private static function bufferResize(window:GlfwWindow, width:Int, height:Int) {
-		final outputSize:Vector2 = new Vector2(0, 0);
-		final outputOffset:Vector2 = new Vector2(0, 0);
+		ThreadHelper.mutex.acquire();
+		Glfw.makeContextCurrent(Game.window.cWindow);
 
-		var gameRatio:Float = Game.window.width / Game.window.height;
-		var windowRatio:Float = width / height;
+		final gameRatio:Float = Game.window.width / Game.window.height;
+		final windowRatio:Float = width / height;
+
+		final outputSize:Vector2 = new Vector2(0, 0);
 
 		outputSize.x = (windowRatio > gameRatio) ? (height * gameRatio) : (width);
 		outputSize.y = (windowRatio < gameRatio) ? (width / gameRatio) : (height);
 
-		outputOffset.x = (width - outputSize.x) / 2;
-		outputOffset.y = (height - outputSize.y) / 2;
+		Glad.viewport(
+			Math.floor((width - outputSize.x) * 0.5),
+			Math.floor((height - outputSize.y) * 0.5),
+			Math.floor(outputSize.x),
+			Math.floor(outputSize.y)
+		);
 
-		Glad.viewport(Math.floor(outputOffset.x), Math.floor(outputOffset.y), Math.floor(outputSize.x), Math.floor(outputSize.y));
+		Glfw.makeContextCurrent(null);
+		ThreadHelper.mutex.release();
 	}
 }

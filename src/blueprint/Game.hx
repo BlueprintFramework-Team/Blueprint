@@ -7,6 +7,7 @@ import cpp.Callable;
 import bindings.Glad;
 import bindings.Glfw;
 import bindings.Freetype;
+import bindings.audio.ALC;
 
 import math.Matrix4x4;
 
@@ -98,12 +99,11 @@ class Game {
 		Glfw.setKeyCallback(window.cWindow, Callable.fromStaticFunction(InputHandler.keyInput));
 
 		ThreadHelper.startWindowThread(SoundData.updateSounds, 0.5); // may make a static var in the future to change the interval. (theres a delay to lower cpu on audio)
-		ThreadHelper.startWindowThread(InputHandler.updateInputs);
 		ThreadHelper.mutex.acquire();
 		while (!Glfw.windowShouldClose(window.cWindow)) {
-			ThreadHelper.mutex.release();
 			update();
 			ThreadHelper.mutex.acquire();
+			Glfw.makeContextCurrent(Game.window.cWindow);
 		}
 		ThreadHelper.mutex.release();
 
@@ -150,6 +150,8 @@ class Game {
 		currentScene.draw();
 
 		Glfw.swapBuffers(window.cWindow);
+		Glfw.makeContextCurrent(null);
+		ThreadHelper.mutex.release();
 		Glfw.pollEvents();
 	}
 

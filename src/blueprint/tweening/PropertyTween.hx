@@ -22,7 +22,7 @@ class PropertyTween extends BaseTween {
 
     override function update(elapsed:Float) {
         if (tweenData.length < 1) {
-            percent = reverse ? 0.0 : 1.0;
+            curTime = duration + delay;
             return;
         }
 

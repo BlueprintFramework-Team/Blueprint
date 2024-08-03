@@ -16,11 +16,20 @@ class ThreadHelper {
 
 	public static function startThread(func:Void->Void) {
 		if (func == null) return;
+
+		Glfw.makeContextCurrent(null);
+		mutex.release();
+
 		Thread.create(function() {
 			mutex.acquire();
+			Glfw.makeContextCurrent(Game.window.cWindow);
 			func();
+			Glfw.makeContextCurrent(null);
 			mutex.release();
 		});
+
+		mutex.acquire();
+		Glfw.makeContextCurrent(Game.window.cWindow);
 	}
 
 	public static function startWindowThread(func:Float->ThreadLoopFlag, ?interval:Float = 0.0) {
@@ -31,10 +40,12 @@ class ThreadHelper {
 			mutex.acquire();
 			while (!Glfw.windowShouldClose(Game.window.cWindow) && func != null && continueThread) {
 				continueThread = func(Glfw.getTime());
+				Glfw.makeContextCurrent(null);
 				mutex.release();
 				if (interval > 0)
 					Sys.sleep(interval - (Glfw.getTime() % interval));
 				mutex.acquire();
+				Glfw.makeContextCurrent(Game.window.cWindow);
 			}
 			mutex.release();
 		});

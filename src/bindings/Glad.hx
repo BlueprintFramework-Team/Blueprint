@@ -60,7 +60,7 @@ typedef GlSync = RawPointer<GlSyncStruct>;
 // struct _cl_context;
 // struct _cl_event;
 
-typedef GlDebugProc = Callable<(source:GlEnum, type:GlEnum, severity:GlEnum, length:GlSizeI, message:ConstCharStar, userParam:Any) -> Void>;
+typedef GlDebugProc = Callable<(source:GlEnum, type:GlEnum, severity:GlEnum, length:GlSizeI, message:ConstCharStar, userParam:RawPointer<cpp.Void>) -> Void>;
 // typedef void (APIENTRY *GLDEBUGPROCARB)(GLenum source,GLenum type,GLuint id,GLenum severity,GLsizei length,const GLchar *message,const void *userParam);
 // typedef void (APIENTRY *GLDEBUGPROCKHR)(GLenum source,GLenum type,GLuint id,GLenum severity,GLsizei length,const GLchar *message,const void *userParam);
 // typedef void (APIENTRY *GLDEBUGPROCAMD)(GLuint id,GLenum category,GLenum severity,GLsizei length,const GLchar *message,void *userParam);
