@@ -96,6 +96,9 @@ class Game {
 
 		currentScene = Type.createInstance(startScene, []);
 
+		Glfw.setCharModsCallback(window.cWindow, Callable.fromStaticFunction(InputHandler.charInput));
+		Glfw.setMouseButtonCallback(window.cWindow, Callable.fromStaticFunction(InputHandler.mouseInput));
+		Glfw.setScrollCallback(window.cWindow, Callable.fromStaticFunction(InputHandler.scrollInput));
 		Glfw.setKeyCallback(window.cWindow, Callable.fromStaticFunction(InputHandler.keyInput));
 
 		ThreadHelper.startWindowThread(SoundData.updateSounds, 0.5); // may make a static var in the future to change the interval. (theres a delay to lower cpu on audio)
@@ -135,6 +138,10 @@ class Game {
 			queuedSceneChange = null;
 			lastTime = Glfw.getTime();
 			cpp.vm.Gc.run(true);
+
+			Glfw.makeContextCurrent(null);
+			ThreadHelper.mutex.release();
+			Glfw.pollEvents();
 
 			return;
 		}

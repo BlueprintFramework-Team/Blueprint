@@ -7,10 +7,13 @@ import bindings.CppHelpers;
 
 import blueprint.objects.Sprite;
 import blueprint.graphics.Shader;
+import blueprint.text.Font;
 
 /**
  * TODO:
  *	- Allow Field Widths
+ *  - Allow flipX, flipY
+ *  - Allow sourceRect
  */
 
 enum abstract TextAlignment(cpp.Int8) from cpp.Int8 to cpp.Int8 {
@@ -34,6 +37,12 @@ class Text extends blueprint.objects.Sprite {
 	public var size(default, set):Int;
 	public var alignment:TextAlignment = LEFT;
 
+	var letter:FontTexture;
+	var transLoc:Int;
+	var scaledSize:Int;
+	var curX:Float;
+	var lineNum:Int = 0;
+
 	public function new(x:Float, y:Float, fontPath:String, fontSize:Int, text:String) {
 		super(x, y);
 		shader = Text.defaultShader;
@@ -52,19 +61,17 @@ class Text extends blueprint.objects.Sprite {
 			updateTrigValues();
 		if (_queueSize)
 			updateTextSize();
+		calcRenderOffset(memberOf.scale, memberOf._sinMult, memberOf._cosMult);
 
 		Glad.useProgram(shader.ID);
 		shader.setUniform("tint", tint);
 		shader.setUniform("fontSize", size);
 		Glad.uniform4f(Glad.getUniformLocation(shader.ID, "sourceRect"), 0, 0, 1, 1);
-		final transLoc:Int = Glad.getUniformLocation(shader.ID, "transform");
+		transLoc = Glad.getUniformLocation(shader.ID, "transform");
+		scaledSize = Math.floor(size * textQuality);
 
-		final width = width; // so im not constantly calling the setters.
-		final height = height;
-		final scaledSize = size * textQuality;
-
-		var curX:Float = (_textWidth - _lineWidths[0]) * (alignment * 0.5) * textQuality;
-		var lineNum:Int = 0;
+		curX = (_textWidth - _lineWidths[0]) * (alignment * 0.5) * textQuality;
+		lineNum = 0;
 		for (i in 0...text.length) {
 			if (text.charAt(i) == '\n') {
 				lineNum++;
@@ -72,40 +79,37 @@ class Text extends blueprint.objects.Sprite {
 				continue;
 			}
 
-			final letter = font.getLetter(text.charCodeAt(i), scaledSize);
-
-			Glad.activeTexture(Glad.TEXTURE0);
-			Glad.bindTexture(Glad.TEXTURE_2D, letter.texture.ID);
-
-			final filter = (antialiasing) ? Glad.LINEAR : Glad.NEAREST;
-			Glad.texParameteri(Glad.TEXTURE_2D, Glad.TEXTURE_MIN_FILTER, filter);
-			Glad.texParameteri(Glad.TEXTURE_2D, Glad.TEXTURE_MAG_FILTER, filter);
-			
-			shader.transform.reset(1.0);
-			shader.transform.translate(Sprite._refVec3.set(
-				((curX + letter.bearingX) + (letter.texture.width * 0.5) - (_textWidth * 0.5 * textQuality) + (dynamicOffset.x * textQuality)) / letter.texture.width,
-				((scaledSize * lineNum + scaledSize) + (letter.texture.height - letter.bearingY) - (letter.texture.height * 0.5) - (_textHeight * 0.5 * textQuality) + (dynamicOffset.y * textQuality)) / letter.texture.height,
-				0
-			));
-			final letterWidth = Math.abs(letter.texture.width * scale.x * qualityFract);
-			final letterHeight = Math.abs(letter.texture.height * scale.y * qualityFract);
-			shader.transform.scale(Sprite._refVec3.set(letterWidth, letterHeight, 1));
-			if (rotation != 0)
-				shader.transform.rotate(_sinMult, _cosMult, Sprite._refVec3.set(0, 0, 1));
-			shader.transform.translate(Sprite._refVec3.set(
-				position.x + positionOffset.x + width * (0.5 - anchor.x),
-				position.y + positionOffset.y + height * (0.5 - anchor.y),
-				0
-			));
-			final transStar = shader.transform.toCArray();
-			Glad.uniformMatrix4fv(transLoc, 1, Glad.FALSE, transStar);
-			CppHelpers.free(transStar);
+			letter = font.getLetter(text.charCodeAt(i), scaledSize);
+			prepareTexture(letter.texture);
+			prepareShaderVars();
 
 			Glad.bindVertexArray(Game.window.VAO);
 			Glad.drawElements(Glad.TRIANGLES, 6, Glad.UNSIGNED_INT, 0);
 
 			curX += letter.advance >> 6;
 		}
+	}
+
+	override function prepareShaderVars() {
+		shader.transform.reset(1.0);
+		shader.transform.translate(Sprite._refVec3.set(
+			((curX + letter.bearingX) + (letter.texture.width * 0.5) - (_textWidth * 0.5 * textQuality) + (dynamicOffset.x * textQuality)) / letter.texture.width,
+			((scaledSize * lineNum + scaledSize) + (letter.texture.height - letter.bearingY) - (letter.texture.height * 0.5) - (_textHeight * 0.5 * textQuality) + (dynamicOffset.y * textQuality)) / letter.texture.height,
+			0
+		));
+		final letterWidth = letter.texture.width * scale.x * qualityFract;
+		final letterHeight = letter.texture.height * scale.y * qualityFract;
+		shader.transform.scale(Sprite._refVec3.set(letterWidth, letterHeight, 1));
+		if (rotation != 0)
+			shader.transform.rotate(_sinMult, _cosMult, Sprite._refVec3.set(0, 0, 1));
+		shader.transform.translate(Sprite._refVec3.set(
+			position.x + renderOffset.x,
+			position.y + renderOffset.y,
+			0
+		));
+		final transStar = shader.transform.toCArray();
+		Glad.uniformMatrix4fv(transLoc, 1, Glad.FALSE, transStar);
+		CppHelpers.free(transStar);
 	}
 
 	override function destroy() {

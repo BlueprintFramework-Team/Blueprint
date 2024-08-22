@@ -23,6 +23,7 @@ class Sprite {
 	public var position:Vector2;
 	public var positionOffset:Vector2 = new Vector2(0, 0);
 	public var dynamicOffset:Vector2 = new Vector2(0, 0);
+	var renderOffset:Vector2 = new Vector2(0, 0);
 
 	public var scale:Vector2 = new Vector2(1, 1);
 	public var flipX:Bool = false;
@@ -65,12 +66,19 @@ class Sprite {
 		if (_queueTrig)
 			updateTrigValues();
 
+		calcRenderOffset(memberOf.scale, memberOf._sinMult, memberOf._cosMult);
 		if (offScreen())
 			return;
 
-		final anchorX:Float = 0.5 - anchor.x;
-		final anchorY:Float = 0.5 - anchor.y;
+		prepareTexture(texture);
+		Glad.useProgram(shader.ID);
+		prepareShaderVars();
 
+		Glad.bindVertexArray(Game.window.VAO);
+		Glad.drawElements(Glad.TRIANGLES, 6, Glad.UNSIGNED_INT, 0);
+	}
+
+	private function prepareTexture(texture:Texture) {
 		Glad.activeTexture(Glad.TEXTURE0);
 		Glad.bindTexture(Glad.TEXTURE_2D, texture.ID);
 
@@ -80,31 +88,24 @@ class Sprite {
 		final filter = (antialiasing) ? Glad.LINEAR : Glad.NEAREST;
 		Glad.texParameteri(Glad.TEXTURE_2D, Glad.TEXTURE_MIN_FILTER, filter);
 		Glad.texParameteri(Glad.TEXTURE_2D, Glad.TEXTURE_MAG_FILTER, filter);
-
-		Glad.useProgram(shader.ID);
-		prepareShaderVars(anchorX, anchorY);
-
-		Glad.bindVertexArray(Game.window.VAO);
-		Glad.drawElements(Glad.TRIANGLES, 6, Glad.UNSIGNED_INT, 0);
 	}
 
-	private function prepareShaderVars(anchorX:Float, anchorY:Float):Void {
+	private function prepareShaderVars():Void {
 		final uMult = bindings.CppHelpers.boolToInt(flipX);
 		final vMult = bindings.CppHelpers.boolToInt(flipY);
 
 		final sourceWidth = sourceWidth; // so im not constantly calling the setters.
 		final sourceHeight = sourceHeight;
-		final width = width;
-		final height = height;
 		
 		shader.transform.reset(1.0);
-		shader.transform.translate(_refVec3.set(dynamicOffset.x / sourceWidth, dynamicOffset.y / sourceHeight, 0));
-		shader.transform.scale(_refVec3.set(width, height, 1));
+		shader.transform.scale(_refVec3.set(sourceWidth, sourceHeight, 1));
+		shader.transform.translate(_refVec3.set(dynamicOffset.x, dynamicOffset.y, 0));
+		shader.transform.scale(_refVec3.set(scale.x, scale.y, 1));
 		if (rotation != 0)
 			shader.transform.rotate(_sinMult, _cosMult, _refVec3.set(0, 0, 1));
 		shader.transform.translate(_refVec3.set(
-			position.x + positionOffset.x + width * anchorX,
-			position.y + positionOffset.y + height * anchorY,
+			position.x + renderOffset.x,
+			position.y + renderOffset.y,
 			0
 		));
 		shader.setUniform("transform", shader.transform);
@@ -118,6 +119,16 @@ class Sprite {
 		);
 	}
 
+	public function calcRenderOffset(parentScale:Vector2, parentSin:Float, parentCos:Float) {
+		renderOffset.copyFrom(positionOffset);
+		if (!memberOf.skipProperties)
+			renderOffset.multiplyEq(parentScale);
+		renderOffset.x += width * (0.5 - anchor.x);
+		renderOffset.y += height * (0.5 - anchor.y);
+		if (!memberOf.skipProperties)
+			renderOffset.rotate(parentSin, parentCos);
+	}
+
 	function updateTrigValues() {
 		final radians = MathExtras.toRad(rotation);
 		_cosMult = Math.cos(radians);
@@ -126,16 +137,20 @@ class Sprite {
 	}
 
 	function offScreen():Bool {
-		final offsetX:Float = (dynamicOffset.x * scale.x * _cosMult - dynamicOffset.y * scale.y * _sinMult) + positionOffset.x;
-		final offsetY:Float = (dynamicOffset.x * scale.x * _sinMult + dynamicOffset.y * scale.y * _cosMult) + positionOffset.y;
-		var width:Float = Math.abs(width);
-		var height:Float = Math.abs(height);
+		final offsetX:Float = (dynamicOffset.x * scale.x * _cosMult - dynamicOffset.y * scale.y * _sinMult) + renderOffset.x;
+		final offsetY:Float = (dynamicOffset.x * scale.x * _sinMult + dynamicOffset.y * scale.y * _cosMult) + renderOffset.y;
+		var width:Float = width;
+		var height:Float = height;
 		// TODO: get the proper formula for proper sizes.
 		// width = (width * _cosMult - height * _sinMult);
 		// height = (this.width * _sinMult + height * _cosMult);
+		final left:Float = position.x + offsetX - width * anchor.x;
+		final right:Float = position.x + offsetX + width * (1.0 - anchor.x);
+		final top:Float = position.y + offsetY - height * anchor.y;
+		final bottom:Float = position.y + offsetY + height * (1.0 - anchor.y);
 
-		final offScreenX:Bool = (position.x + offsetX - width * anchor.x > Game.window.width) || (position.x + offsetX + width * (1 - anchor.x) < 0);
-		final offScreenY:Bool = (position.y + offsetY - height * anchor.y > Game.window.height) || (position.y + offsetY + height * (1 - anchor.y) < 0);
+		final offScreenX:Bool = (Math.min(left, right) > Game.window.width) || (Math.max(left, right) < 0);
+		final offScreenY:Bool = (Math.min(top, bottom) > Game.window.height) || (Math.max(top, bottom) < 0);
 
 		return offScreenX || offScreenY;
 	}
@@ -170,11 +185,11 @@ class Sprite {
 	}
 
 	function get_sourceWidth():Float {
-		return ((sourceRect.width < 0) ? texture.width : sourceRect.width) - sourceRect.x;
+		return (sourceRect.width < 0) ? texture.width : sourceRect.width;
 	}
 
 	function get_sourceHeight():Float {
-		return ((sourceRect.height < 0) ? texture.height : sourceRect.height) - sourceRect.y;
+		return (sourceRect.height < 0) ? texture.height : sourceRect.height;
 	}
 
 	inline function get_shader():Shader {

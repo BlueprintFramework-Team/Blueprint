@@ -24,12 +24,12 @@ class Window {
 
 	private function set_clearColor(value:Vector4):Vector4 {
 		Glad.clearColor(value.r * value.a, value.g * value.a, value.b * value.a, value.a);
-		return value;
+		return clearColor = value;
 	}
 
 	private function set_vSync(value:Bool):Bool {
 		Glfw.swapInterval(value ? Glfw.TRUE : Glfw.FALSE);
-		return value;
+		return vSync = value;
 	}
 
 	public function new(width:Int, height:Int, name:String) {

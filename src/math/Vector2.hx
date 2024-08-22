@@ -91,6 +91,19 @@ class Vector2Base {
 	public inline function copyFrom(vec:Vector2Base):Vector2Base
         return setFull(vec.x, vec.y);
 
+	public inline function radRotate(radians:Float) {
+		var sin = Math.sin(radians);
+		var cos = Math.cos(radians);
+		return rotate(sin, cos);
+	}
+
+    public inline function rotate(sin:Float, cos:Float) {
+        return setFull(
+            x * cos - y * sin,
+            x * sin + y * cos
+        );
+    }
+
 	/**
 	 * Converts the vector into a c array, mainly used for OpenGL Shaders.
 	 * 

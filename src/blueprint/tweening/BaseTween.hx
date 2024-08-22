@@ -26,7 +26,7 @@ class BaseTween {
         enabled = false;
         if (nextTween != null)
             nextTween.start(0.0);
-        curTime = 0.0;
+        curTime = duration + delay;
         finished.emit(this);
     }
 
@@ -45,6 +45,12 @@ class BaseTween {
         curTime = time;
         updatePercent(0.0);
         enabled = true;
+    }
+
+    public function rewind() {
+        curTime = (duration + delay) - curTime;
+        enabled = true;
+        reverse = !reverse;
     }
 
     public function reset() {

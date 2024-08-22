@@ -1,5 +1,6 @@
 package blueprint.objects;
 
+import math.Vector2;
 import haxe.io.Path;
 import sys.FileSystem;
 
@@ -88,6 +89,7 @@ class AnimatedSprite extends Sprite {
 		animFinished = false;
 
 		if (animData.exists(curAnim)) {
+			curFrame = animData[curAnim].indexes[0];
 			animWidth = animData[curAnim].width;
 			animHeight = animData[curAnim].height;
 		}
@@ -106,33 +108,36 @@ class AnimatedSprite extends Sprite {
 
 			animTime = (data.loop) ? (animTime + Game.elapsed) % data.length : Math.min(animTime + Game.elapsed, data.length);
 			animFinished = (animTime >= data.length && !data.loop);
+			curFrame = data.indexes[Math.floor(animTime * data.fps)];
 			if (animFinished && !alreadyFinished)
 				finished.emit(curAnim);
-			curFrame = data.indexes[Math.floor(animTime * data.fps)];
 		}
 		
 		texture = frames[curFrame].texture;
 		super.draw();
 	}
 
-	override function prepareShaderVars(anchorX:Float, anchorY:Float) {
+	override function prepareShaderVars() {
 		final frame = (frames == null || frames.length <= 0) ? backupFrame : frames[curFrame];
 		final uMult = bindings.CppHelpers.boolToInt(flipX);
 		final vMult = bindings.CppHelpers.boolToInt(flipY);
 
 		final sourceWidth = sourceWidth; // so im not constantly calling the setters.
 		final sourceHeight = sourceHeight;
-		final width = width;
-		final height = height;
 
 		shader.transform.reset(1.0);
-		shader.transform.translate(Sprite._refVec3.set((dynamicOffset.x + frame.offsetX) / sourceWidth, (dynamicOffset.y + frame.offsetY) / sourceHeight, 0));
-		shader.transform.scale(Sprite._refVec3.set(width, height, 1));
+		shader.transform.scale(Sprite._refVec3.set(sourceWidth, sourceHeight, 1));
+		shader.transform.translate(Sprite._refVec3.set(
+			dynamicOffset.x + frame.offsetX,
+			dynamicOffset.y + frame.offsetY,
+			0
+		));
+		shader.transform.scale(Sprite._refVec3.set(scale.x, scale.y, 1));
 		if (rotation != 0)
 			shader.transform.rotate(_sinMult, _cosMult, Sprite._refVec3.set(0, 0, 1));
 		shader.transform.translate(Sprite._refVec3.set(
-			position.x + positionOffset.x + width * 0.5 - ((animWidth - sourceRect.x) * scale.x) * anchor.x,
-			position.y + positionOffset.y + height * 0.5 - ((animHeight - sourceRect.y) * scale.y) * anchor.y,
+			position.x + renderOffset.x,
+			position.y + renderOffset.y,
 			0
 		));
 		shader.setUniform("transform", shader.transform);
@@ -144,6 +149,16 @@ class AnimatedSprite extends Sprite {
 			((sourceRect.x + frame.sourceX) + sourceWidth * (1 - uMult)) / texture.width,
 			((sourceRect.y + frame.sourceY) + sourceHeight * (1 - vMult)) / texture.height
 		);
+	}
+
+	override function calcRenderOffset(parentScale:Vector2, parentSin:Float, parentCos:Float) {
+		renderOffset.copyFrom(positionOffset);
+		if (!memberOf.skipProperties)
+			renderOffset.multiplyEq(parentScale);
+		renderOffset.x += width * 0.5 - ((animWidth - sourceRect.x) * scale.x) * anchor.x;
+		renderOffset.y += height * 0.5 - ((animHeight - sourceRect.y) * scale.y) * anchor.y;
+		if (!memberOf.skipProperties)
+			renderOffset.rotate(parentSin, parentCos);
 	}
 
 	override function get_sourceWidth():Float {

@@ -60,29 +60,16 @@ class Group extends Sprite {
 		for (object in members) {
 			final ogX = object.position.x;
 			final ogY = object.position.y;
-			final ogOffX = object.positionOffset.x;
-			final ogOffY = object.positionOffset.y;
 			final ogScaleX = object.scale.x;
 			final ogScaleY = object.scale.y;
 			final width = object.width;
 			final height = object.height;
-
-			if (rotation != 0) {
-				object.position *= _cosMult;
-				// man i need to find a better way to fix anchoring with rotated groups.
-				// this is just..... duct tape glore.
-				object.position.x += ogY * -_sinMult + width * (object.anchor.x - 0.5);
-				object.position.y += ogX * _sinMult + height * (object.anchor.y - 0.5);
-				object.position.x += (width * (0.5 - object.anchor.x) * _cosMult - height * (0.5 - object.anchor.y) * _sinMult);
-				object.position.y += (width * (0.5 - object.anchor.x) * _sinMult + height * (0.5 - object.anchor.y) * _cosMult);
-				object.positionOffset.x = ogOffX * _cosMult - ogOffY * _sinMult;
-				object.positionOffset.y = ogOffX * _sinMult + ogOffY * _cosMult;
-			}
+			
+			if (rotation != 0)
+				object.position.rotate(_sinMult, _cosMult);
 			object.position *= scale;
-			object.position.x += position.x * positionFactor.x;
-			object.position.y += position.y * positionFactor.y;
-			object.positionOffset *= scale;
-
+			object.position.x += position.x * positionFactor.x + positionOffset.x;
+			object.position.y += position.y * positionFactor.y + positionOffset.y;
 			object.scale *= scale;
 
 			@:bypassAccessor object.rotation += rotation;
@@ -93,7 +80,6 @@ class Group extends Sprite {
 			object.draw();
 
 			object.position.set(ogX, ogY);
-			object.positionOffset.set(ogOffX, ogOffY);
 			object.scale.set(ogScaleX, ogScaleY);
 			@:bypassAccessor object.rotation -= rotation;
 			object.tint /= tint;
@@ -102,6 +88,7 @@ class Group extends Sprite {
 
 	function hasDefaultProps():Bool {
 		return (position.x == 0.0 && position.y == 0.0)
+			&& (positionOffset.x == 0.0 && positionOffset.y == 0.0)
 			&& (scale.x == 1.0 && scale.y == 1.0)
 			&& rotation == 0
 			&& (tint.r == 1.0 && tint.g == 1.0 && tint.b == 1.0 && tint.a == 1.0);

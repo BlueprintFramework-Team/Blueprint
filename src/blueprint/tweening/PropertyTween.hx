@@ -27,7 +27,7 @@ class PropertyTween extends BaseTween {
         }
 
         updatePercent(elapsed);
-        if (!complete && curTime >= delay) {
+        if (curTime >= delay) {
             for (prop in tweenData)
                 Reflect.setProperty(prop.target, prop.prop, MathExtras.lerpValue(prop.start, prop.end, percent));
         }

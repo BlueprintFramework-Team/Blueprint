@@ -8,6 +8,8 @@ class Signal<T:Function> {
     public function new() {}
 
     public function emit(...params:Dynamic) {
+        if (funcsToCall.length <= 0) return;
+
         var params:Array<Dynamic> = params.toArray();
 
         var i:Int = 0;
