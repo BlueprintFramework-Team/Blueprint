@@ -66,7 +66,10 @@ class Sprite {
 		if (_queueTrig)
 			updateTrigValues();
 
-		calcRenderOffset(memberOf.scale, memberOf._sinMult, memberOf._cosMult);
+		if (memberOf != null && !memberOf.skipProperties)
+			calcRenderOffset(memberOf.scale, memberOf._sinMult, memberOf._cosMult);
+		else 
+			calcRenderOffset(null, null, null);
 		if (offScreen())
 			return;
 
@@ -119,13 +122,13 @@ class Sprite {
 		);
 	}
 
-	public function calcRenderOffset(parentScale:Vector2, parentSin:Float, parentCos:Float) {
+	public function calcRenderOffset(?parentScale:Vector2, ?parentSin:Float, ?parentCos:Float) {
 		renderOffset.copyFrom(positionOffset);
-		if (!memberOf.skipProperties)
+		if (parentScale != null)
 			renderOffset.multiplyEq(parentScale);
 		renderOffset.x += width * (0.5 - anchor.x);
 		renderOffset.y += height * (0.5 - anchor.y);
-		if (!memberOf.skipProperties)
+		if (parentSin != null && parentCos != null)
 			renderOffset.rotate(parentSin, parentCos);
 	}
 
@@ -167,7 +170,7 @@ class Sprite {
 		if (memberOf != null)
 			memberOf.remove(this);
 		if (parent != null)
-			memberOf.add(this);
+			parent.add(this);
 		return memberOf = parent;
 	}
 

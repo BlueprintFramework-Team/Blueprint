@@ -26,9 +26,9 @@ class Group extends Sprite {
 
 		if (index > -1) {
 			members.splice(index, 1);
+			@:bypassAccessor object.memberOf = null;
 			return true;
 		}
-		@:bypassAccessor object.memberOf = null;
 		return false;
 	}
 
@@ -57,6 +57,10 @@ class Group extends Sprite {
 		if (queueTrig)
 			updateTrigValues();
 
+		if (memberOf != null && !memberOf.skipProperties)
+			calcRenderOffset(memberOf.scale, memberOf._sinMult, memberOf._cosMult);
+		else 
+			calcRenderOffset(null, null, null);
 		for (object in members) {
 			final ogX = object.position.x;
 			final ogY = object.position.y;
@@ -68,8 +72,8 @@ class Group extends Sprite {
 			if (rotation != 0)
 				object.position.rotate(_sinMult, _cosMult);
 			object.position *= scale;
-			object.position.x += position.x * positionFactor.x + positionOffset.x;
-			object.position.y += position.y * positionFactor.y + positionOffset.y;
+			object.position.x += position.x * positionFactor.x + renderOffset.x;
+			object.position.y += position.y * positionFactor.y + renderOffset.y;
 			object.scale *= scale;
 
 			@:bypassAccessor object.rotation += rotation;
@@ -84,6 +88,14 @@ class Group extends Sprite {
 			@:bypassAccessor object.rotation -= rotation;
 			object.tint /= tint;
 		}
+	}
+
+	override function calcRenderOffset(?parentScale:Vector2, ?parentSin:Float, ?parentCos:Float) {
+		renderOffset.copyFrom(positionOffset);
+		if (parentScale != null)
+			renderOffset.multiplyEq(parentScale);
+		if (parentSin != null && parentCos != null)
+			renderOffset.rotate(parentSin, parentCos);
 	}
 
 	function hasDefaultProps():Bool {

@@ -151,13 +151,13 @@ class AnimatedSprite extends Sprite {
 		);
 	}
 
-	override function calcRenderOffset(parentScale:Vector2, parentSin:Float, parentCos:Float) {
+	override function calcRenderOffset(?parentScale:Vector2, ?parentSin:Float, ?parentCos:Float) {
 		renderOffset.copyFrom(positionOffset);
-		if (!memberOf.skipProperties)
+		if (parentScale != null)
 			renderOffset.multiplyEq(parentScale);
 		renderOffset.x += width * 0.5 - ((animWidth - sourceRect.x) * scale.x) * anchor.x;
 		renderOffset.y += height * 0.5 - ((animHeight - sourceRect.y) * scale.y) * anchor.y;
-		if (!memberOf.skipProperties)
+		if (parentSin != null && parentCos != null)
 			renderOffset.rotate(parentSin, parentCos);
 	}
 

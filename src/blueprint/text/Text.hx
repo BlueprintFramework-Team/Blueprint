@@ -61,7 +61,11 @@ class Text extends blueprint.objects.Sprite {
 			updateTrigValues();
 		if (_queueSize)
 			updateTextSize();
-		calcRenderOffset(memberOf.scale, memberOf._sinMult, memberOf._cosMult);
+
+		if (memberOf != null && !memberOf.skipProperties)
+			calcRenderOffset(memberOf.scale, memberOf._sinMult, memberOf._cosMult);
+		else 
+			calcRenderOffset(null, null, null);
 
 		Glad.useProgram(shader.ID);
 		shader.setUniform("tint", tint);
