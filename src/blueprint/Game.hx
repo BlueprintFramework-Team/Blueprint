@@ -6,7 +6,8 @@ import cpp.Callable;
 
 import bindings.Glad;
 import bindings.Glfw;
-import bindings.Freetype;
+import bindings.freetype.Freetype;
+import bindings.freetype.FreetypeStroker;
 import bindings.audio.ALC;
 
 import math.Matrix4x4;
@@ -70,7 +71,7 @@ class Game {
             float uvToPixels(void) {
                 vec2 unitRange = vec2(fontSize) / vec2(textureSize(bitmap, 0));
                 vec2 screenTexSize = vec2(1.0) / fwidth(TexCoord);
-                return max(0.5 * dot(unitRange, screenTexSize), 1.0);
+                return max(0.25 * dot(unitRange, screenTexSize), 1.0);
             }
 
             void main(void) {
@@ -79,8 +80,24 @@ class Game {
                 float pixelDistance = uvToPixels() * (distance - 0.5);
                 float alpha = clamp(pixelDistance + 0.5, 0.0, 1.0);
                 
-                FragColor = vec4(tint.rgb, tint.a * alpha);
+                FragColor = tint;
+				FragColor.a *= alpha;
             }
+		", Shader.defaultVertexSource);
+		Text.defaultShaderNoSDF = new Shader("
+			#version 330 core
+			out vec4 FragColor;
+			in vec2 TexCoord;
+
+			uniform vec4 tint;
+			uniform sampler2D bitmap;
+
+			uniform int fontSize;
+
+			void main(void) {
+				FragColor = tint;
+				FragColor.a *= texture(bitmap, TexCoord).r;
+			}
 		", Shader.defaultVertexSource);
 		AnimatedSprite.backupFrame = {
 			name: "BACKUP FRAME",
@@ -93,6 +110,7 @@ class Game {
 			offsetY: 0
 		};
 		Freetype.init(RawPointer.addressOf(Font.library));
+		FreetypeStroker.init(Font.library, RawPointer.addressOf(Font.stroker));
 
 		currentScene = Type.createInstance(startScene, []);
 

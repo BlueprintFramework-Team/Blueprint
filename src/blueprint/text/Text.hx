@@ -1,6 +1,7 @@
 package blueprint.text;
 
 import math.Vector2;
+import math.Vector4;
 
 import bindings.Glad;
 import bindings.CppHelpers;
@@ -14,6 +15,7 @@ import blueprint.text.Font;
  *	- Allow Field Widths
  *  - Allow flipX, flipY
  *  - Allow sourceRect
+ *  - Allow MSDFs for outlines
  */
 
 enum abstract TextAlignment(cpp.Int8) from cpp.Int8 to cpp.Int8 {
@@ -23,10 +25,15 @@ enum abstract TextAlignment(cpp.Int8) from cpp.Int8 to cpp.Int8 {
 }
 
 class Text extends blueprint.objects.Sprite {
-	public static var textQuality(default, set):Int = 4;
+	public static var textQuality:Int = 4;
 	public static var autoPreloadSizes:Bool = true;
 	public static var defaultShader:Shader;
-	static var qualityFract:Float = 1 / textQuality;
+	public static var defaultShaderNoSDF:Shader;
+
+	public var smoothing(default, set):Bool = true;
+	public var quality(default, set):Int;
+	var _qualityFract:Float;
+	var _oldStatQuality:Int;
 
 	var _queueSize:Bool = true;
 	var _lineWidths:Array<Float> = [];
@@ -37,7 +44,11 @@ class Text extends blueprint.objects.Sprite {
 	public var size(default, set):Int;
 	public var alignment:TextAlignment = LEFT;
 
-	var letter:FontTexture;
+	public var outline:Int = 0;
+	public var outlineTint:Color = new Color(0.0, 0.0, 0.0, 1.0);
+
+	var letter:FontTexture = null;
+	var outlineRef:OutlineRef = null;
 	var transLoc:Int;
 	var scaledSize:Int;
 	var curX:Float;
@@ -46,16 +57,23 @@ class Text extends blueprint.objects.Sprite {
 	public function new(x:Float, y:Float, fontPath:String, fontSize:Int, text:String) {
 		super(x, y);
 		shader = Text.defaultShader;
-
+		quality = _oldStatQuality = textQuality;
+		
 		font = Font.getCachedFont(fontPath);
 		size = fontSize;
 		if (autoPreloadSizes && font != null)
-			font.preloadSize(fontSize);
+			font.preloadSize(fontSize * quality);
 		this.text = text;
 	}
 
 	override public function draw() {
 		if (font == null) return;
+
+		if (_oldStatQuality != textQuality) {
+			if (quality == _oldStatQuality)
+				quality = textQuality;
+			_oldStatQuality = textQuality;
+		}
 
 		if (_queueTrig)
 			updateTrigValues();
@@ -68,22 +86,45 @@ class Text extends blueprint.objects.Sprite {
 			calcRenderOffset(null, null, null);
 
 		Glad.useProgram(shader.ID);
-		shader.setUniform("tint", tint);
 		shader.setUniform("fontSize", size);
 		Glad.uniform4f(Glad.getUniformLocation(shader.ID, "sourceRect"), 0, 0, 1, 1);
 		transLoc = Glad.getUniformLocation(shader.ID, "transform");
-		scaledSize = Math.floor(size * textQuality);
+		scaledSize = Math.floor(size * quality);
 
-		curX = (_textWidth - _lineWidths[0]) * (alignment * 0.5) * textQuality;
+		if (outline > 0) {
+			shader.setUniform("tint", outlineTint);
+			curX = (_textWidth - _lineWidths[0]) * (alignment * 0.5) * quality;
+			lineNum = 0;
+			for (i in 0...text.length) {
+				if (text.charAt(i) == '\n') {
+					lineNum++;
+					curX = (_textWidth - _lineWidths[lineNum]) * (alignment * 0.5) * quality;
+					continue;
+				}
+	
+				outlineRef = font.getOutline(text.charCodeAt(i), scaledSize, outline * quality, smoothing);
+				prepareTexture(outlineRef.texture);
+				prepareShaderVars();
+	
+				Glad.bindVertexArray(Game.window.VAO);
+				Glad.drawElements(Glad.TRIANGLES, 6, Glad.UNSIGNED_INT, 0);
+	
+				curX += outlineRef.parent.advance >> 6;
+			}
+			outlineRef = null;
+		}
+
+		shader.setUniform("tint", tint);
+		curX = (_textWidth - _lineWidths[0]) * (alignment * 0.5) * quality;
 		lineNum = 0;
 		for (i in 0...text.length) {
 			if (text.charAt(i) == '\n') {
 				lineNum++;
-				curX = (_textWidth - _lineWidths[lineNum]) * (alignment * 0.5) * textQuality;
+				curX = (_textWidth - _lineWidths[lineNum]) * (alignment * 0.5) * quality;
 				continue;
 			}
 
-			letter = font.getLetter(text.charCodeAt(i), scaledSize);
+			letter = font.getLetter(text.charCodeAt(i), scaledSize, smoothing);
 			prepareTexture(letter.texture);
 			prepareShaderVars();
 
@@ -92,17 +133,21 @@ class Text extends blueprint.objects.Sprite {
 
 			curX += letter.advance >> 6;
 		}
+		letter = null;
 	}
 
 	override function prepareShaderVars() {
+		final texture = (letter == null) ? outlineRef.texture : letter.texture;
+		final data = (letter == null) ? outlineRef.parent : letter;
+
 		shader.transform.reset(1.0);
 		shader.transform.translate(Sprite._refVec3.set(
-			((curX + letter.bearingX) + (letter.texture.width * 0.5) - (_textWidth * 0.5 * textQuality) + (dynamicOffset.x * textQuality)) / letter.texture.width,
-			((scaledSize * lineNum + scaledSize) + (letter.texture.height - letter.bearingY) - (letter.texture.height * 0.5) - (_textHeight * 0.5 * textQuality) + (dynamicOffset.y * textQuality)) / letter.texture.height,
+			((curX + data.bearingX) + (texture.width * 0.5) - (_textWidth * 0.5 * quality) + (dynamicOffset.x * quality) - (texture.width - data.texture.width) * 0.5) / texture.width,
+			((scaledSize * lineNum + scaledSize) + (texture.height - data.bearingY) - (texture.height * 0.5) - (_textHeight * 0.5 * quality) + (dynamicOffset.y * quality) - (texture.height - data.texture.height) * 0.5) / texture.height,
 			0
 		));
-		final letterWidth = letter.texture.width * scale.x * qualityFract;
-		final letterHeight = letter.texture.height * scale.y * qualityFract;
+		final letterWidth = texture.width * scale.x * _qualityFract;
+		final letterHeight = texture.height * scale.y * _qualityFract;
 		shader.transform.scale(Sprite._refVec3.set(letterWidth, letterHeight, 1));
 		if (rotation != 0)
 			shader.transform.rotate(_sinMult, _cosMult, Sprite._refVec3.set(0, 0, 1));
@@ -137,7 +182,7 @@ class Text extends blueprint.objects.Sprite {
 				continue;
 			}
 
-			final letter = font.getLetter(text.charCodeAt(i), size);
+			final letter = font.getLetter(text.charCodeAt(i), size, smoothing);
 
 			curWidth += letter.advance >> 6;
 			_textWidth = Math.max(curWidth, _textWidth);
@@ -172,9 +217,18 @@ class Text extends blueprint.objects.Sprite {
 		return _textHeight;
 	}
 
-	static function set_textQuality(newQual:Int) {
+	function set_smoothing(newSmooth:Bool) {
+		if (shader == defaultShader && !newSmooth)
+			shader = defaultShaderNoSDF;
+		else if (shader == defaultShaderNoSDF && newSmooth)
+			shader = defaultShader;
+
+		return smoothing = newSmooth;
+	}
+
+	function set_quality(newQual:Int) {
 		newQual = Math.floor(Math.max(newQual, 1));
-		qualityFract = 1 / newQual;
-		return textQuality = newQual;
+		_qualityFract = 1 / newQual;
+		return quality = newQual;
 	}
 }
