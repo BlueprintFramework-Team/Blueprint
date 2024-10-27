@@ -18,10 +18,16 @@ import blueprint.text.Font;
  *  - Allow MSDFs for outlines
  */
 
-enum abstract TextAlignment(cpp.Int8) from cpp.Int8 to cpp.Int8 {
-	var LEFT = 0;
-	var MIDDLE = 1;
-	var RIGHT = 2;
+enum TextAlignment {
+	Left;
+	Middle;
+	Center; // why not
+	Right;
+	// a bit of Backwards Compactibility
+	LEFT;
+	MIDDLE;
+	CENTER;
+	RIGHT;
 }
 
 class Text extends blueprint.objects.Sprite {
@@ -32,17 +38,19 @@ class Text extends blueprint.objects.Sprite {
 
 	public var smoothing(default, set):Bool = true;
 	public var quality(default, set):Int;
+	var _smoothingMult:Float = 0.5;
 	var _qualityFract:Float;
 	var _oldStatQuality:Int;
 
 	var _queueSize:Bool = true;
+	var _lineMult:Float = 0;
 	var _lineWidths:Array<Float> = [];
 	var _textWidth:Float;
 	var _textHeight:Float;
 	public var font(default, set):Font;
 	public var text(default, set):String;
 	public var size(default, set):Int;
-	public var alignment:TextAlignment = LEFT;
+	public var alignment(default, set):TextAlignment = LEFT;
 
 	public var outline:Int = 0;
 	public var outlineTint:Color = new Color(0.0, 0.0, 0.0, 1.0);
@@ -87,18 +95,19 @@ class Text extends blueprint.objects.Sprite {
 
 		Glad.useProgram(shader.ID);
 		shader.setUniform("fontSize", size);
+		shader.setUniform("smoothingMult", _smoothingMult);
 		Glad.uniform4f(Glad.getUniformLocation(shader.ID, "sourceRect"), 0, 0, 1, 1);
 		transLoc = Glad.getUniformLocation(shader.ID, "transform");
 		scaledSize = Math.floor(size * quality);
 
 		if (outline > 0) {
 			shader.setUniform("tint", outlineTint);
-			curX = (_textWidth - _lineWidths[0]) * (alignment * 0.5) * quality;
+			curX = (_textWidth - _lineWidths[0]) * _lineMult * quality;
 			lineNum = 0;
 			for (i in 0...text.length) {
 				if (text.charAt(i) == '\n') {
 					lineNum++;
-					curX = (_textWidth - _lineWidths[lineNum]) * (alignment * 0.5) * quality;
+					curX = (_textWidth - _lineWidths[lineNum]) * _lineMult * quality;
 					continue;
 				}
 	
@@ -115,12 +124,12 @@ class Text extends blueprint.objects.Sprite {
 		}
 
 		shader.setUniform("tint", tint);
-		curX = (_textWidth - _lineWidths[0]) * (alignment * 0.5) * quality;
+		curX = (_textWidth - _lineWidths[0]) * _lineMult * quality;
 		lineNum = 0;
 		for (i in 0...text.length) {
 			if (text.charAt(i) == '\n') {
 				lineNum++;
-				curX = (_textWidth - _lineWidths[lineNum]) * (alignment * 0.5) * quality;
+				curX = (_textWidth - _lineWidths[lineNum]) * _lineMult * quality;
 				continue;
 			}
 
@@ -202,7 +211,23 @@ class Text extends blueprint.objects.Sprite {
 
 	function set_size(newSize:Int):Int {
 		_queueSize = _queueSize || (size != newSize);
+		_smoothingMult = 6 / Math.abs(newSize); // dont think anybody would be doing negative size but yunno.
 		return size = newSize;
+	}
+
+	function set_alignment(newAlign:TextAlignment) {
+		switch (newAlign) {
+			case Left | LEFT:
+				_lineMult = 0;
+				alignment = Left;
+			case Middle | Center | MIDDLE | CENTER:
+				_lineMult = 0.5;
+				alignment = Center;
+			case Right | RIGHT:
+				_lineMult = 1.0;
+				alignment = Right;
+		}
+		return alignment;
 	}
 
 	override function get_sourceWidth():Float {

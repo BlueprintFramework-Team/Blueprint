@@ -67,11 +67,12 @@ class Game {
             // :)
 
             uniform int fontSize;
+			uniform float smoothingMult;
 
             float uvToPixels(void) {
                 vec2 unitRange = vec2(fontSize) / vec2(textureSize(bitmap, 0));
                 vec2 screenTexSize = vec2(1.0) / fwidth(TexCoord);
-                return max(0.25 * dot(unitRange, screenTexSize), 1.0);
+                return max(smoothingMult * dot(unitRange, screenTexSize), 1.0);
             }
 
             void main(void) {
@@ -92,7 +93,9 @@ class Game {
 			uniform vec4 tint;
 			uniform sampler2D bitmap;
 
+			// unused when theres no smoothing
 			uniform int fontSize;
+			uniform float smoothingMult;
 
 			void main(void) {
 				FragColor = tint;
