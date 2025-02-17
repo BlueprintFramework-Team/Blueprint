@@ -6,8 +6,11 @@ import math.Vector2;
 import math.MathExtras;
 
 import blueprint.objects.Sprite;
+import blueprint.objects.Camera;
 
 class Group extends Sprite {
+	var cacheTransform:QueuedDraw = new QueuedDraw(); // Sprite also uses cacheTransform so I can't really use Camera.cacheTransform.
+
 	public var positionFactor:Vector2 = new Vector2(1.0);
 	public var members:Array<Sprite> = [];
 	public var skipProperties:Bool = false;
@@ -46,10 +49,14 @@ class Group extends Sprite {
 			object.update(elapsed);
 	}
 
-	override public function draw():Void {
+	override public function queueDraw() {
+		final lastCameras = Camera.currentCameras;
+		Camera.currentCameras = (cameras != null && cameras.length > 0) ? cameras : lastCameras;
+
 		if (skipProperties || hasDefaultProps()) {
 			for (object in members)
-				object.draw();
+				object.queueDraw();
+			Camera.currentCameras = lastCameras;
 			return;
 		}
 
@@ -62,13 +69,14 @@ class Group extends Sprite {
 		else 
 			calcRenderOffset(null, null, null);
 		for (object in members) {
-			final ogX = object.position.x;
-			final ogY = object.position.y;
-			final ogScaleX = object.scale.x;
-			final ogScaleY = object.scale.y;
-			final width = object.width;
-			final height = object.height;
+			final ogParaX = object.parallax.x;
+			final ogParaY = object.parallax.y;
+			final ogParaZoom = object.zoomFactor;
+			cacheTransform.set(null, object.position, object.renderOffset, object.scale, 0, 1, object.tint);
 			
+			object.parallax *= parallax;
+			object.zoomFactor *= zoomFactor;
+
 			if (rotation != 0)
 				object.position.rotate(_sinMult, _cosMult);
 			object.position *= scale;
@@ -81,13 +89,17 @@ class Group extends Sprite {
 
 			object.tint *= tint;
 
-			object.draw();
+			object.queueDraw();
 
-			object.position.set(ogX, ogY);
-			object.scale.set(ogScaleX, ogScaleY);
+			object.parallax.setFull(ogParaX, ogParaY);
+			object.zoomFactor = ogParaZoom;
+            object.position.copyFrom(cacheTransform.position);
+            object.scale.copyFrom(cacheTransform.scale);
+            object.tint.copyFrom(cacheTransform.tint);
 			@:bypassAccessor object.rotation -= rotation;
-			object.tint /= tint;
 		}
+
+		Camera.currentCameras = lastCameras;
 	}
 
 	override function calcRenderOffset(?parentScale:Vector2, ?parentSin:Float, ?parentCos:Float) {
@@ -102,8 +114,10 @@ class Group extends Sprite {
 		return (position.x == 0.0 && position.y == 0.0)
 			&& (positionOffset.x == 0.0 && positionOffset.y == 0.0)
 			&& (scale.x == 1.0 && scale.y == 1.0)
-			&& rotation == 0
-			&& (tint.r == 1.0 && tint.g == 1.0 && tint.b == 1.0 && tint.a == 1.0);
+			&& rotation == 0.0
+			&& (tint.r == 1.0 && tint.g == 1.0 && tint.b == 1.0 && tint.a == 1.0)
+			&& (parallax.x == 1.0 && parallax.y == 1.0)
+			&& zoomFactor == 1.0;
 	}
 
 	override function destroy() {

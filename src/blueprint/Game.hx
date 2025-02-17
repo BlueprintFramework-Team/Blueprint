@@ -13,6 +13,7 @@ import bindings.audio.ALC;
 import math.Matrix4x4;
 
 import blueprint.Scene;
+import blueprint.objects.Camera;
 import blueprint.objects.Sprite;
 import blueprint.objects.AnimatedSprite;
 import blueprint.graphics.Texture;
@@ -136,6 +137,7 @@ class Game {
 		Texture.clearCache();
 		AnimatedSprite.clearCache();
 		Font.clearCache();
+		Camera.clearCameras();
 
 		window.destroy();
 		mixer.destroy();
@@ -154,6 +156,7 @@ class Game {
 			AnimatedSprite.clearCache();
 			Font.clearCache();
 			BaseTween.curTweens.splice(0, BaseTween.curTweens.length);
+			Camera.clearCameras();
 
 			currentScene = Type.createInstance(queuedSceneChange, queuedSceneParams);
 			queuedSceneChange = null;
@@ -173,9 +176,14 @@ class Game {
 		currentScene.update(elapsed);
 		BaseTween.updateTweens(elapsed);
 
+		for (cam in Camera.allCameras)
+			cam.update(elapsed);
+		currentScene.queueDraw();
+
 		Glad.clear(Glad.COLOR_BUFFER_BIT);
 
-		currentScene.draw();
+		for (cam in Camera.allCameras)
+			cam.drawQueues();
 
 		Glfw.swapBuffers(window.cWindow);
 		Glfw.makeContextCurrent(null);

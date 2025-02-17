@@ -13,12 +13,18 @@ import blueprint.graphics.Shader;
 /**
  * The base render object. Contains everything used for rendering.
  */
+@:allow(blueprint.objects.Camera)
 class Sprite {
 	public static var defaultShader:Shader;
 	public static var defaultTexture:Texture;
 	static var _refVec3:Vector3 = new Vector3();
+	static var _refVec2:Vector2 = new Vector2();
 
 	public var memberOf(default, set):Group;
+	public var cameras:Array<Camera> = [];
+	public var parallax:Vector2 = new Vector2(1, 1);
+	public var zoomFactor:Float = 1.0;
+	public var targetZoom:Float = 1.0;
 
 	public var position:Vector2;
 	public var positionOffset:Vector2 = new Vector2(0, 0);
@@ -62,7 +68,7 @@ class Sprite {
 
 	public function update(elapsed:Float):Void {}
 
-	public function draw():Void {
+	public function queueDraw() {
 		if (_queueTrig)
 			updateTrigValues();
 
@@ -70,9 +76,54 @@ class Sprite {
 			calcRenderOffset(memberOf.scale, memberOf._sinMult, memberOf._cosMult);
 		else 
 			calcRenderOffset(null, null, null);
-		if (offScreen())
-			return;
 
+		final lastCameras = Camera.currentCameras;
+		Camera.currentCameras = (cameras != null && cameras.length > 0) ? cameras : lastCameras;
+
+		for (cam in Camera.currentCameras) {
+			Camera.cacheTransform.set(null, position, renderOffset, scale, _sinMult, _cosMult, tint);
+			_refVec2.x = MathExtras.lerp(targetZoom, cam.zoom.x, zoomFactor);
+			_refVec2.y = MathExtras.lerp(targetZoom, cam.zoom.y, zoomFactor);
+
+			// -cam.position to make the camera position look additional
+			// as every sprite moves to the right, it looks like the camera is moving to the left
+			position.x += -cam.position.x * parallax.x - Game.window.width * 0.5;
+			position.y += -cam.position.y * parallax.y - Game.window.height * 0.5;
+			position *= _refVec2;
+			renderOffset *= _refVec2;
+
+			if (cam.rotation != 0) {
+				position.rotate(cam._sinMult, cam._cosMult);
+				renderOffset.rotate(cam._sinMult, cam._cosMult);
+	
+				// sin(a + b) and cos(a + b) less go all that precalc is paying off
+				// wait a minute this is just rotated point all over again
+				final cacheSin:Float = _sinMult;
+				_sinMult = cacheSin * cam._cosMult + _cosMult * cam._sinMult;
+				_cosMult = _cosMult * cam._cosMult - cacheSin * cam._sinMult;
+			}
+
+			position.x += Game.window.width * 0.5;
+			position.y += Game.window.height * 0.5;
+
+			scale *= _refVec2;
+			tint *= cam.tint;
+
+			if (!offScreen())
+				cam.queueDraw(this, position, renderOffset, scale, _sinMult, _cosMult, tint);
+
+			position.copyFrom(Camera.cacheTransform.position);
+			renderOffset.copyFrom(Camera.cacheTransform.offset);
+            scale.copyFrom(Camera.cacheTransform.scale);
+			_sinMult = Camera.cacheTransform.sin;
+			_cosMult = Camera.cacheTransform.cos;
+            tint.copyFrom(Camera.cacheTransform.tint);
+		}
+
+		Camera.currentCameras = lastCameras;
+	}
+
+	public function draw():Void {
 		prepareTexture(texture);
 		Glad.useProgram(shader.ID);
 		prepareShaderVars();
@@ -104,7 +155,7 @@ class Sprite {
 		shader.transform.scale(_refVec3.set(sourceWidth, sourceHeight, 1));
 		shader.transform.translate(_refVec3.set(dynamicOffset.x, dynamicOffset.y, 0));
 		shader.transform.scale(_refVec3.set(scale.x, scale.y, 1));
-		if (rotation != 0)
+		if (_sinMult != 0)
 			shader.transform.rotate(_sinMult, _cosMult, _refVec3.set(0, 0, 1));
 		shader.transform.translate(_refVec3.set(
 			position.x + renderOffset.x,

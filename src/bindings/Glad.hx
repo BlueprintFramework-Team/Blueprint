@@ -87,50 +87,29 @@ extern class Glad {
 	 */
 	static inline function bufferFloatArray(target:GlEnum, array:Array<cpp.Float32>, usage:GlEnum, arrayLength:Int):Void {
 		return untyped __cpp__(
-			"float _cArray[{3}];
-			for (int i = 0; i < {0}->length; i++) {
-				_cArray[i] = {0}->__get(i);
-			}
-			glBufferData({1}, sizeof(_cArray), _cArray, {2})",
+			"float* _cArray = ((float*)(cpp::Pointer_obj::ofArray({0}).value));
+			glBufferData({1}, sizeof(float) * {3}, _cArray, {2})",
 		array, target, usage, arrayLength);
 	}
 
-	/**
-	 * NOTE: INSERT A NON-VARIABLE INTERGER FOR `arrayLength`!
-	 */
-	static inline function bufferSubFloatArray(target:GlEnum, offset:GlIntPointer, array:Array<cpp.Float32>, arrayLength:Int):Void {
+	static inline function bufferSubFloatArray(target:GlEnum, offset:GlInt, array:Array<cpp.Float32>, arrayLength:Int):Void {
 		return untyped __cpp__(
-			"float _cArray[{3}];
-			for (int i = 0; i < {0}->length; i++) {
-				_cArray[i] = {0}->__get(i);
-			}
-			glBufferSubData({1}, {2}, sizeof(_cArray), _cArray)",
+			"float* _cArray = ((float*)(cpp::Pointer_obj::ofArray({0}).value));
+			glBufferSubData({1}, {2}, sizeof(float) * {3}, _cArray)",
 		array, target, offset, arrayLength);
 	}
 
-	/**
-	 * NOTE: INSERT A NON-VARIABLE INTERGER FOR `arrayLength`!
-	 */
-	 static inline function bufferIntArray(target:GlEnum, array:Array<cpp.UInt32>, usage:GlEnum, arrayLength:Int):Void {
+	static inline function bufferIntArray(target:GlEnum, array:Array<cpp.UInt32>, usage:GlEnum, arrayLength:Int):Void {
 		return untyped __cpp__(
-			"unsigned int _cArray[{3}];
-			for (int i = 0; i < {0}->length; i++) {
-				_cArray[i] = {0}->__get(i);
-			}
-			glBufferData({1}, sizeof(_cArray), _cArray, {2})",
+			"unsigned int* _cArray = ((unsigned int*)(cpp::Pointer_obj::ofArray({0}).value));
+			glBufferData({1}, sizeof(unsigned int) * {3}, _cArray, {2})",
 		array, target, usage, arrayLength);
 	}
 
-	/**
-	 * NOTE: INSERT A NON-VARIABLE INTERGER FOR `arrayLength`!
-	 */
-	static inline function bufferSubIntArray(target:GlEnum, offset:GlIntPointer, array:Array<cpp.UInt32>, arrayLength:Int):Void {
+	static inline function bufferSubIntArray(target:GlEnum, offset:GlInt, array:Array<cpp.UInt32>, arrayLength:Int):Void {
 		return untyped __cpp__(
-			"unsigned int _cArray[{3}];
-			for (int i = 0; i < {0}->length; i++) {
-				_cArray[i] = {0}->__get(i);
-			}
-			glBufferSubData({1}, {2}, sizeof(_cArray), _cArray)",
+			"unsigned int* _cArray = ((unsigned int*)(cpp::Pointer_obj::ofArray({0}).value));
+			glBufferSubData({1}, {2}, sizeof(unsigned int) * {3}, _cArray)",
 		array, target, offset, arrayLength);
 	}
 

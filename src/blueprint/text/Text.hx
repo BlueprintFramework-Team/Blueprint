@@ -83,15 +83,8 @@ class Text extends blueprint.objects.Sprite {
 			_oldStatQuality = textQuality;
 		}
 
-		if (_queueTrig)
-			updateTrigValues();
 		if (_queueSize)
 			updateTextSize();
-
-		if (memberOf != null && !memberOf.skipProperties)
-			calcRenderOffset(memberOf.scale, memberOf._sinMult, memberOf._cosMult);
-		else 
-			calcRenderOffset(null, null, null);
 
 		Glad.useProgram(shader.ID);
 		shader.setUniform("fontSize", size);
@@ -158,7 +151,7 @@ class Text extends blueprint.objects.Sprite {
 		final letterWidth = texture.width * scale.x * _qualityFract;
 		final letterHeight = texture.height * scale.y * _qualityFract;
 		shader.transform.scale(Sprite._refVec3.set(letterWidth, letterHeight, 1));
-		if (rotation != 0)
+		if (_sinMult != 0)
 			shader.transform.rotate(_sinMult, _cosMult, Sprite._refVec3.set(0, 0, 1));
 		shader.transform.translate(Sprite._refVec3.set(
 			position.x + renderOffset.x,

@@ -95,10 +95,10 @@ class AnimatedSprite extends Sprite {
 		}
 	}
 
-	override function draw() {
+	override function queueDraw() {
 		if (frames == null || frames.length <= 0) {
 			texture = backupFrame.texture;
-			super.draw();
+			super.queueDraw();
 			return;
 		}
 
@@ -114,7 +114,7 @@ class AnimatedSprite extends Sprite {
 		}
 		
 		texture = frames[curFrame].texture;
-		super.draw();
+		super.queueDraw();
 	}
 
 	override function prepareShaderVars() {
@@ -133,7 +133,7 @@ class AnimatedSprite extends Sprite {
 			0
 		));
 		shader.transform.scale(Sprite._refVec3.set(scale.x, scale.y, 1));
-		if (rotation != 0)
+		if (_sinMult != 0)
 			shader.transform.rotate(_sinMult, _cosMult, Sprite._refVec3.set(0, 0, 1));
 		shader.transform.translate(Sprite._refVec3.set(
 			position.x + renderOffset.x,

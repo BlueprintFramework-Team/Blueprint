@@ -1,8 +1,14 @@
 package blueprint;
 
+import blueprint.objects.Camera;
+
 class Scene extends blueprint.objects.Group {
+    public var mainCamera:Camera;
+
     public function new() {
         super();
+        mainCamera = new Camera();
+        cameras = [mainCamera];
     }
 
     /**
