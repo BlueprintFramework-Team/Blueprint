@@ -56,6 +56,7 @@ class Camera {
 	public var targetPosition:Vector2;
 	public var targetLerp:Float = 0.0;
 
+	public var visible:Bool = true;
 	public var position:Vector2;
 	public var zoom:Vector2;
 	public var rotation(default, set):Float = 0.0;
@@ -89,6 +90,11 @@ class Camera {
 	}
 
 	public function drawQueues() {
+		if (!visible || tint.a <= 0.0) {
+			queuedDraws.splice(0, queuedDraws.length);
+			return;
+		}
+		
 		for (queue in queuedDraws) {
 			cacheTransform.set(null, queue.target.position, queue.target.renderOffset, queue.target.scale, queue.target._sinMult, queue.target._cosMult, queue.target.tint);
 

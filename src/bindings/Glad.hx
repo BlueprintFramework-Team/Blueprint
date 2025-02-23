@@ -82,9 +82,6 @@ extern class Glad {
 		return untyped __cpp__("gladLoadGLLoader((GLADloadproc){0})", loadProc);
 	}
 
-	/**
-	 * NOTE: INSERT A NON-VARIABLE INTERGER FOR `arrayLength`!
-	 */
 	static inline function bufferFloatArray(target:GlEnum, array:Array<cpp.Float32>, usage:GlEnum, arrayLength:Int):Void {
 		return untyped __cpp__(
 			"float* _cArray = ((float*)(cpp::Pointer_obj::ofArray({0}).value));

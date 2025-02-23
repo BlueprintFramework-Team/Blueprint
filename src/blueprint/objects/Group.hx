@@ -50,6 +50,8 @@ class Group extends Sprite {
 	}
 
 	override public function queueDraw() {
+		if (!visible || tint.a <= 0.0) return;
+
 		final lastCameras = Camera.currentCameras;
 		Camera.currentCameras = (cameras != null && cameras.length > 0) ? cameras : lastCameras;
 
@@ -69,6 +71,8 @@ class Group extends Sprite {
 		else 
 			calcRenderOffset(null, null, null);
 		for (object in members) {
+			if (!object.visible || object.tint.a <= 0.0) continue;
+
 			final ogParaX = object.parallax.x;
 			final ogParaY = object.parallax.y;
 			final ogParaZoom = object.zoomFactor;

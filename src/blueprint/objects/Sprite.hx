@@ -55,6 +55,7 @@ class Sprite {
 	public var horizontalWrap:Int;
 	public var verticalWrap:Int;
 	public var antialiasing:Bool = true;
+	public var visible:Bool = true;
 
 	public function new(?x:Float = 0, ?y:Float = 0, ?imagePath:String) {
 		position = new Vector2(x, y);
@@ -69,6 +70,8 @@ class Sprite {
 	public function update(elapsed:Float):Void {}
 
 	public function queueDraw() {
+		if (!visible || tint.a <= 0.0) return;
+
 		if (_queueTrig)
 			updateTrigValues();
 
@@ -81,6 +84,8 @@ class Sprite {
 		Camera.currentCameras = (cameras != null && cameras.length > 0) ? cameras : lastCameras;
 
 		for (cam in Camera.currentCameras) {
+			if (!cam.visible || cam.tint.a <= 0.0) continue;
+
 			Camera.cacheTransform.set(null, position, renderOffset, scale, _sinMult, _cosMult, tint);
 			_refVec2.x = MathExtras.lerp(targetZoom, cam.zoom.x, zoomFactor);
 			_refVec2.y = MathExtras.lerp(targetZoom, cam.zoom.y, zoomFactor);
@@ -193,11 +198,14 @@ class Sprite {
 	function offScreen():Bool {
 		final offsetX:Float = (dynamicOffset.x * scale.x * _cosMult - dynamicOffset.y * scale.y * _sinMult) + renderOffset.x;
 		final offsetY:Float = (dynamicOffset.x * scale.x * _sinMult + dynamicOffset.y * scale.y * _cosMult) + renderOffset.y;
+		
 		var width:Float = width;
 		var height:Float = height;
 		// TODO: get the proper formula for proper sizes.
 		// width = (width * _cosMult - height * _sinMult);
 		// height = (this.width * _sinMult + height * _cosMult);
+
+		// Do not apply anchors here. position + offset already takes care of that.
 		final left:Float = position.x + offsetX - width * anchor.x;
 		final right:Float = position.x + offsetX + width * (1.0 - anchor.x);
 		final top:Float = position.y + offsetY - height * anchor.y;

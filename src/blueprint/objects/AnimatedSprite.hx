@@ -96,6 +96,8 @@ class AnimatedSprite extends Sprite {
 	}
 
 	override function queueDraw() {
+		if (!visible || tint.a <= 0.0) return;
+
 		if (frames == null || frames.length <= 0) {
 			texture = backupFrame.texture;
 			super.queueDraw();
@@ -159,6 +161,28 @@ class AnimatedSprite extends Sprite {
 		renderOffset.y += height * 0.5 - ((animHeight - sourceRect.y) * scale.y) * anchor.y;
 		if (parentSin != null && parentCos != null)
 			renderOffset.rotate(parentSin, parentCos);
+	}
+
+	override function offScreen():Bool {
+		final frame = (frames == null || frames.length <= 0) ? backupFrame : frames[curFrame];
+		final dynamX:Float = dynamicOffset.x + frame.offsetX;
+		final dynamY:Float = dynamicOffset.y + frame.offsetY;
+		final offsetX:Float = (dynamX * scale.x * _cosMult - dynamY * scale.y * _sinMult) + renderOffset.x;
+		final offsetY:Float = (dynamX * scale.x * _sinMult + dynamY * scale.y * _cosMult) + renderOffset.y;
+		
+		var width:Float = width;
+		var height:Float = height;
+
+		// Do not apply anchors here. position + offset already takes care of that.
+		final left:Float = position.x + offsetX - width * 0.5;
+		final right:Float = position.x + offsetX + width * 0.5;
+		final top:Float = position.y + offsetY - height * 0.5;
+		final bottom:Float = position.y + offsetY + height * 0.5;
+
+		final offScreenX:Bool = (Math.min(left, right) > Game.window.width) || (Math.max(left, right) < 0);
+		final offScreenY:Bool = (Math.min(top, bottom) > Game.window.height) || (Math.max(top, bottom) < 0);
+
+		return offScreenX || offScreenY;
 	}
 
 	override function get_sourceWidth():Float {
