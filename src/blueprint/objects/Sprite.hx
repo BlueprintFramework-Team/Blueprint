@@ -206,10 +206,10 @@ class Sprite {
 		// height = (this.width * _sinMult + height * _cosMult);
 
 		// Do not apply anchors here. position + offset already takes care of that.
-		final left:Float = position.x + offsetX - width * anchor.x;
-		final right:Float = position.x + offsetX + width * (1.0 - anchor.x);
-		final top:Float = position.y + offsetY - height * anchor.y;
-		final bottom:Float = position.y + offsetY + height * (1.0 - anchor.y);
+		final left:Float = position.x + offsetX - width * 0.5;
+		final right:Float = position.x + offsetX + width * 0.5;
+		final top:Float = position.y + offsetY - height * 0.5;
+		final bottom:Float = position.y + offsetY + height * 0.5;
 
 		final offScreenX:Bool = (Math.min(left, right) > Game.window.width) || (Math.max(left, right) < 0);
 		final offScreenY:Bool = (Math.min(top, bottom) > Game.window.height) || (Math.max(top, bottom) < 0);
