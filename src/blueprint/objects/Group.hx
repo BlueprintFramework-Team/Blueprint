@@ -49,7 +49,7 @@ class Group extends Sprite {
 			object.update(elapsed);
 	}
 
-	override public function queueDraw() {
+	override public function queueDraw():Void {
 		if (!visible || tint.a <= 0.0) return;
 
 		final lastCameras = Camera.currentCameras;
@@ -81,9 +81,9 @@ class Group extends Sprite {
 			object.parallax *= parallax;
 			object.zoomFactor *= zoomFactor;
 
+			object.position *= scale;
 			if (rotation != 0)
 				object.position.rotate(_sinMult, _cosMult);
-			object.position *= scale;
 			object.position.x += position.x * positionFactor.x + renderOffset.x;
 			object.position.y += position.y * positionFactor.y + renderOffset.y;
 			object.scale *= scale;
@@ -106,7 +106,7 @@ class Group extends Sprite {
 		Camera.currentCameras = lastCameras;
 	}
 
-	override function calcRenderOffset(?parentScale:Vector2, ?parentSin:Float, ?parentCos:Float) {
+	override function calcRenderOffset(?parentScale:Vector2, ?parentSin:Float, ?parentCos:Float):Void {
 		renderOffset.copyFrom(positionOffset);
 		if (parentScale != null)
 			renderOffset.multiplyEq(parentScale);
@@ -124,7 +124,7 @@ class Group extends Sprite {
 			&& zoomFactor == 1.0;
 	}
 
-	override function destroy() {
+	override function destroy():Void {
 		for (object in members)
 			object.destroy();
 		members.splice(0, members.length);

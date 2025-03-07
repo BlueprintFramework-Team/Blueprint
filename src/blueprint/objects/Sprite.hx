@@ -69,7 +69,85 @@ class Sprite {
 
 	public function update(elapsed:Float):Void {}
 
-	public function queueDraw() {
+	public function getGlobalPosition(?stopAt:Group, ?result:Vector2):Vector2 {
+		result = (result == null) ? new Vector2() : result;
+
+		var curParent:Group = memberOf;
+		var parents:Array<Group> = [];
+		
+		while (curParent != null && curParent != stopAt && !curParent.skipProperties) {
+			parents.insert(0, curParent);
+			curParent = curParent.memberOf;
+		}
+		if (parents.length <= 0) {
+			result.copyFrom(position);
+			result += positionOffset;
+			return result;
+		}
+		
+		var curSin:Float = 0.0;
+		var curCos:Float = 1.0;
+		var curScaleX:Float = 1.0;
+		var curScaleY:Float = 1.0;
+		result.copyFrom(parents[0].position);
+		for (i in 0...parents.length) {
+			final parent = parents[i];
+			final offsetX = (parent.positionOffset.x * curScaleX * curCos - parent.positionOffset.y * curScaleY * curSin);
+			final offsetY = (parent.positionOffset.x * curScaleX * curSin + parent.positionOffset.y * curScaleY * curCos);
+			var nextX = (i == parents.length - 1) ? position.x : parents[i + 1].position.x;
+			var nextY = (i == parents.length - 1) ? position.y : parents[i + 1].position.y;
+
+			curScaleX *= parent.scale.x;
+			curScaleY *= parent.scale.y;
+			nextX *= curScaleX;
+			nextY *= curScaleY;
+			if (curSin != 0 || parent.rotation != 0) {
+				final rad = MathExtras.toRad(parent.rotation);
+				final cacheSin:Float = curSin;
+				final cacheX:Float = nextX;
+				final sin = Math.sin(rad);
+				final cos = Math.cos(rad);
+				curSin = cacheSin * cos + curCos * sin;
+				curCos = curCos * cos - cacheSin * sin;
+
+				nextX = cacheX * curCos - nextY * curSin;
+				nextY = cacheX * curSin + nextY * curCos;
+			}
+			nextX += result.x * parent.positionFactor.x + offsetX;
+			nextY += result.y * parent.positionFactor.y + offsetY;
+			result.setFull(nextX, nextY);
+		}
+
+		result.x += (positionOffset.x * curScaleX * curCos - positionOffset.y * curScaleY * curSin);
+		result.y += (positionOffset.x * curScaleX * curSin + positionOffset.y * curScaleY * curCos);
+		return result;
+	}
+	public function getGlobalScale(?stopAt:Group, ?result:Vector2):Vector2 {
+		var curParent:Group = memberOf;
+
+		result = (result == null) ? new Vector2() : result;
+		result.copyFrom(this.scale);
+
+		while (curParent != null && curParent != stopAt && !curParent.skipProperties) {
+			result *= curParent.scale;
+			curParent = curParent.memberOf;
+		}
+
+		return result;
+	}
+	public function getGlobalRotation(?stopAt:Group):Float {
+		var curParent:Group = memberOf;
+		var result:Float = this.rotation;
+
+		while (curParent != null && curParent != stopAt && !curParent.skipProperties) {
+			result += curParent.rotation;
+			curParent = curParent.memberOf;
+		}
+
+		return result;
+	}
+
+	public function queueDraw():Void {
 		if (!visible || tint.a <= 0.0) return;
 
 		if (_queueTrig)
@@ -137,7 +215,7 @@ class Sprite {
 		Glad.drawElements(Glad.TRIANGLES, 6, Glad.UNSIGNED_INT, 0);
 	}
 
-	private function prepareTexture(texture:Texture) {
+	private function prepareTexture(texture:Texture):Void {
 		Glad.activeTexture(Glad.TEXTURE0);
 		Glad.bindTexture(Glad.TEXTURE_2D, texture.ID);
 
@@ -178,7 +256,7 @@ class Sprite {
 		);
 	}
 
-	public function calcRenderOffset(?parentScale:Vector2, ?parentSin:Float, ?parentCos:Float) {
+	public function calcRenderOffset(?parentScale:Vector2, ?parentSin:Float, ?parentCos:Float):Void {
 		renderOffset.copyFrom(positionOffset);
 		if (parentScale != null)
 			renderOffset.multiplyEq(parentScale);
@@ -188,14 +266,14 @@ class Sprite {
 			renderOffset.rotate(parentSin, parentCos);
 	}
 
-	function updateTrigValues() {
+	private function updateTrigValues():Void {
 		final radians = MathExtras.toRad(rotation);
 		_cosMult = Math.cos(radians);
 		_sinMult = Math.sin(radians);
 		_queueTrig = false;
 	}
 
-	function offScreen():Bool {
+	private function offScreen():Bool {
 		final offsetX:Float = (dynamicOffset.x * scale.x * _cosMult - dynamicOffset.y * scale.y * _sinMult) + renderOffset.x;
 		final offsetY:Float = (dynamicOffset.x * scale.x * _sinMult + dynamicOffset.y * scale.y * _cosMult) + renderOffset.y;
 		
@@ -217,12 +295,12 @@ class Sprite {
 		return offScreenX || offScreenY;
 	}
 
-	public function destroy() {
+	public function destroy():Void {
 		shader = null;
 		texture = null;
 	}
 
-	function set_memberOf(parent:Group) {
+	function set_memberOf(parent:Group):Group {
 		if (memberOf == parent)
 			return parent;
 
@@ -233,7 +311,7 @@ class Sprite {
 		return memberOf = parent;
 	}
 
-	function set_rotation(newRot:Float) {
+	function set_rotation(newRot:Float):Float {
 		_queueTrig = _queueTrig || (newRot != rotation);
 		return rotation = newRot;
 	}
