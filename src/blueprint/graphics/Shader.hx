@@ -12,6 +12,10 @@ import bindings.CppHelpers;
 import bindings.Glad;
 
 class Shader {
+	private static var curShaders:Array<Shader> = [];
+	public var keepIfUnused:Bool = false;
+	public var useCount:Int = 0;
+
 	public var ID:cpp.UInt32;
 
 	public var transform:Matrix4x4 = new Matrix4x4(1.0);
@@ -67,6 +71,14 @@ class Shader {
 		final projectStar = Game.projection.toCArray();
 		Glad.uniformMatrix4fv(projectLoc, 1, Glad.FALSE, projectStar);
 		CppHelpers.free(projectStar);
+
+		curShaders.push(this);
+	}
+
+	public function destroy() {
+		curShaders.remove(this);
+		Glad.deleteProgram(ID);
+		transform = null;
 	}
 
 	public function setUniformVar(name:ConstCharStar, value:Any) {
@@ -114,6 +126,17 @@ class Shader {
 		final star = value.toCArray();
 		Glad.uniformMatrix4fv(Glad.getUniformLocation(ID, name), 1, Glad.FALSE, star);
 		CppHelpers.free(star);
+	}
+
+	public static function clearShaders(?force:Bool = false) {
+		var i:Int = 0; // So I have more control over the iterator. (Removing stuff can mess up for loops.)
+		while (i < curShaders.length) {
+			final shader = curShaders[i];
+			if (!force && (shader.keepIfUnused || shader.useCount > 0))
+				i++;
+			else
+				shader.destroy();
+		}
 	}
 
 	public static final defaultVertexSource:String = "

@@ -16,6 +16,7 @@ import blueprint.Scene;
 import blueprint.objects.Camera;
 import blueprint.objects.Sprite;
 import blueprint.objects.AnimatedSprite;
+import blueprint.graphics.SpriteFrames;
 import blueprint.graphics.Texture;
 import blueprint.graphics.Shader;
 import blueprint.graphics.Window;
@@ -54,55 +55,16 @@ class Game {
 		}
 
 		projection = Matrix4x4.ortho(0.0, width, height, 0.0, -1.0, 1.0);
+
 		Sprite.defaultShader = new Shader(Shader.defaultFragmentSource, Shader.defaultVertexSource);
 		Sprite.defaultTexture = new Texture("missingImage.png");
-		Text.defaultShader = new Shader("
-			#version 330 core
-			out vec4 FragColor;
-			in vec2 TexCoord;
+		Sprite.defaultShader.keepIfUnused = true;
 
-			uniform vec4 tint;
-			uniform sampler2D bitmap;
+		Text.defaultShader = new Shader(Text.defaultShaderSource, Shader.defaultVertexSource);
+		Text.defaultShaderNoSDF = new Shader(Text.defaultShaderSourceNoSDF, Shader.defaultVertexSource);
+		Text.defaultShader.keepIfUnused = true;
+		Text.defaultShaderNoSDF.keepIfUnused = true;
 
-            // credit for the msdf shader: Blatko1/awesome-msdf
-            // :)
-
-            uniform int fontSize;
-			uniform float smoothingMult;
-
-            float uvToPixels(void) {
-                vec2 unitRange = vec2(fontSize) / vec2(textureSize(bitmap, 0));
-                vec2 screenTexSize = vec2(1.0) / fwidth(TexCoord);
-                return max(smoothingMult * dot(unitRange, screenTexSize), 1.0);
-            }
-
-            void main(void) {
-                float distance = texture(bitmap, TexCoord).r;
-                
-                float pixelDistance = uvToPixels() * (distance - 0.5);
-                float alpha = clamp(pixelDistance + 0.5, 0.0, 1.0);
-                
-                FragColor = tint;
-				FragColor.a *= alpha;
-            }
-		", Shader.defaultVertexSource);
-		Text.defaultShaderNoSDF = new Shader("
-			#version 330 core
-			out vec4 FragColor;
-			in vec2 TexCoord;
-
-			uniform vec4 tint;
-			uniform sampler2D bitmap;
-
-			// unused when theres no smoothing
-			uniform int fontSize;
-			uniform float smoothingMult;
-
-			void main(void) {
-				FragColor = tint;
-				FragColor.a *= texture(bitmap, TexCoord).r;
-			}
-		", Shader.defaultVertexSource);
 		AnimatedSprite.backupFrame = {
 			name: "BACKUP FRAME",
 			texture: Sprite.defaultTexture,
@@ -113,6 +75,7 @@ class Game {
 			offsetX: 0,
 			offsetY: 0
 		};
+
 		Freetype.init(RawPointer.addressOf(Font.library));
 		FreetypeStroker.init(Font.library, RawPointer.addressOf(Font.stroker));
 
@@ -133,10 +96,13 @@ class Game {
 		ThreadHelper.mutex.release();
 
 		currentScene.destroy();
+
+		Shader.clearShaders(true);
+		SpriteFrameSet.clearCache(true);
+		Texture.clearCache(true);
 		SoundData.clearSounds();
-		Texture.clearCache();
-		AnimatedSprite.clearCache();
 		Font.clearCache();
+		BaseTween.curTweens.splice(0, BaseTween.curTweens.length);
 		Camera.clearCameras();
 
 		window.destroy();
@@ -150,16 +116,23 @@ class Game {
 	private function update():Void {
 		if (queuedSceneChange != null) {
 			currentScene.destroy();
-
+			
 			SoundData.clearSounds();
-			Texture.clearCache();
-			AnimatedSprite.clearCache();
 			Font.clearCache();
 			BaseTween.curTweens.splice(0, BaseTween.curTweens.length);
 			Camera.clearCameras();
 
+			SpriteFrameSet.enableKeepOnce = Texture.enableKeepOnce = true;
+
 			currentScene = Type.createInstance(queuedSceneChange, queuedSceneParams);
 			queuedSceneChange = null;
+
+			Shader.clearShaders();
+			SpriteFrameSet.clearCache();
+			Texture.clearCache();
+
+			SpriteFrameSet.enableKeepOnce = Texture.enableKeepOnce = false;
+
 			lastTime = Glfw.getTime();
 			cpp.vm.Gc.run(true);
 

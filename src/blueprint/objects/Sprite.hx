@@ -47,8 +47,8 @@ class Sprite {
 
 	public var anchor:Vector2 = new Vector2(0.5, 0.5);
 
-	@:isVar public var shader(get, default):Shader;
-	@:isVar public var texture(get, default):Texture;
+	public var shader(default, set):Shader = defaultShader;
+	public var texture(default, set):Texture = defaultTexture;
 	public var tint:Color = new Color(1.0);
 
 	public var sourceRect:Rect = new Rect(0.0, 0.0, -1.0, -1.0);
@@ -62,6 +62,9 @@ class Sprite {
 		
 		horizontalWrap = Glad.CLAMP_TO_EDGE;
 		verticalWrap = Glad.CLAMP_TO_EDGE;
+
+		++defaultShader.useCount; // im not calling the setter so i wanna balence out the useCount.
+		++defaultTexture.useCount;
 
 		if (imagePath != null)
 			texture = Texture.getCachedTex(imagePath);
@@ -296,8 +299,10 @@ class Sprite {
 	}
 
 	public function destroy():Void {
-		shader = null;
-		texture = null;
+		--shader.useCount;
+		@:bypassAccessor shader = null;
+		--texture.useCount;
+		@:bypassAccessor texture = null;
 	}
 
 	function set_memberOf(parent:Group):Group {
@@ -332,11 +337,27 @@ class Sprite {
 		return (sourceRect.height < 0) ? texture.height : sourceRect.height;
 	}
 
-	inline function get_shader():Shader {
-		return (shader != null) ? shader : defaultShader;
+	function set_shader(newShader:Shader):Shader {
+		if (shader == newShader)
+			return shader;
+
+		newShader = (newShader != null) ? newShader : Sprite.defaultShader;
+
+		--shader.useCount;
+		++newShader.useCount;
+
+		return shader = newShader;
 	}
 
-	inline function get_texture():Texture {
-		return (texture != null) ? texture : defaultTexture;
+	function set_texture(newText:Texture):Texture {
+		if (texture == newText)
+			return texture;
+
+		newText = (newText != null) ? newText : Sprite.defaultTexture;
+
+		--texture.useCount;
+		++newText.useCount;
+
+		return texture = newText;
 	}
 }

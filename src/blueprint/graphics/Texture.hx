@@ -12,12 +12,16 @@ import bindings.texture.StbImage;
 import blueprint.objects.Sprite;
 
 class Texture {
+	public static var enableKeepOnce:Bool = false;
 	static var imageCache:Map<String, Texture> = [];
 
 	public var ID:cpp.UInt32;
 
-	var _cacheKey:Null<String>;
+	public var keepIfUnused:Bool = false;
+	public var keepOnce:Bool = false;
+	public var useCount:Int = 0;
 	public var path:String;
+	var _cacheKey:Null<String>;
 
 	public var width:Int;
 	public var height:Int;
@@ -85,16 +89,24 @@ class Texture {
 				tex._cacheKey = filePath;
 			imageCache.set(filePath, tex);
 		}
-
+		
+		imageCache[filePath].keepOnce = enableKeepOnce || imageCache[filePath].keepOnce;
 		return imageCache[filePath];
 	}
 
-	public static function clearCache() {
+	public static function clearCache(?force:Bool = false) {
 		for (key in imageCache.keys()) {
-			if (imageCache[key] == Sprite.defaultTexture)
+			final texture = imageCache[key];
+			if (force) {
+				texture.destroy();
+				continue;
+			}
+
+			if (texture == Sprite.defaultTexture)
 				imageCache.remove(key);
-			else 
-				imageCache[key].destroy();
+			else if (!texture.keepOnce && !texture.keepIfUnused && texture.useCount <= 0)
+				texture.destroy();
+			texture.keepOnce = false;
 		}
 	}
 

@@ -5,21 +5,9 @@ import haxe.io.Path;
 import sys.FileSystem;
 
 import blueprint.graphics.Texture;
+import blueprint.graphics.SpriteFrames;
 
 using StringTools;
-
-@:structInit class SpriteFrame {
-	public var name:String;
-	public var texture:Texture;
-
-	public var sourceX:Float;
-	public var sourceY:Float;
-	public var sourceWidth:Float;
-	public var sourceHeight:Float;
-
-	public var offsetX:Float;
-	public var offsetY:Float;
-}
 
 @:structInit class AnimationData {
 	public var fps:Float;
@@ -32,59 +20,142 @@ using StringTools;
 
 class AnimatedSprite extends Sprite {
 	public static var backupFrame:SpriteFrame;
-	static var dataCache:Map<String, Array<SpriteFrame>> = [];
 
 	public var animWidth:Float;
 	public var animHeight:Float;
 	public var curAnim:String = "";
 	public var animFinished:Bool = false;
-	var frames:Array<SpriteFrame>;
+	var frameSets:Array<SpriteFrameSet> = [];
+	var frame:SpriteFrame;
 	var animData:Map<String, AnimationData> = [];
 	var animTime:Float = 0.0;
-	var curFrame:Int = 0;
+	var curFrame(default, set):Int = 0;
 
 	public var finished:Signal<String->Void>;
 
 	public function new(?x:Float = 0, ?y:Float = 0, ?filePath:String) {
 		super(x, y);
+		frame = backupFrame;
 		animWidth = backupFrame.sourceWidth;
 		animHeight = backupFrame.sourceHeight;
+		texture = backupFrame.texture;
 		finished = new Signal();
 
 		if (filePath != null)
 			loadFrames(filePath);
 	}
 
-	public function loadFrames(filePath:String, ?appendFrames:Bool = false) {
-		if (!dataCache.exists(filePath))
-			dataCache.set(filePath, loadFromFile(filePath));
+	public function pushFrameSet(set:SpriteFrameSet) {
+		frameSets.push(set);
+		++set.useCount;
+	}
+	
+	public function removeFrameSet(set:SpriteFrameSet) {
+		if (frameSets.remove(set))
+			--set.useCount;
+	}
 
-		frames = (frames != null && appendFrames) ? frames.concat(dataCache[filePath]) : dataCache[filePath];
-		return dataCache[filePath];
+	public function getFrame(idx:Int) {
+		var offset = 0;
+		
+		for (set in frameSets) {
+			if (idx - offset < set.frames.length)
+				return set.frames[idx - offset];
+			offset += set.frames.length;
+		}
+
+		return backupFrame;
+	}
+
+	public function loadFrames(filePath:String, ?appendFrames:Bool = false) {
+		if (!appendFrames) {
+			for (set in frameSets)
+				--set.useCount;
+			frameSets.splice(0, frameSets.length);
+		}
+		
+		final set = SpriteFrameSet.getCachedFrames(filePath);
+		pushFrameSet(set);
+		return set;
+	}
+
+	public function loadTilesFromPath(filePath:String, width:Float, height:Float, ?appendFrames:Bool = false) {
+		return loadTilesFromTex(Texture.getCachedTex(filePath), width, height, appendFrames);
+	}
+
+	public function loadTilesFromTex(tex:Texture, width:Float, height:Float, ?appendFrames:Bool = false) {
+		if (!appendFrames) {
+			for (set in frameSets)
+				--set.useCount;
+			frameSets.splice(0, frameSets.length);
+		}
+
+		var frameSet = new SpriteFrameSet();
+		frameSet._cacheKey = tex.path + "_" + width + "x" + height;
+		SpriteFrameSet.frameCache.set(frameSet._cacheKey, frameSet);
+		frameSet.textures.push(tex);
+		++tex.useCount;
+
+		final horiTiles = Math.floor(tex.width / width);
+		final vertTiles = Math.floor(tex.height / height);
+
+		for (y in 0...vertTiles) {
+			for (x in 0...horiTiles) {
+				frameSet.frames.push({
+					name: "FRAME_" + frameSet.frames.length,
+					texture: tex,
+
+					sourceX: width * x,
+					sourceY: height * y,
+					sourceWidth: width,
+					sourceHeight: height,
+
+					offsetX: 0,
+					offsetY: 0
+				});
+			}
+		}
+	}
+
+	public function addBasicAnim(animName:String, indexes:Array<Int>, ?fps:Float = 24, ?loop:Bool = false) {
+		final anim:AnimationData = {fps: fps, length: (1 / fps) * (indexes.length - 0.001), loop: loop, indexes: indexes, width: 0, height: 0};
+
+		for (idx in indexes) {
+			final frame = getFrame(idx);
+			if (frame != backupFrame) {
+				anim.width = Math.max(anim.width, frame.sourceWidth);
+				anim.height = Math.max(anim.height, frame.sourceHeight);
+			}
+		}
+		
+		animData.set(animName, anim);
 	}
 
 	public function addPrefixAnim(animName:String, prefix:String, ?fps:Float = 24, ?loop:Bool = false, ?indices:Array<Int>) {
 		final anim:AnimationData = {fps: fps, length: 1 / fps, loop: loop, indexes: [], width: 0, height: 0};
 
-		for (i => frame in frames) {
-			if (!frame.name.startsWith(prefix)) continue;
-
-			anim.indexes.push(i);
-
-			anim.width = Math.max(anim.width, frame.sourceWidth);
-			anim.height = Math.max(anim.height, frame.sourceHeight);
+		var offset = 0;
+		for (set in frameSets) {
+			for (i => frame in set.frames) {
+				if (!frame.name.startsWith(prefix)) continue;
+	
+				anim.indexes.push(i + offset);
+	
+				anim.width = Math.max(anim.width, frame.sourceWidth);
+				anim.height = Math.max(anim.height, frame.sourceHeight);
+			}
+			offset += set.frames.length;
 		}
 
 		if (indices != null && indices.length > 0)
 			anim.indexes = [for (i in indices) anim.indexes[i]];
 
-		anim.length *= anim.indexes.length - 0.01;
+		anim.length *= anim.indexes.length - 0.001;
 		animData.set(animName, anim);
 	}
 
 	public function playAnim(newAnim:String, ?forceRestart:Bool = true) {
 		animTime = animTime * bindings.CppHelpers.boolToInt(!(curAnim != newAnim || animFinished || forceRestart));
-		curFrame = 0;
 		curAnim = newAnim;
 		animFinished = false;
 
@@ -92,19 +163,14 @@ class AnimatedSprite extends Sprite {
 			curFrame = animData[curAnim].indexes[0];
 			animWidth = animData[curAnim].width;
 			animHeight = animData[curAnim].height;
-		}
+		} else
+			curFrame = 0;
 	}
 
 	override function queueDraw() {
 		if (!visible || tint.a <= 0.0) return;
 
-		if (frames == null || frames.length <= 0) {
-			texture = backupFrame.texture;
-			super.queueDraw();
-			return;
-		}
-
-		if (animData.exists(curAnim)) {
+		if (frameSets != null && frameSets.length > 0 && animData.exists(curAnim)) {
 			final data = animData[curAnim];
 			final alreadyFinished = animFinished;
 
@@ -115,12 +181,10 @@ class AnimatedSprite extends Sprite {
 				finished.emit(curAnim);
 		}
 		
-		texture = frames[curFrame].texture;
 		super.queueDraw();
 	}
 
 	override function prepareShaderVars() {
-		final frame = (frames == null || frames.length <= 0) ? backupFrame : frames[curFrame];
 		final uMult = bindings.CppHelpers.boolToInt(flipX);
 		final vMult = bindings.CppHelpers.boolToInt(flipY);
 
@@ -164,7 +228,6 @@ class AnimatedSprite extends Sprite {
 	}
 
 	override function offScreen():Bool {
-		final frame = (frames == null || frames.length <= 0) ? backupFrame : frames[curFrame];
 		final dynamX:Float = dynamicOffset.x + frame.offsetX;
 		final dynamY:Float = dynamicOffset.y + frame.offsetY;
 		final offsetX:Float = (dynamX * scale.x * _cosMult - dynamY * scale.y * _sinMult) + renderOffset.x;
@@ -185,55 +248,27 @@ class AnimatedSprite extends Sprite {
 		return offScreenX || offScreenY;
 	}
 
+	override function destroy() {
+		for (set in frameSets)
+			--set.useCount;
+		frameSets.splice(0, frameSets.length);
+		super.destroy();
+	}
+
+	function set_curFrame(newFrame:Int) {
+		if (curFrame == newFrame && frame != backupFrame)
+			return curFrame;
+
+		frame = getFrame(newFrame);
+		texture = frame.texture;
+		return curFrame = newFrame;
+	}
+
 	override function get_sourceWidth():Float {
-		final frame = (frames == null || frames.length <= 0) ? backupFrame : frames[curFrame];
 		return (sourceRect.width <= 0) ? frame.sourceWidth : sourceRect.width;
 	}
 
 	override function get_sourceHeight():Float {
-		final frame = (frames == null || frames.length <= 0) ? backupFrame : frames[curFrame];
 		return (sourceRect.height <= 0) ? frame.sourceHeight : sourceRect.height;
-	}
-
-	static function loadFromFile(filePath:String) {
-		final daPath = FileSystem.absolutePath(filePath);
-		if (!FileSystem.exists(daPath)) {
-			Sys.println('Failed to load "$filePath": File nonexistant.');
-			return [];
-		}
-
-		var frames:Array<SpriteFrame> = [];
-		switch (Path.extension(daPath)) {
-			case "xml":
-				var xml:Xml;
-				try {
-					xml = Xml.parse(sys.io.File.getContent(daPath));
-				} catch (e) {
-					Sys.println('Failed to load "$filePath": $e');
-					return [];
-				}
-
-				for (atlas in xml.elementsNamed("TextureAtlas")) {
-					var tex = Texture.getCachedTex(Path.directory(filePath) + "/" + atlas.get("imagePath"));
-					for (node in atlas.elementsNamed("SubTexture")) {
-						frames.push({
-							name: node.get("name"),
-							texture: tex,
-							sourceX: Std.parseFloat(node.get("x")),
-							sourceY: Std.parseFloat(node.get("y")),
-							sourceWidth: Std.parseFloat(node.get("width")),
-							sourceHeight: Std.parseFloat(node.get("height")),
-							offsetX: (node.exists("frameX")) ? -Std.parseFloat(node.get("frameX")) : 0,
-							offsetY: (node.exists("frameY")) ? -Std.parseFloat(node.get("frameY")) : 0,
-						});
-					}
-				}
-		}
-
-		return frames;
-	}
-
-	public static function clearCache() {
-		dataCache.clear();
 	}
 }

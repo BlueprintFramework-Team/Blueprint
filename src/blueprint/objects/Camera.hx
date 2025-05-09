@@ -1,6 +1,5 @@
 package blueprint.objects;
 
-import haxe.ds.Vector;
 import math.MathExtras;
 import math.Vector4;
 import math.Vector2;

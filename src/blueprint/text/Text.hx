@@ -249,4 +249,53 @@ class Text extends blueprint.objects.Sprite {
 		_qualityFract = 1 / newQual;
 		return quality = newQual;
 	}
+
+	public static final defaultShaderSource:String = "
+		#version 330 core
+		out vec4 FragColor;
+		in vec2 TexCoord;
+
+		uniform vec4 tint;
+		uniform sampler2D bitmap;
+
+		// credit for the msdf shader: Blatko1/awesome-msdf
+		// :)
+
+		uniform int fontSize;
+		uniform float smoothingMult;
+
+		float uvToPixels(void) {
+			vec2 unitRange = vec2(fontSize) / vec2(textureSize(bitmap, 0));
+			vec2 screenTexSize = vec2(1.0) / fwidth(TexCoord);
+			return max(smoothingMult * dot(unitRange, screenTexSize), 1.0);
+		}
+
+		void main(void) {
+			float distance = texture(bitmap, TexCoord).r;
+			
+			float pixelDistance = uvToPixels() * (distance - 0.5);
+			float alpha = clamp(pixelDistance + 0.5, 0.0, 1.0);
+			
+			FragColor = tint;
+			FragColor.a *= alpha;
+		}
+	";
+
+	public static final defaultShaderSourceNoSDF:String = "
+		#version 330 core
+		out vec4 FragColor;
+		in vec2 TexCoord;
+
+		uniform vec4 tint;
+		uniform sampler2D bitmap;
+
+		// unused when theres no smoothing
+		uniform int fontSize;
+		uniform float smoothingMult;
+
+		void main(void) {
+			FragColor = tint;
+			FragColor.a *= texture(bitmap, TexCoord).r;
+		}
+	";
 }
