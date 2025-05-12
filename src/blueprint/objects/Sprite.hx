@@ -307,6 +307,40 @@ class Sprite {
 		@:bypassAccessor texture = null;
 	}
 
+	// just for clone, this wont exist on compilation.
+	extern inline function _copyOver(spr:Sprite) {
+		spr.anchor.copyFrom(anchor);
+		spr.position.copyFrom(position);
+		spr.scale.copyFrom(scale);
+		spr.positionOffset.copyFrom(positionOffset);
+		spr.dynamicOffset.copyFrom(dynamicOffset);
+		spr.rotation = rotation;
+		spr.tint.copyFrom(tint);
+
+		spr.parallax.copyFrom(parallax);
+		spr.zoomFactor = zoomFactor;
+		spr.targetZoom = targetZoom;
+
+		spr.flipX = flipX;
+		spr.flipY = flipY;
+		spr.sourceRect.copyFrom(sourceRect);
+		spr.horizontalWrap = horizontalWrap;
+		spr.verticalWrap = verticalWrap;
+
+		spr.shader = shader;
+	}
+
+	public function clone<T:Sprite>():T {
+		var spr = new Sprite();
+
+		// copy over the transformations and rendering data (except texture)
+		_copyOver(spr);
+
+		// not in copyOver as this is meant for class specific stuff, like how base Sprite is basic texture rendering.
+		spr.texture = texture;
+		return cast spr;
+	}
+
 	function set_memberOf(parent:Group):Group {
 		if (memberOf == parent)
 			return parent;

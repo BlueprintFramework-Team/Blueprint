@@ -163,8 +163,22 @@ class Text extends blueprint.objects.Sprite {
 		CppHelpers.free(transStar);
 	}
 
+	override function clone<T:Sprite>():T {
+		var spr = new Text(0, 0, font.path, size, text);
+
+		_copyOver(spr);
+
+		spr.smoothing = smoothing;
+		spr.quality = quality;
+		spr.alignment = alignment;
+
+		spr.outline = outline;
+		spr.outlineTint.copyFrom(outlineTint);
+		return cast spr;
+	}
+
 	override function destroy() {
-		shader = null;
+		super.destroy();
 		_lineWidths.splice(0, _lineWidths.length);
 	}
 

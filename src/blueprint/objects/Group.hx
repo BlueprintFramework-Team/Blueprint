@@ -124,6 +124,11 @@ class Group extends Sprite {
 			&& zoomFactor == 1.0;
 	}
 
+	override function clone<T:Sprite>():T {
+		Sys.println("Group.clone() is currently unimplemented.");
+		return cast new Group();
+	}
+
 	override function destroy():Void {
 		for (object in members)
 			object.destroy();

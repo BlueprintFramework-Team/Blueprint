@@ -226,6 +226,19 @@ class AnimatedSprite extends Sprite {
 		return offScreenX || offScreenY;
 	}
 
+	override function clone<T:Sprite>():T {
+		var spr = new AnimatedSprite();
+
+		_copyOver(spr);
+
+		for (set in frameSets)
+			spr.pushFrameSet(set);
+		for (anim in animData.keys())
+			spr.animData.set(anim, animData[anim]);
+
+		return cast spr;
+	}
+
 	override function destroy() {
 		for (set in frameSets)
 			--set.useCount;
