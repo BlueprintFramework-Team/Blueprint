@@ -219,6 +219,8 @@ class Sprite {
 	}
 
 	private function prepareTexture(texture:Texture):Void {
+		if (texture == null) return;
+
 		Glad.activeTexture(Glad.TEXTURE0);
 		Glad.bindTexture(Glad.TEXTURE_2D, texture.ID);
 

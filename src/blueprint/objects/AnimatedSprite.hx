@@ -90,31 +90,9 @@ class AnimatedSprite extends Sprite {
 			frameSets.splice(0, frameSets.length);
 		}
 
-		var frameSet = new SpriteFrameSet();
-		frameSet._cacheKey = tex.path + "_" + width + "x" + height;
-		SpriteFrameSet.frameCache.set(frameSet._cacheKey, frameSet);
-		frameSet.textures.push(tex);
-		++tex.useCount;
-
-		final horiTiles = Math.floor(tex.width / width);
-		final vertTiles = Math.floor(tex.height / height);
-
-		for (y in 0...vertTiles) {
-			for (x in 0...horiTiles) {
-				frameSet.frames.push({
-					name: "FRAME_" + frameSet.frames.length,
-					texture: tex,
-
-					sourceX: width * x,
-					sourceY: height * y,
-					sourceWidth: width,
-					sourceHeight: height,
-
-					offsetX: 0,
-					offsetY: 0
-				});
-			}
-		}
+		final set = SpriteFrameSet.getTilesFromTex(tex, width, height);
+		pushFrameSet(set);
+		return set;
 	}
 
 	public function addBasicAnim(animName:String, indexes:Array<Int>, ?fps:Float = 24, ?loop:Bool = false) {

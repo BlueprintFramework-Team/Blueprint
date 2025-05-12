@@ -41,6 +41,31 @@ class SpriteFrameSet {
             loadFromFile(filePath);
     }
 
+	public function loadTiled(tex:Texture, width:Float, height:Float) {
+		textures.push(tex);
+		++tex.useCount;
+
+		final horiTiles = Math.floor(tex.width / width);
+		final vertTiles = Math.floor(tex.height / height);
+
+		for (y in 0...vertTiles) {
+			for (x in 0...horiTiles) {
+				frames.push({
+					name: "FRAME_" + frames.length,
+					texture: tex,
+
+					sourceX: width * x,
+					sourceY: height * y,
+					sourceWidth: width,
+					sourceHeight: height,
+
+					offsetX: 0,
+					offsetY: 0
+				});
+			}
+		}
+	}
+
     public function loadFromFile(filePath:String) {
         path = filePath;
 
@@ -94,6 +119,23 @@ class SpriteFrameSet {
 
 		if (_cacheKey != null)
 			frameCache.remove(_cacheKey);
+	}
+
+	public static function getTilesFromPath(filePath:String, width:Float, height:Float) {
+		return getTilesFromTex(Texture.getCachedTex(filePath), width, height);
+	}
+
+	public static function getTilesFromTex(tex:Texture, width:Float, height:Float) {
+		final key = tex.path + "_" + width + "x" + height;
+		if (!frameCache.exists(key)) {
+			var frameSet = new SpriteFrameSet();
+			frameSet.loadTiled(tex, width, height);
+			frameSet._cacheKey = key;
+			SpriteFrameSet.frameCache.set(key, frameSet);
+		}
+
+		frameCache[key].keepOnce = enableKeepOnce || frameCache[key].keepOnce;
+		return frameCache[key];
 	}
 
 	public static function getCachedFrames(filePath:String) {
