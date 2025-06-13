@@ -12,7 +12,6 @@ import blueprint.text.Font;
 
 /**
  * TODO:
- *	- Allow Field Widths
  *  - Allow flipX, flipY
  *  - Allow sourceRect
  *  - Allow MSDFs for outlines
@@ -31,6 +30,12 @@ enum TextAlignment {
 }
 
 class Text extends blueprint.objects.Sprite {
+	static inline final wordStopStr:String = " ,.!?:;/<({[]})>\\|~`+=-_^*&";
+	static final wordStops:Array<Int> = [
+		for (i in 0...wordStopStr.length)
+			wordStopStr.charCodeAt(i)
+	];
+
 	public static var textQuality:Int = 4;
 	public static var autoPreloadSizes:Bool = true;
 	public static var defaultShader:Shader;
@@ -45,12 +50,14 @@ class Text extends blueprint.objects.Sprite {
 	var _queueSize:Bool = true;
 	var _lineMult:Float = 0;
 	var _lineWidths:Array<Float> = [];
+	var _newLines:Array<Int> = [];
 	var _textWidth:Float;
 	var _textHeight:Float;
 	public var font(default, set):Font;
 	public var text(default, set):String;
 	public var size(default, set):Int;
 	public var alignment(default, set):TextAlignment = LEFT;
+	public var forceWidth(default, set):Float = 0.0;
 
 	public var outline:Int = 0;
 	public var outlineTint:Color = new Color(0.0, 0.0, 0.0, 1.0);
@@ -98,10 +105,11 @@ class Text extends blueprint.objects.Sprite {
 			curX = (_textWidth - _lineWidths[0]) * _lineMult * quality;
 			lineNum = 0;
 			for (i in 0...text.length) {
-				if (text.charAt(i) == '\n') {
-					lineNum++;
+				if (lineNum < _newLines.length && _newLines[lineNum] == i) {
+					++lineNum;
 					curX = (_textWidth - _lineWidths[lineNum]) * _lineMult * quality;
-					continue;
+					if (text.charAt(i) == "\n")
+						continue;
 				}
 	
 				outlineRef = font.getOutline(text.charCodeAt(i), scaledSize, outline * quality, smoothing);
@@ -120,10 +128,11 @@ class Text extends blueprint.objects.Sprite {
 		curX = (_textWidth - _lineWidths[0]) * _lineMult * quality;
 		lineNum = 0;
 		for (i in 0...text.length) {
-			if (text.charAt(i) == '\n') {
-				lineNum++;
+			if (lineNum < _newLines.length && _newLines[lineNum] == i) {
+				++lineNum;
 				curX = (_textWidth - _lineWidths[lineNum]) * _lineMult * quality;
-				continue;
+				if (text.charAt(i) == "\n")
+					continue;
 			}
 
 			letter = font.getLetter(text.charCodeAt(i), scaledSize, smoothing);
@@ -185,25 +194,74 @@ class Text extends blueprint.objects.Sprite {
 	function updateTextSize() {
 		_queueSize = false;
 		_lineWidths.splice(0, _lineWidths.length);
+		_newLines.splice(0, _newLines.length);
+		_textWidth = Math.max(forceWidth, 0.0);
 		_textHeight = size;
 		var firstLetter:Bool = true;
+		var wasWordStop:Bool = false;
 		var curWidth:Float = 0.0;
+		var wordWidth:Float = 0.0;
+		var widthSinceLastWord:Float = 0.0;
+		var lastWordStop:Int = 0;
+
+		inline function pushWidth(wid:Float, nextWid:Float) {
+			_lineWidths.push(wid);
+			_textWidth = Math.max(wid, _textWidth);
+			_textHeight += size;
+
+			curWidth = nextWid;
+			wordWidth = nextWid;
+			widthSinceLastWord = nextWid;
+		}
 
 		for (i in 0...text.length) {
-			if (text.charAt(i) == '\n') {
-				_lineWidths.push(curWidth);
-				_textHeight += size;
-				curWidth = 0.0;
+			final code = text.charCodeAt(i);
+			if (code == '\n'.code) {
+				pushWidth(curWidth, 0.0);
+				lastWordStop = i;
 				firstLetter = true;
+				wasWordStop = false;
+				_newLines.push(i);
 				continue;
 			}
 
-			final letter = font.getLetter(text.charCodeAt(i), size, smoothing);
+			firstLetter = false;
+			final letter = font.getLetter(code, size, smoothing);
+			final advance = letter.advance >> 6;
 
-			curWidth += letter.advance >> 6;
+			curWidth += advance;
+
+			if (forceWidth <= 0) continue;
+
+			wordWidth += advance;
+
+			if (curWidth > forceWidth) {
+				if (wordWidth > forceWidth) { // just split the word
+					pushWidth(curWidth - advance, advance);
+					lastWordStop = i;
+					_newLines.push(i);
+				} else {
+					pushWidth(widthSinceLastWord, wordWidth);
+					_newLines.push(lastWordStop);
+				}
+			}
+
+			if (wordStops.contains(code)) {
+				if (code != " ".code) // may detach " " from the word stops later on to give a special case and make it feel less hardcoded.
+					widthSinceLastWord = curWidth;
+				else if (!wasWordStop)
+					widthSinceLastWord = curWidth - advance;
+				lastWordStop = i + 1;
+				wordWidth = 0.0;
+				wasWordStop = true;
+			} else
+				wasWordStop = false;
+		}
+
+		if (!firstLetter || _lineWidths.length <= 0) {
+			_lineWidths.push(curWidth);
 			_textWidth = Math.max(curWidth, _textWidth);
 		}
-		_lineWidths.push(curWidth);
 	}
 
 	function set_font(newFont:Font):Font {
@@ -222,7 +280,7 @@ class Text extends blueprint.objects.Sprite {
 		return size = newSize;
 	}
 
-	function set_alignment(newAlign:TextAlignment) {
+	function set_alignment(newAlign:TextAlignment):TextAlignment {
 		switch (newAlign) {
 			case Left | LEFT:
 				_lineMult = 0;
@@ -235,6 +293,11 @@ class Text extends blueprint.objects.Sprite {
 				alignment = Right;
 		}
 		return alignment;
+	}
+
+	function set_forceWidth(newWidth:Float):Float {
+		_queueSize = _queueSize || (forceWidth != newWidth);
+		return forceWidth = newWidth;
 	}
 
 	override function get_sourceWidth():Float {

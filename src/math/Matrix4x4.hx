@@ -117,12 +117,16 @@ abstract Matrix4x4(Array<Vector4>) from Array<Vector4> to Array<Vector4> {
 	public inline function multiply(mat:Matrix4x4):Matrix4x4 {
 		var newMat = new Matrix4x4();
 
-		for (i in 0...4) {
-			// i dont even know if this is right
-			newMat[i].x = this[i].x * mat[0].x + this[i].x * mat[0].y + this[i].x * mat[0].z + this[i].x * mat[0].w;
-			newMat[i].y = this[i].y * mat[1].x + this[i].y * mat[1].y + this[i].y * mat[1].z + this[i].y * mat[1].w;
-			newMat[i].z = this[i].z * mat[2].x + this[i].z * mat[2].y + this[i].z * mat[2].z + this[i].z * mat[2].w;
-			newMat[i].w = this[i].w * mat[3].x + this[i].w * mat[3].y + this[i].w * mat[3].z + this[i].w * mat[3].w;
+		// got this from an online friend but i dunno how to credit them properly (they didnt tell me)
+		// adjusted a bit to account for multiplyEq and lack of array access in Vector4.
+		// also had to unroll two of their loops lol
+		for(x in 0...4) {
+			final total0:Float = this[x].x * mat[0].x + this[x].y * mat[1].x + this[x].z * mat[2].x + this[x].w * mat[3].x;
+			final total1:Float = this[x].x * mat[0].y + this[x].y * mat[1].y + this[x].z * mat[2].y + this[x].w * mat[3].y;
+			final total2:Float = this[x].x * mat[0].z + this[x].y * mat[1].z + this[x].z * mat[2].z + this[x].w * mat[3].z;
+			final total3:Float = this[x].x * mat[0].w + this[x].y * mat[1].w + this[x].z * mat[2].w + this[x].w * mat[3].w;
+
+			newMat[x].setFull(total0, total1, total2, total3);
 		}
 
 		return newMat;
@@ -176,12 +180,13 @@ abstract Matrix4x4(Array<Vector4>) from Array<Vector4> to Array<Vector4> {
 
 	@:op(A *= B)
 	public inline function multiplyEq(mat:Matrix4x4):Matrix4x4 {
-		for (i in 0...4) {
-			// i dont even know if this is right
-			this[i].x = this[i].x * mat[0].x + this[i].x * mat[0].y + this[i].x * mat[0].z + this[i].x * mat[0].w;
-			this[i].y = this[i].y * mat[1].x + this[i].y * mat[1].y + this[i].y * mat[1].z + this[i].y * mat[1].w;
-			this[i].z = this[i].z * mat[2].x + this[i].z * mat[2].y + this[i].z * mat[2].z + this[i].z * mat[2].w;
-			this[i].w = this[i].w * mat[3].x + this[i].w * mat[3].y + this[i].w * mat[3].z + this[i].w * mat[3].w;
+		for(x in 0...4) {
+			final total0:Float = this[x].x * mat[0].x + this[x].y * mat[1].x + this[x].z * mat[2].x + this[x].w * mat[3].x;
+			final total1:Float = this[x].x * mat[0].y + this[x].y * mat[1].y + this[x].z * mat[2].y + this[x].w * mat[3].y;
+			final total2:Float = this[x].x * mat[0].z + this[x].y * mat[1].z + this[x].z * mat[2].z + this[x].w * mat[3].z;
+			final total3:Float = this[x].x * mat[0].w + this[x].y * mat[1].w + this[x].z * mat[2].w + this[x].w * mat[3].w;
+
+			this[x].setFull(total0, total1, total2, total3);
 		}
 
 		return this;
