@@ -188,7 +188,9 @@ class Text extends blueprint.objects.Sprite {
 
 	override function destroy() {
 		super.destroy();
+		font = null;
 		_lineWidths.splice(0, _lineWidths.length);
+		_newLines.splice(0, _newLines.length);
 	}
 
 	function updateTextSize() {
@@ -265,7 +267,14 @@ class Text extends blueprint.objects.Sprite {
 	}
 
 	function set_font(newFont:Font):Font {
-		_queueSize = _queueSize || (font != newFont);
+		if (font == newFont)
+			return font;
+
+		if (font != null)
+			--font.useCount;
+		if (newFont != null)
+			++newFont.useCount;
+
 		return font = newFont;
 	}
 

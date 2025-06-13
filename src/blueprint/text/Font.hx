@@ -35,17 +35,21 @@ import blueprint.graphics.Texture;
 class Font {
 	@:allow(blueprint.Game) static var library:FTLibrary;
 	@:allow(blueprint.Game) static var stroker:FTStroker;
+	public static var enableKeepOnce:Bool = false;
 	static final loadRenderTarget:cpp.UInt32 = Freetype.LOAD_TARGET(FTRenderMode.SDF);
 	static var fontCache:Map<String, Font> = [];
 
-	var _cacheKey:Null<String>;
 	var face:FTFace;
 	var tempGlyph:FTGlyph;
 	var sizes:Map<Int, Map<Int, FontTexture>> = [];
 	var sizesNoSDF:Map<Int, Map<Int, FontTexture>> = [];
 
+	public var keepIfUnused:Bool = false;
+	public var keepOnce:Bool = false;
+	public var useCount:Int = 0;
 	public var path:String;
 	public var loaded:Bool = true;
+	var _cacheKey:Null<String>;
 	
 	public function new(path:String) {
 		this.path = path;
@@ -219,20 +223,28 @@ class Font {
 			if (!font.loaded)  {
 				font.destroy();
 				font = null;
-			} else 
+			} else {
 				font._cacheKey = filePath;
+				font.keepOnce = enableKeepOnce || font.keepOnce;
+			}
 			fontCache.set(filePath, font);
-		}
+		} else 
+			fontCache[filePath].keepOnce = enableKeepOnce || fontCache[filePath].keepOnce;
 
 		return fontCache[filePath];
 	}
 
-	public static function clearCache() {
+	public static function clearCache(?force:Bool = false) {
 		for (key in fontCache.keys()) {
-			if (fontCache[key] == null)
+			final font = fontCache[key];
+
+			if (font == null)
 				fontCache.remove(key);
-			else 
-				fontCache[key].destroy();
+			else {
+				if (force || (!font.keepOnce && !font.keepIfUnused && font.useCount <= 0))
+					font.destroy();
+				font.keepOnce = false;
+			}
 		}
 	}
 }

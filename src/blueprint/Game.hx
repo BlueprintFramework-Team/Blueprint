@@ -98,10 +98,10 @@ class Game {
 		currentScene.destroy();
 
 		Shader.clearShaders(true);
+		Font.clearCache(true);
 		SpriteFrameSet.clearCache(true);
 		Texture.clearCache(true);
 		SoundData.clearSounds();
-		Font.clearCache();
 		BaseTween.curTweens.splice(0, BaseTween.curTweens.length);
 		Camera.clearCameras();
 
@@ -118,20 +118,20 @@ class Game {
 			currentScene.destroy();
 			
 			SoundData.clearSounds();
-			Font.clearCache();
 			BaseTween.curTweens.splice(0, BaseTween.curTweens.length);
 			Camera.clearCameras();
 
-			SpriteFrameSet.enableKeepOnce = Texture.enableKeepOnce = true;
+			Font.enableKeepOnce = SpriteFrameSet.enableKeepOnce = Texture.enableKeepOnce = true;
 
 			currentScene = Type.createInstance(queuedSceneChange, queuedSceneParams);
 			queuedSceneChange = null;
 
 			Shader.clearShaders();
+			Font.clearCache();
 			SpriteFrameSet.clearCache();
 			Texture.clearCache();
 
-			SpriteFrameSet.enableKeepOnce = Texture.enableKeepOnce = false;
+			Font.enableKeepOnce = SpriteFrameSet.enableKeepOnce = Texture.enableKeepOnce = false;
 
 			lastTime = Glfw.getTime();
 			cpp.vm.Gc.run(true);
