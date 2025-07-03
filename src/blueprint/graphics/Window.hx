@@ -19,6 +19,11 @@ class Window {
 
 	public var width:Int;
 	public var height:Int;
+
+	public var viewSize:Vector2;
+	public var viewOffset:Vector2;
+	public var resized:Signal<Int->Int->Void>;
+
 	public var vSync(default, set):Bool;
 	public var clearColor(default, set):Vector4;
 
@@ -35,6 +40,9 @@ class Window {
 	public function new(width:Int, height:Int, name:String) {
 		this.width = width;
 		this.height = height;
+		this.resized = new Signal();
+		this.viewSize = new Vector2(width, height);
+		this.viewOffset = new Vector2();
 
 		cWindow = Glfw.createWindow(width, height, name, null, null);
 		if (cWindow == null) {
@@ -108,17 +116,22 @@ class Window {
 		final gameRatio:Float = Game.window.width / Game.window.height;
 		final windowRatio:Float = width / height;
 
-		final outputSize:Vector2 = new Vector2(0, 0);
-
-		outputSize.x = (windowRatio > gameRatio) ? (height * gameRatio) : (width);
-		outputSize.y = (windowRatio < gameRatio) ? (width / gameRatio) : (height);
+		Game.window.viewSize.setFull(
+			Math.ffloor((windowRatio > gameRatio) ? (height * gameRatio) : (width)),
+			Math.ffloor((windowRatio < gameRatio) ? (width / gameRatio) : (height))
+		);
+		Game.window.viewOffset.setFull(
+			Math.ffloor((width - Game.window.viewSize.x) * 0.5),
+			Math.ffloor((height - Game.window.viewSize.y) * 0.5)
+		);
 
 		Glad.viewport(
-			Math.floor((width - outputSize.x) * 0.5),
-			Math.floor((height - outputSize.y) * 0.5),
-			Math.floor(outputSize.x),
-			Math.floor(outputSize.y)
+			Std.int(Game.window.viewOffset.x),
+			Std.int(Game.window.viewOffset.y),
+			Std.int(Game.window.viewSize.x),
+			Std.int(Game.window.viewSize.y)
 		);
+		Game.window.resized.emit(width, height);
 
 		Glfw.makeContextCurrent(null);
 		ThreadHelper.mutex.release();

@@ -1,5 +1,6 @@
 package blueprint.objects;
 
+import bindings.Glad;
 import math.MathExtras;
 import math.Vector4;
 import math.Vector2;
@@ -49,6 +50,9 @@ class Camera {
 	public static var cacheTransform:QueuedDraw = new QueuedDraw();
 	static var allCameras:Array<Camera> = [];
 
+	public var firstViewCapture:ViewCapture = null;
+	public var lastViewCapture:ViewCapture = null;
+	
 	public var keepOnSwitch:Bool = false;
 	public var resetOnSwitch:Bool = true;
 
@@ -91,9 +95,19 @@ class Camera {
 	public function drawQueues() {
 		if (!visible || tint.a <= 0.0) {
 			queuedDraws.splice(0, queuedDraws.length);
+			firstViewCapture = null;
+			lastViewCapture = null;
 			return;
 		}
 		
+		if (firstViewCapture != null) {
+			Glad.bindFramebuffer(Glad.FRAMEBUFFER, firstViewCapture.framebuffer);
+			Glad.viewport(0, 0, Std.int(Game.window.viewSize.x), Std.int(Game.window.viewSize.y));
+			Glad.clearColor(0.0, 0.0, 0.0, 0.0);
+			Glad.clear(Glad.COLOR_BUFFER_BIT);
+			firstViewCapture = null;
+		}
+
 		for (queue in queuedDraws) {
 			cacheTransform.set(null, queue.target.position, queue.target.renderOffset, queue.target.scale, queue.target._sinMult, queue.target._cosMult, queue.target.tint);
 
@@ -114,6 +128,7 @@ class Camera {
 			queue.target.tint.copyFrom(cacheTransform.tint);
 		}
 		queuedDraws.splice(0, queuedDraws.length);
+		lastViewCapture = null;
 	}
 
 	function updateTrigValues() {
