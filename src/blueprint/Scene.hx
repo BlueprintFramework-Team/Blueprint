@@ -7,6 +7,10 @@ class Scene extends blueprint.objects.Group {
 
     public function new() {
         super();
+        
+        if (Game.currentScene == null)
+            Game.currentScene = this;
+
         mainCamera = new Camera();
         cameras = [mainCamera];
     }

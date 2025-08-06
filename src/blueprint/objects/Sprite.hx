@@ -23,8 +23,8 @@ class Sprite {
 	public var memberOf(default, set):Group;
 	public var cameras:Array<Camera> = [];
 	public var parallax:Vector2 = new Vector2(1, 1);
-	public var zoomFactor:Float = 1.0;
-	public var targetZoom:Float = 1.0;
+	public var zoomFactor:Vector2 = new Vector2(1, 1);
+	public var targetZoom:Vector2 = new Vector2(1, 1);
 
 	public var position:Vector2;
 	public var positionOffset:Vector2 = new Vector2(0, 0);
@@ -168,8 +168,8 @@ class Sprite {
 			if (!cam.visible || cam.tint.a <= 0.0) continue;
 
 			Camera.cacheTransform.set(null, position, renderOffset, scale, _sinMult, _cosMult, tint);
-			_refVec2.x = MathExtras.lerp(targetZoom, cam.zoom.x, zoomFactor);
-			_refVec2.y = MathExtras.lerp(targetZoom, cam.zoom.y, zoomFactor);
+			_refVec2.x = MathExtras.lerp(targetZoom.x, cam.zoom.x, zoomFactor.x);
+			_refVec2.y = MathExtras.lerp(targetZoom.y, cam.zoom.y, zoomFactor.y);
 
 			// -cam.position to make the camera position look additional
 			// as every sprite moves to the right, it looks like the camera is moving to the left

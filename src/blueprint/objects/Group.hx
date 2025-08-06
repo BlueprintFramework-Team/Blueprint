@@ -121,7 +121,7 @@ class Group extends Sprite {
 			&& rotation == 0.0
 			&& (tint.r == 1.0 && tint.g == 1.0 && tint.b == 1.0 && tint.a == 1.0)
 			&& (parallax.x == 1.0 && parallax.y == 1.0)
-			&& zoomFactor == 1.0;
+			&& (zoomFactor.x == 1.0 && zoomFactor.y == 1.0);
 	}
 
 	override function clone<T:Sprite>():T {

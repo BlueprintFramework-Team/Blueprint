@@ -1,7 +1,5 @@
 package blueprint;
 
-import blueprint.tweening.BaseTween;
-import blueprint.input.InputHandler;
 import cpp.Callable;
 
 import bindings.Glad;
@@ -15,6 +13,7 @@ import math.Matrix4x4;
 import blueprint.Scene;
 import blueprint.objects.Camera;
 import blueprint.objects.Sprite;
+import blueprint.objects.ColorRect;
 import blueprint.objects.AnimatedSprite;
 import blueprint.graphics.SpriteFrames;
 import blueprint.graphics.Texture;
@@ -24,6 +23,8 @@ import blueprint.sound.SoundData;
 import blueprint.sound.Mixer;
 import blueprint.text.Font;
 import blueprint.text.Text;
+import blueprint.input.InputHandler;
+import blueprint.tweening.BaseTween;
 
 class Game {
 	public static var projection:Matrix4x4;
@@ -76,10 +77,17 @@ class Game {
 			offsetY: 0
 		};
 
+		ColorRect.pixel = new Texture();
+		ColorRect.pixel.keepIfUnused = true;
+		var pixelData:cpp.RawPointer<cpp.UInt8> = CppHelpers.malloc(3, cpp.UInt8);
+		pixelData[0] = pixelData[1] = pixelData[2] = 255;
+		Glad.texImage2D(Glad.TEXTURE_2D, 0, Glad.RGB, 1, 1, 0, Glad.RGB, Glad.UNSIGNED_BYTE, pixelData);
+		CppHelpers.free(pixelData);
+
 		Freetype.init(RawPointer.addressOf(Font.library));
 		FreetypeStroker.init(Font.library, RawPointer.addressOf(Font.stroker));
 
-		currentScene = Type.createInstance(startScene, []);
+		Type.createInstance(startScene, []);
 
 		Glfw.setCharModsCallback(window.cWindow, Callable.fromStaticFunction(InputHandler.charInput));
 		Glfw.setMouseButtonCallback(window.cWindow, Callable.fromStaticFunction(InputHandler.mouseInput));
@@ -101,6 +109,7 @@ class Game {
 		Font.clearCache(true);
 		SpriteFrameSet.clearCache(true);
 		Texture.clearCache(true);
+		ColorRect.pixel.destroy();
 		SoundData.clearSounds();
 		BaseTween.curTweens.splice(0, BaseTween.curTweens.length);
 		Camera.clearCameras();
@@ -123,7 +132,8 @@ class Game {
 
 			Font.enableKeepOnce = SpriteFrameSet.enableKeepOnce = Texture.enableKeepOnce = true;
 
-			currentScene = Type.createInstance(queuedSceneChange, queuedSceneParams);
+			currentScene = null;
+			Type.createInstance(queuedSceneChange, queuedSceneParams);
 			queuedSceneChange = null;
 
 			Shader.clearShaders();
