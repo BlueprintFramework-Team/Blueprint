@@ -21,22 +21,22 @@ class Mixer {
 
 	private function set_position(value:Vector3):Vector3 {
 		AL.listener3f(AL.POSITION, value.x, value.y, value.z);
-		return value;
+		return position.copyFrom(value);
 	}
 
 	private function set_velocity(value:Vector3):Vector3 {
 		AL.listener3f(AL.VELOCITY, value.x, value.y, value.z);
-		return value;
+		return velocity.copyFrom(value);
 	}
 
 	private function set_orientation(value:Array<Single>):Array<Single> {
 		AL.listenerfv(AL.ORIENTATION, cpp.Pointer.arrayElem(value, 0).raw);
-		return value;
+		return orientation = value;
 	}
 
 	private function set_gain(value:Single):Single {
 		AL.listenerf(AL.GAIN, value);
-		return value;
+		return gain = value;
 	}
 
 	public function new() {
