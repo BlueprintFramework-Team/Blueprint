@@ -145,21 +145,17 @@ class AnimatedSprite extends Sprite {
 			curFrame = 0;
 	}
 
-	override function queueDraw() {
-		if (!visible || tint.a <= 0.0) return;
-
+	override function update(elapsed:Float) {
 		if (frameSets != null && frameSets.length > 0 && animData.exists(curAnim)) {
 			final data = animData[curAnim];
 			final alreadyFinished = animFinished;
 
-			animTime = (data.loop) ? (animTime + Game.elapsed) % data.length : Math.min(animTime + Game.elapsed, data.length);
+			animTime = (data.loop) ? (animTime + elapsed) % data.length : Math.min(animTime + elapsed, data.length);
 			animFinished = (animTime >= data.length && !data.loop);
 			curFrame = data.indexes[Math.floor(animTime * data.fps)];
 			if (animFinished && !alreadyFinished)
 				finished.emit(curAnim);
 		}
-		
-		super.queueDraw();
 	}
 
 	override function prepareShaderVars() {

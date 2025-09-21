@@ -45,8 +45,10 @@ class Group extends Sprite {
 	}
 
 	override public function update(elapsed:Float):Void {
-		for (object in members)
-			object.update(elapsed);
+		for (object in members) {
+			if (!object.frozen)
+				object.update(elapsed);
+		}
 	}
 
 	override public function queueDraw():Void {
@@ -56,8 +58,10 @@ class Group extends Sprite {
 		Camera.currentCameras = (cameras != null && cameras.length > 0) ? cameras : lastCameras;
 
 		if (skipProperties || hasDefaultProps()) {
-			for (object in members)
-				object.queueDraw();
+			for (object in members) {
+				if (object.visible && object.tint.a > 0.0)
+					object.queueDraw();
+			}
 			Camera.currentCameras = lastCameras;
 			return;
 		}

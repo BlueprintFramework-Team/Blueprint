@@ -82,7 +82,7 @@ class Text extends blueprint.objects.Sprite {
 	}
 
 	override public function draw() {
-		if (font == null) return;
+		if (font == null || !visible || tint.a <= 0.0) return;
 
 		if (_oldStatQuality != textQuality) {
 			if (quality == _oldStatQuality)

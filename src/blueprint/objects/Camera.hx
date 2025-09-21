@@ -64,6 +64,7 @@ class Camera {
 	public var zoom:Vector2;
 	public var rotation(default, set):Float = 0.0;
 	public var tint:Color;
+	public var layer(default, set):Int;
 
 	var _queueTrig:Bool = false;
 	var _sinMult:Float = 0;
@@ -76,7 +77,7 @@ class Camera {
 		position = new Vector2();
 		zoom = new Vector2(1.0, 1.0);
 		tint = new Color(1.0, 1.0, 1.0, 1.0);
-		allCameras.push(this);
+		layer = 0;
 	}
 
 	public function update(elapsed:Float) {
@@ -148,6 +149,17 @@ class Camera {
 		_sinMult = 1.0;
 		_cosMult = 0.0;
 		_queueTrig = false;
+	}
+
+	function set_layer(newLayer:Int) {
+		allCameras.remove(this);
+
+		var idx = allCameras.length;
+		while (idx > 0 && allCameras[idx - 1].layer > newLayer)
+            --idx;
+		allCameras.insert(idx, this);
+
+		return layer = newLayer;
 	}
 
 	function set_rotation(newRot:Float) {

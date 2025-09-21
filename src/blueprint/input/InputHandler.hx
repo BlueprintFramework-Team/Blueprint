@@ -44,8 +44,26 @@ class InputHandler {
 		ThreadHelper.mutex.acquire();
 		Glfw.makeContextCurrent(Game.window.cWindow);
 		switch (action) {
-			case Glfw.PRESS: mousePressed.emit(button);
-			case Glfw.RELEASE: mouseReleased.emit(button);
+			case Glfw.PRESS:
+				mousePressed.emit(button);
+
+				for (scene in Game.plugins) {
+					if (scene.takeInput)
+						scene.mouseDown(button);
+				}
+
+				if (Game.topScene.takeInput)
+					Game.topScene.mouseUp(button);
+			case Glfw.RELEASE:
+				mouseReleased.emit(button);
+
+				for (scene in Game.plugins) {
+					if (scene.takeInput)
+						scene.mouseUp(button);
+				}
+
+				if (Game.topScene.takeInput)
+					Game.topScene.mouseUp(button);
 		}
 		Glfw.makeContextCurrent(null);
 		ThreadHelper.mutex.release();
@@ -57,13 +75,34 @@ class InputHandler {
 		switch (action) {
 			case Glfw.PRESS:
 				keyPressed.emit(key, scancode, mods);
-				Game.currentScene.keyDown(key, scancode, mods);
+
+				for (scene in Game.plugins) {
+					if (scene.takeInput)
+						scene.keyDown(key, scancode, mods);
+				}
+
+				if (Game.topScene.takeInput)
+					Game.topScene.keyDown(key, scancode, mods);
 			case Glfw.REPEAT:
 				keyRepeated.emit(key, scancode, mods);
-				Game.currentScene.keyRepeat(key, scancode, mods);
+
+				for (scene in Game.plugins) {
+					if (scene.takeInput)
+						scene.keyRepeat(key, scancode, mods);
+				}
+
+				if (Game.topScene.takeInput)
+					Game.topScene.keyRepeat(key, scancode, mods);
 			case Glfw.RELEASE:
 				keyReleased.emit(key, scancode, mods);
-				Game.currentScene.keyUp(key, scancode, mods);
+
+				for (scene in Game.plugins) {
+					if (scene.takeInput)
+						scene.keyUp(key, scancode, mods);
+				}
+
+				if (Game.topScene.takeInput)
+					Game.topScene.keyUp(key, scancode, mods);
 		}
 		Glfw.makeContextCurrent(null);
 		ThreadHelper.mutex.release();

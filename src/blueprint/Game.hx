@@ -29,7 +29,22 @@ import blueprint.tweening.BaseTween;
 class Game {
 	public static var projection:Matrix4x4;
 
-	public static var currentScene:Scene;
+	/**
+		Additional scenes which all take updates.
+
+		Useful for additional functionality or debug info.
+	**/
+	public static var plugins:Array<Scene> = [];
+	/**
+		The main scenes of the game, clearing itself on a scene change.
+
+		Only the top scene will update and take inputs.
+	**/
+	public static var sceneStack:Array<Scene> = [null];
+
+	public static var currentScene(get, set):Scene;
+	public static var topScene(get, set):Scene;
+
 	private static var queuedSceneChange:Class<Scene> = null;
 	private static var queuedSceneParams:Array<Dynamic> = [];
 
@@ -39,7 +54,9 @@ class Game {
 
 	public static var mixer:Mixer;
 
-	public function new(width:Int, height:Int, name:String, startScene:Class<Scene>) {
+	public static var preLoop:Signal<Void->Void> = new Signal();
+
+	public function new(width:Int, height:Int, name:String, startScene:Class<Scene>, ?startingPlugins:Array<Class<Scene>>) {
 		Glfw.init();
 		Glfw.windowHint(Glfw.CONTEXT_VERSION_MAJOR, 3);
 		Glfw.windowHint(Glfw.CONTEXT_VERSION_MINOR, 3);
@@ -88,11 +105,17 @@ class Game {
 		FreetypeStroker.init(Font.library, RawPointer.addressOf(Font.stroker));
 
 		Type.createInstance(startScene, []);
+		if (startingPlugins != null && startingPlugins.length > 0) {
+			for (cls in startingPlugins)
+				createPlugin(cls);
+		}
 
 		Glfw.setCharModsCallback(window.cWindow, Callable.fromStaticFunction(InputHandler.charInput));
 		Glfw.setMouseButtonCallback(window.cWindow, Callable.fromStaticFunction(InputHandler.mouseInput));
 		Glfw.setScrollCallback(window.cWindow, Callable.fromStaticFunction(InputHandler.scrollInput));
 		Glfw.setKeyCallback(window.cWindow, Callable.fromStaticFunction(InputHandler.keyInput));
+
+		preLoop.emit();
 
 		ThreadHelper.startWindowThread(SoundData.updateSounds, 0.5); // may make a static var in the future to change the interval. (theres a delay to lower cpu on audio)
 		ThreadHelper.mutex.acquire();
@@ -124,7 +147,8 @@ class Game {
 
 	private function update():Void {
 		if (queuedSceneChange != null) {
-			currentScene.destroy();
+			while (sceneStack.length > 0)
+				sceneStack[sceneStack.length - 1].destroy();
 			
 			SoundData.clearSounds();
 			BaseTween.curTweens.splice(0, BaseTween.curTweens.length);
@@ -132,7 +156,7 @@ class Game {
 
 			Font.enableKeepOnce = SpriteFrameSet.enableKeepOnce = Texture.enableKeepOnce = true;
 
-			currentScene = null;
+			sceneStack.push(null);
 			Type.createInstance(queuedSceneChange, queuedSceneParams);
 			queuedSceneChange = null;
 
@@ -156,12 +180,17 @@ class Game {
 		var runTime:Float = Glfw.getTime();
 		elapsed = runTime - lastTime;
 		lastTime = runTime;
-		currentScene.update(elapsed);
+		sceneStack[sceneStack.length - 1].update(elapsed);
+		for (plugin in plugins)
+			plugin.update(elapsed);
 		BaseTween.updateTweens(elapsed);
 
 		for (cam in Camera.allCameras)
 			cam.update(elapsed);
-		currentScene.queueDraw();
+		for (scene in sceneStack)
+			scene.queueDraw();
+		for (plugin in plugins)
+			plugin.queueDraw();
 
 		Glad.clear(Glad.COLOR_BUFFER_BIT);
 
@@ -182,8 +211,35 @@ class Game {
 		Glfw.setWindowShouldClose(window.cWindow, 0);
 	}
 
-	public static function changeSceneTo(scene:Class<Scene>, ...params:Dynamic) {
+	public static function addScene<T:Scene>(scene:Class<T>, ...params:Dynamic):T {
+		sceneStack.push(null);
+		return Type.createInstance(scene, params.toArray());
+	}
+
+	public static function createPlugin<T:Scene>(plugin:Class<T>, ...params:Dynamic):T {
+		final scene:T = Type.createInstance(plugin, params.toArray());
+		plugins.push(scene);
+		return scene;
+	}
+
+	public static function changeSceneTo(scene:Class<Scene>, ...params:Dynamic):Void {
 		queuedSceneChange = scene;
 		queuedSceneParams = params.toArray();
+	}
+
+	static function get_currentScene():Scene {
+		return sceneStack[0];
+	}
+
+	static function set_currentScene(newScene:Scene):Scene {
+		return sceneStack[0] = newScene;
+	}
+
+	static function get_topScene():Scene {
+		return sceneStack[sceneStack.length - 1];
+	}
+
+	static function set_topScene(newScene:Scene):Scene {
+		return sceneStack[sceneStack.length - 1] = newScene;
 	}
 }

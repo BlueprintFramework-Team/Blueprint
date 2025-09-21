@@ -57,6 +57,8 @@ class Sprite {
 	public var antialiasing:Bool = true;
 	public var visible:Bool = true;
 
+	public var frozen:Bool = false;
+
 	public function new(?x:Float = 0, ?y:Float = 0, ?imagePath:String) {
 		position = new Vector2(x, y);
 		
