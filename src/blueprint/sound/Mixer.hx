@@ -13,8 +13,8 @@ class Mixer {
 	public var device:Device;
 	public var context:Context;
 
-	public var position(default, set):Vector3;
-	public var velocity(default, set):Vector3;
+	public var position(default, set):Vector3 = new Vector3();
+	public var velocity(default, set):Vector3 = new Vector3();
 	public var orientation(default, set):Array<Single>;
 
 	public var gain(default, set):Single;
@@ -65,8 +65,8 @@ class Mixer {
 			return;
 		}
 
-		position = new Vector3(0, 0, 0);
-		velocity = new Vector3(0, 0, 0);
+		position = position.setFull(0, 0, 0);
+		velocity = velocity.setFull(0, 0, 0);
 
 		orientation = [
 			1, 0, 0,
