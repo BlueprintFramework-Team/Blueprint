@@ -42,16 +42,16 @@
 
 	<!-- LINUX LINKER -->
 	<target id="haxe" if="linux">
-		<flag value="-lglfw" />
-		<flag value="-lGL" />
-		<flag value="-lX11" />
-		<flag value="-lpthread" />
-		<flag value="-lXrandr" />
-		<flag value="-lXi" />
-		<flag value="-ldl" />
-		<flag value="-lopenal" />
-		<flag value="-lfreetype" />
-		<flag value="-lpng" />
+		<lib name="-lglfw" />
+		<lib name="-lGL" />
+		<lib name="-lX11" />
+		<lib name="-lpthread" />
+		<lib name="-lXrandr" />
+		<lib name="-lXi" />
+		<lib name="-ldl" />
+		<lib name="-lopenal" />
+		<lib name="-lfreetype" />
+		<lib name="-lpng" />
 	</target>
 
 	<copyFile name="OpenAL32.dll" from="${PROJECT_DIR}vendor/lib" toolId="exe"
