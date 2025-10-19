@@ -216,6 +216,14 @@ abstract Matrix4x4(Array<Vector4>) from Array<Vector4> to Array<Vector4> {
 		return this;
 	}
 
+	public function transformVec4(vec:Vector4):Vector4 {
+		return vec.setFull(
+			this[0].x * vec.x + this[0].y * vec.y + this[0].z * vec.z + this[0].w * vec.w,
+			this[1].x * vec.x + this[1].y * vec.y + this[1].z * vec.z + this[1].w * vec.w,
+			this[2].x * vec.x + this[2].y * vec.y + this[2].z * vec.z + this[2].w * vec.w,
+			this[3].x * vec.x + this[3].y * vec.y + this[3].z * vec.z + this[3].w * vec.w
+		);
+	}
 
 	public inline function copyFrom(mat:Matrix4x4):Matrix4x4 {
 		for (i in 0...4)

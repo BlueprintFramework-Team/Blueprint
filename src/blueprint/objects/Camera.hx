@@ -2,10 +2,11 @@ package blueprint.objects;
 
 import bindings.Glad;
 import math.MathExtras;
+import math.Matrix4x4;
 import math.Vector4;
 import math.Vector2;
 
-class QueuedDraw {
+class TransformCache {
 	public var target:Sprite;
 
 	public var position:Vector2;
@@ -42,12 +43,35 @@ class QueuedDraw {
 		tint.setFull(1, 1, 1, 1);
 	}
 }
+class QueuedDraw {
+	public var target:Sprite;
+
+	public var transform:Matrix4x4;
+	public var tint:Color;
+
+	public function new() {
+		transform = new Matrix4x4();
+		tint = new Color(1.0, 1.0, 1.0, 1.0);
+	}
+
+	public function set(target:Sprite, transform:Matrix4x4, tint:Color) {
+		this.target = target;
+		this.transform.copyFrom(transform);
+		this.tint.copyFrom(tint);
+	}
+	public function reset() {
+		target = null;
+		transform.reset(1);
+		tint.setFull(1, 1, 1, 1);
+	}
+}
 
 @:allow(blueprint.objects.Sprite)
 @:allow(blueprint.Game)
 class Camera {
 	public static var currentCameras:Array<Camera> = [];
-	public static var cacheTransform:QueuedDraw = new QueuedDraw();
+	public static var cacheTransform:TransformCache = new TransformCache();
+	public static var cacheDraw:QueuedDraw = new QueuedDraw();
 	static var allCameras:Array<Camera> = [];
 
 	public var firstViewCapture:ViewCapture = null;
@@ -87,9 +111,9 @@ class Camera {
 		position.y = MathExtras.lerp(position.y, targetPosition.y, elapsed * targetLerp);
 	}
 
-	public function queueDraw(target:Sprite, position:Vector2, offset:Vector2, scale:Vector2, sin:Float, cos:Float, tint:Color) {
+	public function queueDraw(target:Sprite, transform:Matrix4x4, tint:Color) {
 		final queue:QueuedDraw = getQueue();
-		queue.set(target, position, offset, scale, sin, cos, tint);
+		queue.set(target, transform, tint);
 		queuedDraws.push(queue);
 	}
 
@@ -110,23 +134,15 @@ class Camera {
 		}
 
 		for (queue in queuedDraws) {
-			cacheTransform.set(null, queue.target.position, queue.target.renderOffset, queue.target.scale, queue.target._sinMult, queue.target._cosMult, queue.target.tint);
+			cacheDraw.set(null, queue.target.transform, queue.target.tint);
 
-			queue.target.position.copyFrom(queue.position);
-			queue.target.renderOffset.copyFrom(queue.offset);
-			queue.target.scale.copyFrom(queue.scale);
-			queue.target._sinMult = queue.sin;
-			queue.target._cosMult = queue.cos;
+			queue.target.transform.copyFrom(queue.transform);
 			queue.target.tint.copyFrom(queue.tint);
 
 			queue.target.draw();
 
-			queue.target.position.copyFrom(cacheTransform.position);
-			queue.target.renderOffset.copyFrom(cacheTransform.offset);
-			queue.target.scale.copyFrom(cacheTransform.scale);
-			queue.target._sinMult = cacheTransform.sin;
-			queue.target._cosMult = cacheTransform.cos;
-			queue.target.tint.copyFrom(cacheTransform.tint);
+			queue.target.transform.copyFrom(cacheDraw.transform);
+			queue.target.tint.copyFrom(cacheDraw.tint);
 		}
 		queuedDraws.splice(0, queuedDraws.length);
 		lastViewCapture = null;

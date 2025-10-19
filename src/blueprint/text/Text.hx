@@ -151,23 +151,23 @@ class Text extends blueprint.objects.Sprite {
 		final texture = (letter == null) ? outlineRef.texture : letter.texture;
 		final data = (letter == null) ? outlineRef.parent : letter;
 
-		shader.transform.reset(1.0);
-		shader.transform.translate(Sprite._refVec3.set(
+		transform.reset(1.0);
+		transform.translate(Sprite._refVec3.set(
 			((curX + data.bearingX) + (texture.width * 0.5) - (_textWidth * 0.5 * quality) + (dynamicOffset.x * quality) - (texture.width - data.texture.width) * 0.5) / texture.width,
 			((scaledSize * lineNum + scaledSize) + (texture.height - data.bearingY) - (texture.height * 0.5) - (_textHeight * 0.5 * quality) + (dynamicOffset.y * quality) - (texture.height - data.texture.height) * 0.5) / texture.height,
 			0
 		));
 		final letterWidth = texture.width * scale.x * _qualityFract;
 		final letterHeight = texture.height * scale.y * _qualityFract;
-		shader.transform.scale(Sprite._refVec3.set(letterWidth, letterHeight, 1));
+		transform.scale(Sprite._refVec3.set(letterWidth, letterHeight, 1));
 		if (_sinMult != 0)
-			shader.transform.rotate(_sinMult, _cosMult, Sprite._refVec3.set(0, 0, 1));
-		shader.transform.translate(Sprite._refVec3.set(
+			transform.rotate(_sinMult, _cosMult, Sprite._refVec3.set(0, 0, 1));
+		transform.translate(Sprite._refVec3.set(
 			position.x + renderOffset.x,
 			position.y + renderOffset.y,
 			0
 		));
-		final transStar = shader.transform.toCArray();
+		final transStar = transform.toCArray();
 		Glad.uniformMatrix4fv(transLoc, 1, Glad.FALSE, transStar);
 		CppHelpers.free(transStar);
 	}

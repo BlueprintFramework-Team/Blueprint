@@ -1,9 +1,10 @@
 package blueprint.objects;
 
-import math.Vector3;
 import bindings.Glad;
 
 import math.MathExtras;
+import math.Matrix4x4;
+import math.Vector3;
 import math.Vector2;
 import math.Vector4;
 
@@ -17,6 +18,7 @@ import blueprint.graphics.Shader;
 class Sprite {
 	public static var defaultShader:Shader;
 	public static var defaultTexture:Texture;
+	static var _refVec4:Vector4 = new Vector4();
 	static var _refVec3:Vector3 = new Vector3();
 	static var _refVec2:Vector2 = new Vector2();
 
@@ -25,6 +27,9 @@ class Sprite {
 	public var parallax:Vector2 = new Vector2(1, 1);
 	public var zoomFactor:Vector2 = new Vector2(1, 1);
 	public var targetZoom:Vector2 = new Vector2(1, 1);
+
+	var transform:Matrix4x4 = new Matrix4x4(1.0);
+	public var bounds:Vector4 = new Vector4();
 
 	public var position:Vector2;
 	public var positionOffset:Vector2 = new Vector2(0, 0);
@@ -152,6 +157,34 @@ class Sprite {
 		return result;
 	}
 
+	public function getPositionOnCamera(camera:Camera, ?stopAt:Group, ?result:Vector2) {
+		result = getGlobalPosition(stopAt, result);
+
+		result.x += -camera.position.x * parallax.x - Game.window.width * 0.5;
+		result.y += -camera .position.y * parallax.y - Game.window.height * 0.5;
+
+		result.x *= MathExtras.lerp(targetZoom.x, camera.zoom.x, zoomFactor.x);
+		result.y *= MathExtras.lerp(targetZoom.y, camera.zoom.y, zoomFactor.y);
+
+		result.rotate(camera._sinMult, camera._cosMult);
+
+		result.x += Game.window.width * 0.5;
+		result.y += Game.window.height * 0.5;
+
+		return result;
+	}
+	public function getScaleOnCamera(camera:Camera, ?stopAt:Group, ?result:Vector2) {
+		result = getGlobalScale(stopAt, result);
+
+		result.x *= MathExtras.lerp(targetZoom.x, camera.zoom.x, zoomFactor.x);
+		result.y *= MathExtras.lerp(targetZoom.y, camera.zoom.y, zoomFactor.y);
+
+		return result;
+	}
+	public function getRotationOnCamera(camera:Camera, ?stopAt:Group) {
+		return getGlobalRotation(stopAt) + camera.rotation;
+	}
+
 	public function queueDraw():Void {
 		if (!visible || tint.a <= 0.0) return;
 
@@ -198,7 +231,7 @@ class Sprite {
 			tint *= cam.tint;
 
 			if (!offScreen())
-				cam.queueDraw(this, position, renderOffset, scale, _sinMult, _cosMult, tint);
+				cam.queueDraw(this, transform, tint);
 
 			position.copyFrom(Camera.cacheTransform.position);
 			renderOffset.copyFrom(Camera.cacheTransform.offset);
@@ -234,26 +267,27 @@ class Sprite {
 		Glad.texParameteri(Glad.TEXTURE_2D, Glad.TEXTURE_MAG_FILTER, filter);
 	}
 
-	private function prepareShaderVars():Void {
-		final uMult = bindings.CppHelpers.boolToInt(flipX);
-		final vMult = bindings.CppHelpers.boolToInt(flipY);
-
-		final sourceWidth = sourceWidth; // so im not constantly calling the setters.
-		final sourceHeight = sourceHeight;
-		
-		shader.transform.reset(1.0);
-		shader.transform.scale(_refVec3.set(sourceWidth, sourceHeight, 1));
-		shader.transform.translate(_refVec3.set(dynamicOffset.x, dynamicOffset.y, 0));
-		shader.transform.scale(_refVec3.set(scale.x, scale.y, 1));
+	private function prepareTransform() {
+		transform.reset(1.0);
+		transform.scale(_refVec3.set(sourceWidth, sourceHeight, 1));
+		transform.translate(_refVec3.set(dynamicOffset.x, dynamicOffset.y, 0));
+		transform.scale(_refVec3.set(scale.x, scale.y, 1));
 		if (_sinMult != 0)
-			shader.transform.rotate(_sinMult, _cosMult, _refVec3.set(0, 0, 1));
-		shader.transform.translate(_refVec3.set(
+			transform.rotate(_sinMult, _cosMult, _refVec3.set(0, 0, 1));
+		transform.translate(_refVec3.set(
 			position.x + renderOffset.x,
 			position.y + renderOffset.y,
 			0
 		));
-		shader.setUniform("transform", shader.transform);
+	}
 
+	private function prepareShaderVars():Void {
+		final uMult = bindings.CppHelpers.boolToInt(flipX);
+		final vMult = bindings.CppHelpers.boolToInt(flipY);
+		
+		final sourceWidth = sourceWidth; // so im not constantly calling the setters.
+		final sourceHeight = sourceHeight;
+		shader.setUniform("transform", transform);
 		shader.setUniform("tint", tint);
 		Glad.uniform4f(Glad.getUniformLocation(shader.ID, "sourceRect"),
 			(sourceRect.x + sourceWidth * uMult) / texture.width,
@@ -280,24 +314,71 @@ class Sprite {
 		_queueTrig = false;
 	}
 
+	public function getBoundsOnCamera(camera:Camera, ?stopAt:Group, ?result:Vector4) {
+		Camera.cacheTransform.set(null, position, renderOffset, scale, _sinMult, _cosMult, tint);
+
+		getPositionOnCamera(camera, stopAt, position);
+		renderOffset.setFull(0, 0);
+		getScaleOnCamera(camera, stopAt, scale);
+		final radians = MathExtras.toRad(getRotationOnCamera(camera, stopAt));
+		_sinMult = Math.sin(radians);
+		_cosMult = Math.cos(radians);
+
+		result = getBounds(result);
+
+		position.copyFrom(Camera.cacheTransform.position);
+		renderOffset.copyFrom(Camera.cacheTransform.offset);
+		scale.copyFrom(Camera.cacheTransform.scale);
+		_sinMult = Camera.cacheTransform.sin;
+		_cosMult = Camera.cacheTransform.cos;
+
+		return result;
+	}
+	public function getGlobalBounds(?stopAt:Group, ?result:Vector4) {
+		Camera.cacheTransform.set(null, position, renderOffset, scale, _sinMult, _cosMult, tint);
+
+		getGlobalPosition(stopAt, position);
+		renderOffset.setFull(0, 0);
+		getGlobalScale(stopAt, scale);
+		final radians = MathExtras.toRad(getGlobalRotation(stopAt));
+		_sinMult = Math.sin(radians);
+		_cosMult = Math.cos(radians);
+
+		result = getBounds(result);
+
+		position.copyFrom(Camera.cacheTransform.position);
+		renderOffset.copyFrom(Camera.cacheTransform.offset);
+		scale.copyFrom(Camera.cacheTransform.scale);
+		_sinMult = Camera.cacheTransform.sin;
+		_cosMult = Camera.cacheTransform.cos;
+
+		return result;
+	}
+	public function getBounds(?result:Vector4):Vector4 {
+		if (result == null)
+			result = bounds;
+
+		prepareTransform();
+		result.setFull(Math.POSITIVE_INFINITY, Math.POSITIVE_INFINITY, Math.NEGATIVE_INFINITY, Math.NEGATIVE_INFINITY);
+		inline function runCorner(x:Float, y:Float) {
+			transform.transformVec4(_refVec4.setFull(x, y, 0, 1));
+			result.x = Math.min(result.x, _refVec4.x);
+			result.z = Math.max(result.z, _refVec4.x);
+			result.y = Math.min(result.y, _refVec4.y);
+			result.w = Math.max(result.w, _refVec4.y);
+		}
+		runCorner(-0.5, -0.5);
+		runCorner(0.5, -0.5);
+		runCorner(0.5, 0.5);
+		runCorner(-0.5, 0.5);
+
+		return result;
+	}
+
 	private function offScreen():Bool {
-		final offsetX:Float = (dynamicOffset.x * scale.x * _cosMult - dynamicOffset.y * scale.y * _sinMult) + renderOffset.x;
-		final offsetY:Float = (dynamicOffset.x * scale.x * _sinMult + dynamicOffset.y * scale.y * _cosMult) + renderOffset.y;
-		
-		var width:Float = width;
-		var height:Float = height;
-		// TODO: get the proper formula for proper sizes.
-		// width = (width * _cosMult - height * _sinMult);
-		// height = (this.width * _sinMult + height * _cosMult);
-
-		// Do not apply anchors here. position + offset already takes care of that.
-		final left:Float = position.x + offsetX - width * 0.5;
-		final right:Float = position.x + offsetX + width * 0.5;
-		final top:Float = position.y + offsetY - height * 0.5;
-		final bottom:Float = position.y + offsetY + height * 0.5;
-
-		final offScreenX:Bool = (Math.min(left, right) > Game.window.width) || (Math.max(left, right) < 0);
-		final offScreenY:Bool = (Math.min(top, bottom) > Game.window.height) || (Math.max(top, bottom) < 0);
+		getBounds(bounds);
+		final offScreenX:Bool = (bounds.x > Game.window.width) || (bounds.z < 0);
+		final offScreenY:Bool = (bounds.y > Game.window.height) || (bounds.w < 0);
 
 		return offScreenX || offScreenY;
 	}

@@ -9,7 +9,7 @@ import blueprint.objects.Sprite;
 import blueprint.objects.Camera;
 
 class Group extends Sprite {
-	var cacheTransform:QueuedDraw = new QueuedDraw(); // Sprite also uses cacheTransform so I can't really use Camera.cacheTransform.
+	var cacheTransform:TransformCache = new TransformCache(); // Sprite also uses cacheTransform so I can't really use Camera.cacheTransform.
 
 	public var positionFactor:Vector2 = new Vector2(1.0);
 	public var members:Array<Sprite> = [];

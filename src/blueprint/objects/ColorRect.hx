@@ -17,20 +17,22 @@ class ColorRect extends Sprite {
     }
 
     // merely to simplfy
-	override function prepareShaderVars():Void {
-		shader.transform.reset(1.0);
-		shader.transform.scale(Sprite._refVec3.set(size.x, size.y, 1));
-		shader.transform.translate(Sprite._refVec3.set(dynamicOffset.x, dynamicOffset.y, 0));
-		shader.transform.scale(Sprite._refVec3.set(scale.x, scale.y, 1));
+    override function prepareTransform() {
+        transform.reset(1.0);
+		transform.scale(Sprite._refVec3.set(size.x, size.y, 1));
+		transform.translate(Sprite._refVec3.set(dynamicOffset.x, dynamicOffset.y, 0));
+		transform.scale(Sprite._refVec3.set(scale.x, scale.y, 1));
 		if (_sinMult != 0)
-			shader.transform.rotate(_sinMult, _cosMult, Sprite._refVec3.set(0, 0, 1));
-		shader.transform.translate(Sprite._refVec3.set(
+			transform.rotate(_sinMult, _cosMult, Sprite._refVec3.set(0, 0, 1));
+		transform.translate(Sprite._refVec3.set(
 			position.x + renderOffset.x,
 			position.y + renderOffset.y,
 			0
 		));
-		shader.setUniform("transform", shader.transform);
+    }
 
+	override function prepareShaderVars():Void {
+		shader.setUniform("transform", transform);
 		shader.setUniform("tint", tint);
 		Glad.uniform4f(Glad.getUniformLocation(shader.ID, "sourceRect"), 0, 0, 1, 1);
 	}

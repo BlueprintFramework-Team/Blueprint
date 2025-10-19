@@ -158,30 +158,31 @@ class AnimatedSprite extends Sprite {
 		}
 	}
 
+	override function prepareTransform() {
+		transform.reset(1.0);
+		transform.scale(Sprite._refVec3.set(sourceWidth, sourceHeight, 1));
+		transform.translate(Sprite._refVec3.set(
+			dynamicOffset.x + frame.offsetX,
+			dynamicOffset.y + frame.offsetY,
+			0
+		));
+		transform.scale(Sprite._refVec3.set(scale.x, scale.y, 1));
+		if (_sinMult != 0)
+			transform.rotate(_sinMult, _cosMult, Sprite._refVec3.set(0, 0, 1));
+		transform.translate(Sprite._refVec3.set(
+			position.x + renderOffset.x,
+			position.y + renderOffset.y,
+			0
+		));
+	}
+
 	override function prepareShaderVars() {
 		final uMult = bindings.CppHelpers.boolToInt(flipX);
 		final vMult = bindings.CppHelpers.boolToInt(flipY);
 
 		final sourceWidth = sourceWidth; // so im not constantly calling the setters.
 		final sourceHeight = sourceHeight;
-
-		shader.transform.reset(1.0);
-		shader.transform.scale(Sprite._refVec3.set(sourceWidth, sourceHeight, 1));
-		shader.transform.translate(Sprite._refVec3.set(
-			dynamicOffset.x + frame.offsetX,
-			dynamicOffset.y + frame.offsetY,
-			0
-		));
-		shader.transform.scale(Sprite._refVec3.set(scale.x, scale.y, 1));
-		if (_sinMult != 0)
-			shader.transform.rotate(_sinMult, _cosMult, Sprite._refVec3.set(0, 0, 1));
-		shader.transform.translate(Sprite._refVec3.set(
-			position.x + renderOffset.x,
-			position.y + renderOffset.y,
-			0
-		));
-		shader.setUniform("transform", shader.transform);
-
+		shader.setUniform("transform", transform);
 		shader.setUniform("tint", tint);
 		bindings.Glad.uniform4f(bindings.Glad.getUniformLocation(shader.ID, "sourceRect"),
 			((sourceRect.x + frame.sourceX) + sourceWidth * uMult) / texture.width,
@@ -199,27 +200,6 @@ class AnimatedSprite extends Sprite {
 		renderOffset.y += height * 0.5 - ((animHeight - sourceRect.y) * scale.y) * anchor.y;
 		if (parentSin != null && parentCos != null)
 			renderOffset.rotate(parentSin, parentCos);
-	}
-
-	override function offScreen():Bool {
-		final dynamX:Float = dynamicOffset.x + frame.offsetX;
-		final dynamY:Float = dynamicOffset.y + frame.offsetY;
-		final offsetX:Float = (dynamX * scale.x * _cosMult - dynamY * scale.y * _sinMult) + renderOffset.x;
-		final offsetY:Float = (dynamX * scale.x * _sinMult + dynamY * scale.y * _cosMult) + renderOffset.y;
-		
-		var width:Float = width;
-		var height:Float = height;
-
-		// Do not apply anchors here. position + offset already takes care of that.
-		final left:Float = position.x + offsetX - width * 0.5;
-		final right:Float = position.x + offsetX + width * 0.5;
-		final top:Float = position.y + offsetY - height * 0.5;
-		final bottom:Float = position.y + offsetY + height * 0.5;
-
-		final offScreenX:Bool = (Math.min(left, right) > Game.window.width) || (Math.max(left, right) < 0);
-		final offScreenY:Bool = (Math.min(top, bottom) > Game.window.height) || (Math.max(top, bottom) < 0);
-
-		return offScreenX || offScreenY;
 	}
 
 	override function clone<T:Sprite>():T {

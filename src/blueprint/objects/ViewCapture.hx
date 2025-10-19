@@ -50,8 +50,9 @@ class ViewCapture extends Sprite {
 			cam.firstViewCapture = this;
 		cam.lastViewCapture = this;
 
+		prepareTransform();
 		if (cam.visible && cam.tint.a >= 0.0)
-			cam.queueDraw(this, position, renderOffset, scale, _sinMult, _cosMult, tint);
+			cam.queueDraw(this, transform, tint);
 	}
 
 	override function draw() {
