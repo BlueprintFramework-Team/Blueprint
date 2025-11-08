@@ -66,7 +66,7 @@ class SoundData {
 		var i:Int = 0; // So I have more control over the iterator. (Removing stuff can mess up for loops.)
 		while (i < curSounds.length) {
 			if (!force && curSounds[i].keepOnSwitch) {
-				if (curSounds[i].data != null)
+				if (curSounds[i].data != null && !soundCache[curSounds[i].data.path].contains(null))
 					soundCache[curSounds[i].data.path].push(null);
 				i++;
 			} else 
