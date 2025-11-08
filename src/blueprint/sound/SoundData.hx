@@ -9,8 +9,13 @@ import ThreadHelper.ThreadLoopFlag;
 class SoundData {
 	private static var curSounds:Array<SoundPlayer> = [];
 	private static var lastSoundUpdate:Float = 0.0;
+	private static var soundCache:Map<String, Array<AudioFormat>> = [];
 
 	public static function getSoundData(filePath:String):AudioFormat {
+		final hasCache = soundCache.exists(filePath);
+		if (hasCache && soundCache[filePath].length > 0)
+			return soundCache[filePath].shift();
+
 		var data = switch (haxe.io.Path.extension(filePath)) {
 			case "flac": 	new FlacFormat(filePath);
 			case "mp3": 	new MP3Format(filePath);
@@ -21,7 +26,8 @@ class SoundData {
 		if (!data.loaded) {
 			data.destroy();
 			data = null;
-		}
+		} else if (!hasCache)
+			soundCache.set(filePath, []);
 
 		return data;
 	}
@@ -30,10 +36,15 @@ class SoundData {
 		final elapsed = runTime - lastSoundUpdate;
 		lastSoundUpdate = runTime;
 
-		for (sound in curSounds) {
-			if (sound.data == null || !sound.playing) continue;
+		var i = 0;
+		while (i < curSounds.length) {
+			final sound = curSounds[i];
+			if (sound.data == null || !sound.playing) {
+				++i;
+				continue;
+			}
 
-			var soundTime = sound.time;
+			final soundTime = sound.time;
 			if (sound.looping && soundTime >= sound.length)
 				sound.play(0.0);
 			else if (soundTime >= sound.length) {
@@ -43,18 +54,44 @@ class SoundData {
 				sound.finished.emit(sound);
 			}
 			sound.update();
+
+			if (curSounds.contains(sound))
+				++i;
 		}
 
 		return CONTINUE_THREAD;
 	}
 
-	public static function clearSounds() {
+	public static function clearSounds(?force:Bool = false) {
 		var i:Int = 0; // So I have more control over the iterator. (Removing stuff can mess up for loops.)
 		while (i < curSounds.length) {
-			if (curSounds[i].keepOnSwitch)
+			if (!force && curSounds[i].keepOnSwitch) {
+				if (curSounds[i].data != null)
+					soundCache[curSounds[i].data.path].push(null);
 				i++;
-			else
+			} else 
 				curSounds[i].destroy();
+		}
+	}
+
+	public static function clearCache(?force:Bool = false) {
+		for (key in soundCache.keys()) {
+			final cache = soundCache[key];
+
+			var i = 0;
+			while (i < cache.length) {
+				if (!force && (cache[i] == null || cache[i].keepOnSwitch)) {
+					++i;
+				} else if (cache[i] != null) {
+					cache[i].destroy();
+					cache.splice(i, 1);
+				}
+			}
+
+			if (force || cache.length <= 0)
+				soundCache.remove(key);
+			else if (cache.contains(null))
+				cache.remove(null);
 		}
 	}
 }

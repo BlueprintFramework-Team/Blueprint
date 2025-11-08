@@ -5,6 +5,8 @@ final SAMPLE_SIZE:Int = 65536;
 final SAMPLE_COUNT:Int = untyped __cpp__("{0} / sizeof(short)", SAMPLE_SIZE);
 
 interface AudioFormat {
+	public var keepOnSwitch:Bool;
+	
 	public var stopLoading:Bool;
 	public var sampleRate:Int;
 	public var bufferNum:Int;

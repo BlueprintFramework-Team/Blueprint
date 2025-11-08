@@ -117,7 +117,7 @@ class Game {
 
 		preLoop.emit();
 
-		ThreadHelper.startWindowThread(SoundData.updateSounds, 0.5); // may make a static var in the future to change the interval. (theres a delay to lower cpu on audio)
+		ThreadHelper.startWindowThread(SoundData.updateSounds, 0.15); // may make a static var in the future to change the interval. (theres a delay to lower cpu on audio)
 		ThreadHelper.mutex.acquire();
 		while (!Glfw.windowShouldClose(window.cWindow)) {
 			update();
@@ -133,7 +133,8 @@ class Game {
 		SpriteFrameSet.clearCache(true);
 		Texture.clearCache(true);
 		ColorRect.pixel.destroy();
-		SoundData.clearSounds();
+		SoundData.clearSounds(true);
+		SoundData.clearCache(true);
 		BaseTween.curTweens.splice(0, BaseTween.curTweens.length);
 		Camera.clearCameras();
 
@@ -151,6 +152,7 @@ class Game {
 				sceneStack[sceneStack.length - 1].destroy();
 			
 			SoundData.clearSounds();
+			SoundData.clearCache();
 			BaseTween.curTweens.splice(0, BaseTween.curTweens.length);
 			Camera.clearCameras();
 

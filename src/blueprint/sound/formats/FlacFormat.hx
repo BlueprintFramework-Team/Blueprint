@@ -8,9 +8,9 @@ import bindings.audio.DrFLAC;
 
 import blueprint.sound.AudioFormat;
 
-import haxe.io.Bytes;
-
 class FlacFormat implements AudioFormat {
+	public var keepOnSwitch:Bool = false;
+	
 	public var stopLoading:Bool = false;
 	public var sampleRate:Int;
 	public var bufferNum:Int = BUFFER_COUNT;

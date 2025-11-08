@@ -8,9 +8,9 @@ import bindings.audio.AL;
 
 import blueprint.sound.AudioFormat;
 
-import haxe.io.Bytes;
-
 class OggFormat implements AudioFormat {
+	public var keepOnSwitch:Bool = false;
+
 	public var stopLoading:Bool = false;
 	public var sampleRate:Int;
 	public var bufferNum:Int = BUFFER_COUNT;

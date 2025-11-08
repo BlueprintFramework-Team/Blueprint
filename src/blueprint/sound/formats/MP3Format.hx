@@ -8,9 +8,9 @@ import bindings.audio.DrMP3;
 
 import blueprint.sound.AudioFormat;
 
-import haxe.io.Bytes;
-
 class MP3Format implements AudioFormat {
+	public var keepOnSwitch:Bool = false;
+
 	public var stopLoading:Bool = false;
 	public var sampleRate:Int;
 	public var bufferNum:Int = BUFFER_COUNT;

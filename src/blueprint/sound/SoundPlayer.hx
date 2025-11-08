@@ -30,6 +30,17 @@ class SoundPlayer {
 	public var position(default, set):Vector3;
 	public var velocity(default, set):Vector3;
 
+	static function destroySignal(snd:SoundPlayer):Void 
+		snd.destroy();
+	public static function quickPlay(filePath:String, looping:Bool = false, gain:Float = 1.0, pitch:Float = 1.0, ?destroyWhenDone:Bool = true):SoundPlayer {
+		var snd = new SoundPlayer(filePath, true, looping, gain, pitch);
+
+		if (!looping && destroyWhenDone)
+			snd.finished.add(destroySignal);
+
+		return snd;
+	}
+
 	public function new(?filePath:String, autoPlay:Bool = false, looping:Bool = false, gain:Float = 1.0, pitch:Float = 1.0) {
 		AL.genSources(1, RawPointer.addressOf(source));
 
@@ -48,9 +59,14 @@ class SoundPlayer {
 		SoundData.curSounds.push(this);
 	}
 
-	function update() {
-		if (data.stopLoading)
+	function update():Void {
+		if (data == null || data.stopLoading)
 			return;
+
+		var state = 0;
+		AL.getSourcei(source, AL.SOURCE_STATE, CppHelpers.makePointer(state));
+		if (state == AL.STOPPED)
+			time = time;
 
 		var buffersProcessed = 0;
 		AL.getSourcei(source, AL.BUFFERS_PROCESSED, CppHelpers.makePointer(buffersProcessed));
@@ -106,7 +122,7 @@ class SoundPlayer {
 		SoundData.curSounds.remove(this);
 	}
 
-	function set_data(newData:AudioFormat) {
+	function set_data(newData:AudioFormat):AudioFormat {
 		if (data != newData) {
 			if (data != null) {
 				if (source > 0) 
@@ -115,7 +131,7 @@ class SoundPlayer {
 				length = 0.0;
 				lastStartTime = 0.0;
 				AL.sourcei(source, AL.BUFFER, 0);
-				data.destroy();
+				SoundData.soundCache[data.path].push(data);
 			}
 			if (newData != null) {
 				length = newData.getLength();
@@ -143,7 +159,7 @@ class SoundPlayer {
 	private var lastStartTime:Float;
 	private var lastStartTimestamp:Float;
 	function get_time():Float {
-		return lastStartTime + (Glfw.getTime() - lastStartTimestamp) * CppHelpers.boolToInt(playing);
+		return lastStartTime + (Glfw.getTime() - lastStartTimestamp) * pitch * CppHelpers.boolToInt(playing);
 	}
 
 	function set_time(value:Float):Float {
@@ -151,8 +167,8 @@ class SoundPlayer {
 		value = Math.min(Math.max(value, 0), length);
 		complete = value >= length;
 
-		if (playing)
-			AL.sourceStop(source);
+		// if (playing)
+		AL.sourceStop(source);
 
 		data.seek(value);
 		if (!shortSound) {
