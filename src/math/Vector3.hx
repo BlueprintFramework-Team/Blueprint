@@ -96,6 +96,31 @@ class Vector3Base {
     public inline function divideFloatEq(val:Float):Vector3Base
         return setFull(this.x / val, this.y / val, this.z / val);
 
+    public inline function clampSelf(min:Vector3Base, max:Vector3Base):Vector3Base {
+        return setFull(
+            MathExtras.clamp(this.x, min.x, max.x),
+            MathExtras.clamp(this.y, min.y, max.y),
+            MathExtras.clamp(this.z, min.z, max.z)
+        );
+    }
+    public inline function wrapSelf(min:Vector3Base, max:Vector3Base):Vector3Base {
+        return setFull(
+            MathExtras.wrap(this.x, min.x, max.x),
+            MathExtras.wrap(this.y, min.y, max.y),
+            MathExtras.wrap(this.z, min.z, max.z)
+        );
+    }
+    public inline function lerpSelf(vec:Vector3Base, r:Float):Vector3Base {
+        return setFull(
+            MathExtras.lerp(this.x, vec.x, r),
+            MathExtras.lerp(this.y, vec.y, r),
+            MathExtras.lerp(this.z, vec.z, r)
+        );
+    }
+
+    public inline function clone():Vector3Base
+        return new Vector3Base(x, y, z);
+
 	public inline function copyFrom(vec:Vector3Base):Vector3Base
         return setFull(vec.x, vec.y, vec.z);
 

@@ -225,6 +225,9 @@ abstract Matrix4x4(Array<Vector4>) from Array<Vector4> to Array<Vector4> {
 		);
 	}
 
+    public inline function clone():Matrix4x4
+        return new Matrix4x4().copyFrom(this);
+
 	public inline function copyFrom(mat:Matrix4x4):Matrix4x4 {
 		for (i in 0...4)
 			this[i].copyFrom(mat[i]);

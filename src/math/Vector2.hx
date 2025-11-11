@@ -88,6 +88,28 @@ class Vector2Base {
     public inline function divideFloatEq(val:Float):Vector2Base
         return setFull(this.x / val, this.y / val);
 
+    public inline function clampSelf(min:Vector2Base, max:Vector2Base):Vector2Base {
+        return setFull(
+            MathExtras.clamp(this.x, min.x, max.x),
+            MathExtras.clamp(this.y, min.y, max.y)
+        );
+    }
+    public inline function wrapSelf(min:Vector2Base, max:Vector2Base):Vector2Base {
+        return setFull(
+            MathExtras.wrap(this.x, min.x, max.x),
+            MathExtras.wrap(this.y, min.y, max.y)
+        );
+    }
+    public inline function lerpSelf(vec:Vector2Base, r:Float):Vector2Base {
+        return setFull(
+            MathExtras.lerp(this.x, vec.x, r),
+            MathExtras.lerp(this.y, vec.y, r)
+        );
+    }
+
+    public inline function clone():Vector2Base
+        return new Vector2Base(x, y);
+
 	public inline function copyFrom(vec:Vector2Base):Vector2Base
         return setFull(vec.x, vec.y);
 

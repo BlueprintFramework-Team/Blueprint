@@ -107,6 +107,34 @@ class Vector4Base {
     public inline function divideFloatEq(val:Float):Vector4Base
         return setFull(this.x / val, this.y / val, this.z / val, this.w / val);
 
+    public inline function clampSelf(min:Vector4Base, max:Vector4Base):Vector4Base {
+        return setFull(
+            MathExtras.clamp(this.x, min.x, max.x),
+            MathExtras.clamp(this.y, min.y, max.y),
+            MathExtras.clamp(this.z, min.z, max.z),
+            MathExtras.clamp(this.w, min.w, max.w)
+        );
+    }
+    public inline function wrapSelf(min:Vector4Base, max:Vector4Base):Vector4Base {
+        return setFull(
+            MathExtras.wrap(this.x, min.x, max.x),
+            MathExtras.wrap(this.y, min.y, max.y),
+            MathExtras.wrap(this.z, min.z, max.z),
+            MathExtras.wrap(this.w, min.w, max.w)
+        );
+    }
+    public inline function lerpSelf(vec:Vector4Base, r:Float):Vector4Base {
+        return setFull(
+            MathExtras.lerp(this.x, vec.x, r),
+            MathExtras.lerp(this.y, vec.y, r),
+            MathExtras.lerp(this.z, vec.z, r),
+            MathExtras.lerp(this.w, vec.w, r)
+        );
+    }
+
+    public inline function clone():Vector4Base
+        return new Vector4Base(x, y, z, w);
+
 	public inline function copyFrom(vec:Vector4Base):Vector4Base
         return setFull(vec.x, vec.y, vec.z, vec.w);
 
