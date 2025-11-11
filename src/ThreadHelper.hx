@@ -6,11 +6,6 @@ import blueprint.Game;
 import sys.thread.Thread;
 import sys.thread.Mutex;
 
-enum abstract ThreadLoopFlag(Bool) from Bool to Bool {
-	var CONTINUE_THREAD = true;
-	var STOP_THREAD = false;
-}
-
 class ThreadHelper {
 	public static var mutex:Mutex = new Mutex();
 
@@ -32,14 +27,20 @@ class ThreadHelper {
 		Glfw.makeContextCurrent(Game.window.cWindow);
 	}
 
-	public static function startWindowThread(func:Float->ThreadLoopFlag, ?interval:Float = 0.0) {
+	/**
+		Creates a thread that runs until the window is closed.
+
+		@param func The function to run in the thread. Receives the current timestamp and returns how long it should wait until the next run. (It may also return a negative value to stop it!)
+	**/
+	public static function startWindowThread(func:Float->Float) {
 		if (func == null) return;
 
 		Thread.create(function() {
-			var continueThread:ThreadLoopFlag = CONTINUE_THREAD;
+			var interval:Float = 0.0;
 			mutex.acquire();
-			while (!Glfw.windowShouldClose(Game.window.cWindow) && func != null && continueThread) {
-				continueThread = func(Glfw.getTime());
+			Glfw.makeContextCurrent(Game.window.cWindow);
+			while (!Glfw.windowShouldClose(Game.window.cWindow) && func != null && interval >= 0.0) {
+				interval = func(Glfw.getTime());
 				Glfw.makeContextCurrent(null);
 				mutex.release();
 				if (interval > 0)
@@ -47,6 +48,7 @@ class ThreadHelper {
 				mutex.acquire();
 				Glfw.makeContextCurrent(Game.window.cWindow);
 			}
+			Glfw.makeContextCurrent(null);
 			mutex.release();
 		});
 	}

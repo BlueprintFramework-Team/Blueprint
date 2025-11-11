@@ -1,5 +1,6 @@
 package blueprint;
 
+import sys.thread.Thread;
 import cpp.Callable;
 
 import bindings.Glad;
@@ -48,6 +49,10 @@ class Game {
 	private static var queuedSceneChange:Class<Scene> = null;
 	private static var queuedSceneParams:Array<Dynamic> = [];
 
+	public static var updateFPS(default, set):Float = 0.0;
+	private static var updateInterval:Float = 0.001;
+	public static var drawFPS(default, set):Float = 0.0;
+	private static var drawInterval:Float = 0.001;
 	public static var elapsed:Float;
 
 	public static var window:Window;
@@ -117,10 +122,16 @@ class Game {
 
 		preLoop.emit();
 
-		ThreadHelper.startWindowThread(SoundData.updateSounds, 0.15); // may make a static var in the future to change the interval. (theres a delay to lower cpu on audio)
+		ThreadHelper.startWindowThread(SoundData.updateSounds);
+		// ThreadHelper.startWindowThread(update); until i'm more confidant in threads
+		// ThreadHelper.startWindowThread(draw);
 		ThreadHelper.mutex.acquire();
 		while (!Glfw.windowShouldClose(window.cWindow)) {
-			update();
+			update(Glfw.getTime());
+			draw(Glfw.getTime());
+			Glfw.makeContextCurrent(null);
+			ThreadHelper.mutex.release();
+			Glfw.pollEvents(); // Glfw.waitEventsTimeout(0.1); until i'm more confidant in threads
 			ThreadHelper.mutex.acquire();
 			Glfw.makeContextCurrent(Game.window.cWindow);
 		}
@@ -146,7 +157,9 @@ class Game {
 
 	private static var lastTime:Float = 0;
 
-	private function update():Void {
+	private function update(runTime:Float):Float {
+		// Sys.println("UPDATE TIMESTAMP: " + runTime);
+
 		if (queuedSceneChange != null) {
 			while (sceneStack.length > 0)
 				sceneStack[sceneStack.length - 1].destroy();
@@ -172,14 +185,9 @@ class Game {
 			lastTime = Glfw.getTime();
 			cpp.vm.Gc.run(true);
 
-			Glfw.makeContextCurrent(null);
-			ThreadHelper.mutex.release();
-			Glfw.pollEvents();
-
-			return;
+			return 0.0;
 		}
 
-		var runTime:Float = Glfw.getTime();
 		elapsed = runTime - lastTime;
 		lastTime = runTime;
 		sceneStack[sceneStack.length - 1].update(elapsed);
@@ -189,6 +197,13 @@ class Game {
 
 		for (cam in Camera.allCameras)
 			cam.update(elapsed);
+
+		return updateInterval;
+	}
+
+	private function draw(runTime:Float):Float {
+		// Sys.println("UPDATE TIMESTAMP: " + runTime);
+
 		for (scene in sceneStack)
 			scene.queueDraw();
 		for (plugin in plugins)
@@ -200,9 +215,8 @@ class Game {
 			cam.drawQueues();
 
 		Glfw.swapBuffers(window.cWindow);
-		Glfw.makeContextCurrent(null);
-		ThreadHelper.mutex.release();
-		Glfw.pollEvents();
+
+		return drawInterval;
 	}
 
 	public static function queueClose():Void {
@@ -243,5 +257,14 @@ class Game {
 
 	static function set_topScene(newScene:Scene):Scene {
 		return sceneStack[sceneStack.length - 1] = newScene;
+	}
+
+	static function set_updateFPS(newFPS:Float):Float {
+		updateInterval = (newFPS <= 0.0) ? 0.0 : 1.0 / newFPS;
+		return updateFPS = newFPS;
+	}
+	static function set_drawFPS(newFPS:Float):Float {
+		drawInterval = (newFPS <= 0.0) ? 0.0 : 1.0 / newFPS;
+		return drawFPS = newFPS;
 	}
 }

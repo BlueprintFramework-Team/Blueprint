@@ -2,11 +2,12 @@ package blueprint.sound;
 
 import blueprint.sound.formats.*;
 import blueprint.sound.SoundPlayer;
-import ThreadHelper.ThreadLoopFlag;
 
 @:allow(blueprint.Game)
 @:allow(blueprint.sound.SoundPlayer)
 class SoundData {
+	public static var interval:Float = 0.15;
+
 	private static var curSounds:Array<SoundPlayer> = [];
 	private static var lastSoundUpdate:Float = 0.0;
 	private static var soundCache:Map<String, Array<AudioFormat>> = [];
@@ -32,7 +33,8 @@ class SoundData {
 		return data;
 	}
 
-	private static function updateSounds(runTime:Float):ThreadLoopFlag {
+	private static function updateSounds(runTime:Float):Float {
+		// Sys.println("AUDIO TIMESTAMP: " + runTime);
 		final elapsed = runTime - lastSoundUpdate;
 		lastSoundUpdate = runTime;
 
@@ -59,7 +61,7 @@ class SoundData {
 				++i;
 		}
 
-		return CONTINUE_THREAD;
+		return interval;
 	}
 
 	public static function clearSounds(?force:Bool = false) {

@@ -17,12 +17,6 @@ class InputHandler {
 	public static final mouseReleased:Signal<Int->Void> = new Signal();
 	public static final mouseScrolled:Signal<Float->Float->Void> = new Signal();
 	public static final charInputted:Signal<String->cpp.UInt32->Int->Void> = new Signal();
-	
-	// originally for multithreading input, currently scrapped because the main thread took that job and the main thread NEEDS pollEvents.
-	static function updateInputs(runTime:Float):ThreadLoopFlag {
-		Glfw.pollEvents();
-        return CONTINUE_THREAD;
-    }
 
 	static function charInput(window:GlfwWindow, code:cpp.UInt32, mods:Int) {
 		ThreadHelper.mutex.acquire();

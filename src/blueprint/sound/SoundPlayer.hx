@@ -8,7 +8,6 @@ import bindings.Glfw;
 import math.Vector3;
 import blueprint.Game;
 import blueprint.sound.AudioFormat;
-import ThreadHelper.ThreadLoopFlag;
 
 @:allow(blueprint.sound.SoundData)
 class SoundPlayer {
