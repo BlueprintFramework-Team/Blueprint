@@ -43,8 +43,8 @@ class ThreadHelper {
 				interval = func(Glfw.getTime());
 				Glfw.makeContextCurrent(null);
 				mutex.release();
-				if (interval > 0)
-					Sys.sleep(interval - (Glfw.getTime() % interval));
+				Glfw.postEmptyEvent();
+				Sys.sleep(interval > 0 ? interval - (Glfw.getTime() % interval) : 0.0);
 				mutex.acquire();
 				Glfw.makeContextCurrent(Game.window.cWindow);
 			}

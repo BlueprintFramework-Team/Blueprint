@@ -50,9 +50,9 @@ class Game {
 	private static var queuedSceneParams:Array<Dynamic> = [];
 
 	public static var updateFPS(default, set):Float = 0.0;
-	private static var updateInterval:Float = 0.001;
+	private static var updateInterval:Float = 0.0;
 	public static var drawFPS(default, set):Float = 0.0;
-	private static var drawInterval:Float = 0.001;
+	private static var drawInterval:Float = 0.0;
 	public static var elapsed:Float;
 
 	public static var window:Window;
@@ -123,15 +123,13 @@ class Game {
 		preLoop.emit();
 
 		ThreadHelper.startWindowThread(SoundData.updateSounds);
-		// ThreadHelper.startWindowThread(update); until i'm more confidant in threads
-		// ThreadHelper.startWindowThread(draw);
+		ThreadHelper.startWindowThread(update);
+		ThreadHelper.startWindowThread(draw);
 		ThreadHelper.mutex.acquire();
 		while (!Glfw.windowShouldClose(window.cWindow)) {
-			update(Glfw.getTime());
-			draw(Glfw.getTime());
 			Glfw.makeContextCurrent(null);
 			ThreadHelper.mutex.release();
-			Glfw.pollEvents(); // Glfw.waitEventsTimeout(0.1); until i'm more confidant in threads
+			Glfw.waitEventsTimeout(0.1);
 			ThreadHelper.mutex.acquire();
 			Glfw.makeContextCurrent(Game.window.cWindow);
 		}
