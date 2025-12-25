@@ -8,7 +8,7 @@ import math.MathExtras;
 import blueprint.objects.Sprite;
 import blueprint.objects.Camera;
 
-class Group extends Sprite {
+class Group<T:Sprite = Sprite> extends Sprite {
 	var cacheTransform:TransformCache = new TransformCache(); // Sprite also uses cacheTransform so I can't really use Camera.cacheTransform.
 
 	public var positionFactor:Vector2 = new Vector2(1.0);
@@ -20,7 +20,7 @@ class Group extends Sprite {
 			return false;
 
 		members.push(object);
-		@:bypassAccessor object.memberOf = this;
+		@:bypassAccessor object.memberOf = cast this;
 		return true;
 	}
 
@@ -40,7 +40,7 @@ class Group extends Sprite {
 			return false;
 
 		members.insert(index, object);
-		@:bypassAccessor object.memberOf = this;
+		@:bypassAccessor object.memberOf = cast this;
 		return true;
 	}
 
