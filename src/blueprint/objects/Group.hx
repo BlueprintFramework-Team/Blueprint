@@ -12,10 +12,10 @@ class Group<T:Sprite = Sprite> extends Sprite {
 	var cacheTransform:TransformCache = new TransformCache(); // Sprite also uses cacheTransform so I can't really use Camera.cacheTransform.
 
 	public var positionFactor:Vector2 = new Vector2(1.0);
-	public var members:Array<Sprite> = [];
+	public var members:Array<T> = [];
 	public var skipProperties:Bool = false;
 
-	public function add(object:Sprite):Bool {
+	public function add(object:T):Bool {
 		if (members.indexOf(object) > -1)
 			return false;
 
@@ -24,7 +24,7 @@ class Group<T:Sprite = Sprite> extends Sprite {
 		return true;
 	}
 
-	public function remove(object:Sprite):Bool {
+	public function remove(object:T):Bool {
 		var index = members.indexOf(object);
 
 		if (index > -1) {
@@ -35,7 +35,7 @@ class Group<T:Sprite = Sprite> extends Sprite {
 		return false;
 	}
 
-	public function insert(index:Int, object:Sprite):Bool {
+	public function insert(index:Int, object:T):Bool {
 		if (members.indexOf(object) > -1)
 			return false;
 
@@ -128,7 +128,7 @@ class Group<T:Sprite = Sprite> extends Sprite {
 			&& (zoomFactor.x == 1.0 && zoomFactor.y == 1.0);
 	}
 
-	override function clone<T:Sprite>():T {
+	override function clone<C:Sprite>():C {
 		Sys.println("Group.clone() is currently unimplemented.");
 		return cast new Group();
 	}
