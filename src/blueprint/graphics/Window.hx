@@ -5,6 +5,8 @@ import cpp.RawPointer;
 import bindings.Glfw;
 import bindings.Glad;
 
+import utils.ThreadHelper;
+
 import math.Vector4;
 import math.Vector2;
 

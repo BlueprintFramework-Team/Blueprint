@@ -2,7 +2,7 @@ package blueprint.input;
 
 import bindings.Glfw;
 import blueprint.Game;
-import ThreadHelper;
+import utils.ThreadHelper;
 
 @:allow(blueprint.Game)
 class InputHandler {

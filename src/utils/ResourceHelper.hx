@@ -1,4 +1,4 @@
-package;
+package utils;
 
 import bindings.CppHelpers;
 import cpp.RawPointer;

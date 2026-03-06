@@ -4,7 +4,7 @@ import haxe.io.Path;
 import sys.FileSystem;
 import sys.io.File;
 
-import ResourceHelper.InternalResource;
+import utils.ResourceHelper;
 
 @:structInit class SpriteFrame {
 	public var name:String;

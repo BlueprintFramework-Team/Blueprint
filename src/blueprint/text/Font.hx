@@ -5,7 +5,7 @@ package blueprint.text;
  * 	- Fix Freetype.errorString returning `null`.
  */
 
-import ResourceHelper.InternalResource;
+import utils.ResourceHelper;
 import cpp.RawPointer;
 import sys.FileSystem;
 

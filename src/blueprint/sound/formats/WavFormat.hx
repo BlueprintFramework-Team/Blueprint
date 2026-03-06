@@ -1,6 +1,6 @@
 package blueprint.sound.formats;
 
-import ResourceHelper.InternalResource;
+import utils.ResourceHelper;
 import cpp.RawPointer;
 import bindings.CppHelpers;
 import bindings.audio.AL;

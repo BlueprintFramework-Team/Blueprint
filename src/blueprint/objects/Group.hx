@@ -1,9 +1,8 @@
 package blueprint.objects;
 
-import bindings.Glad;
-
 import math.Vector2;
-import math.MathExtras;
+
+import utils.ShrinkingArrayIterator;
 
 import blueprint.objects.Sprite;
 import blueprint.objects.Camera;
@@ -138,4 +137,9 @@ class Group<T:Sprite = Sprite> extends Sprite {
 			object.destroy();
 		members.splice(0, members.length);
 	}
+
+	public inline function iterator():ShrinkingArrayIterator<T>
+		return new ShrinkingArrayIterator(members);
+	public inline function keyValueIterator():ShrinkingKeyValueArrayIterator<T>
+		return new ShrinkingKeyValueArrayIterator(members);
 }

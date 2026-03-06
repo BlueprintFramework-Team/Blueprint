@@ -1,6 +1,6 @@
 package blueprint.graphics;
 
-import ResourceHelper.InternalResource;
+import utils.ResourceHelper;
 import haxe.io.Path;
 import cpp.RawPointer;
 import sys.FileSystem;

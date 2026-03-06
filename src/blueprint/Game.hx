@@ -1,15 +1,15 @@
 package blueprint;
 
-import sys.thread.Thread;
 import cpp.Callable;
 
 import bindings.Glad;
 import bindings.Glfw;
 import bindings.freetype.Freetype;
 import bindings.freetype.FreetypeStroker;
-import bindings.audio.ALC;
 
 import math.Matrix4x4;
+
+import utils.ThreadHelper;
 
 import blueprint.Scene;
 import blueprint.objects.Camera;
